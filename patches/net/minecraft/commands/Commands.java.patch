@@ -1,5 +1,31 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
+@@ -25,6 +_,8 @@
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
++
++import com.taiyitistmc.injection.advancements.CommandsInjection;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.Util;
+@@ -43,7 +_,6 @@
+ import net.minecraft.network.chat.ComponentUtils;
+ import net.minecraft.network.chat.HoverEvent;
+ import net.minecraft.network.chat.MutableComponent;
+-import net.minecraft.network.chat.Style;
+ import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.server.MinecraftServer;
+@@ -138,7 +_,7 @@
+ import net.minecraft.world.level.GameRules;
+ import org.slf4j.Logger;
+ 
+-public class Commands {
++public class Commands implements CommandsInjection {
+     private static final ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT = new ThreadLocal<>();
+     private static final Logger LOGGER = LogUtils.getLogger();
+     public static final int LEVEL_ALL = 0;
 @@ -214,7 +_,7 @@
              JfrCommand.register(this.dispatcher);
          }
