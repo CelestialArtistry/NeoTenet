@@ -3,7 +3,8 @@
   "package": "org.taiyitistmc.mixin",
   "plugin": "org.taiyitistmc.mixin.NeoTaiyitistMixinPlugin",
   "mixins": [
-    "advancements.MixinAdvancementTree"
+    "advancements.MixinAdvancementTree",
+    "server.dedicated.MixinDedicatedServer"
   ],
   "client": [],
   "injectors": {
