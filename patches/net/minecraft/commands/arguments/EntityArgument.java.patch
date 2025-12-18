@@ -8,12 +8,14 @@
  import net.minecraft.commands.CommandBuildContext;
  import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.commands.SharedSuggestionProvider;
-@@ -24,7 +_,7 @@
+@@ -23,8 +_,9 @@
+ import net.minecraft.network.chat.Component;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.entity.Entity;
++import org.taiyitistmc.injection.commands.arguments.InjectionEntityArgument;
  
 -public class EntityArgument implements ArgumentType<EntitySelector> {
-+public class EntityArgument implements ArgumentType<EntitySelector>, com.taiyitistmc.injection.commands.arguments.InjectionEntityArgument {
++public class EntityArgument implements ArgumentType<EntitySelector>, InjectionEntityArgument {
      private static final Collection<String> EXAMPLES = Arrays.asList("Player", "0123", "@e", "@e[type=foo]", "dd12be42-52a9-4a91-a8a1-11c01849e498");
      public static final SimpleCommandExceptionType ERROR_NOT_SINGLE_ENTITY = new SimpleCommandExceptionType(Component.translatable("argument.entity.toomany"));
      public static final SimpleCommandExceptionType ERROR_NOT_SINGLE_PLAYER = new SimpleCommandExceptionType(Component.translatable("argument.player.toomany"));

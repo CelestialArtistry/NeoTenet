@@ -1,9 +1,9 @@
-package com.taiyitistmc.mixin;
+package org.taiyitistmc.mixin;
 
-import com.taiyitistmc.NeoTaiyitist;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import org.taiyitistmc.NeoTaiyitist;
 
 import java.util.List;
 import java.util.Set;

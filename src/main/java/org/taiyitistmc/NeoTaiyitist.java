@@ -1,4 +1,4 @@
-package com.taiyitistmc;
+package org.taiyitistmc;
 
 import net.neoforged.neoforge.internal.versions.neoforge.NeoForgeVersion;
 import org.apache.logging.log4j.LogManager;

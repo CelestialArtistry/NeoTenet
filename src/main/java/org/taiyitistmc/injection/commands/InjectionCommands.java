@@ -1,4 +1,4 @@
-package com.taiyitistmc.injection.commands;
+package org.taiyitistmc.injection.commands;
 
 import com.mojang.brigadier.ParseResults;
 import net.minecraft.commands.CommandSourceStack;

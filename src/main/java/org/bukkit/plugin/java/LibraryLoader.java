@@ -1,6 +1,10 @@
 // CHECKSTYLE:OFF
 package org.bukkit.plugin.java;
+class LibraryLoader
+{
 
+}
+/*
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -131,3 +135,4 @@ class LibraryLoader
         return loader;
     }
 }
+*/

@@ -36,12 +36,14 @@
  import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.server.MinecraftServer;
-@@ -138,7 +_,7 @@
+@@ -137,8 +_,9 @@
+ import net.minecraft.util.profiling.jfr.JvmProfiler;
  import net.minecraft.world.level.GameRules;
  import org.slf4j.Logger;
++import org.taiyitistmc.injection.commands.InjectionCommands;
  
 -public class Commands {
-+public class Commands implements com.taiyitistmc.injection.commands.InjectionCommands {
++public class Commands implements InjectionCommands {
      private static final ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT = new ThreadLocal<>();
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final int LEVEL_ALL = 0;

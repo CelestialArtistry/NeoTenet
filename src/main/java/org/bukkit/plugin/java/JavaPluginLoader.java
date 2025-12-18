@@ -53,7 +53,7 @@ public final class JavaPluginLoader implements PluginLoader {
     final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
     private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
-    private final LibraryLoader libraryLoader;
+    //private final LibraryLoader libraryLoader;
     public static final CustomTimingsHandler pluginParentTimer = new CustomTimingsHandler("** Plugins"); // Spigot
 
     /**
@@ -66,14 +66,15 @@ public final class JavaPluginLoader implements PluginLoader {
         Preconditions.checkArgument(instance != null, "Server cannot be null");
         server = instance;
 
+        /**
         LibraryLoader libraryLoader = null;
         try {
             libraryLoader = new LibraryLoader(server.getLogger());
         } catch (NoClassDefFoundError ex) {
             // Provided depends were not added back
             server.getLogger().warning("Could not initialize LibraryLoader (missing dependencies?)");
-        }
-        this.libraryLoader = libraryLoader;
+        }*/
+        //this.libraryLoader = libraryLoader;
     }
 
     @Override
@@ -142,7 +143,7 @@ public final class JavaPluginLoader implements PluginLoader {
 
         final PluginClassLoader loader;
         try {
-            loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file, (libraryLoader != null) ? libraryLoader.createLoader(description) : null);
+            loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file, /*(libraryLoader != null) ? libraryLoader.createLoader(description) :*/ null);
         } catch (InvalidPluginException ex) {
             throw ex;
         } catch (Throwable ex) {

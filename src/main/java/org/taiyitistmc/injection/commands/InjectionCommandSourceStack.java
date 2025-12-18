@@ -1,4 +1,4 @@
-package com.taiyitistmc.injection.commands;
+package org.taiyitistmc.injection.commands;
 
 public interface InjectionCommandSourceStack {
 

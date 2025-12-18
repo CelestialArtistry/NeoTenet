@@ -1,8 +1,9 @@
 {
   "required": true,
-  "package": "com.taiyitistmc.mixin",
+  "package": "org.taiyitistmc.mixin",
+  "plugin": "org.taiyitistmc.mixin.NeoTaiyitistMixinPlugin",
   "mixins": [
-    "advancements.AdvancementTreeMixin"
+    "advancements.MixinAdvancementTree"
   ],
   "client": [],
   "injectors": {

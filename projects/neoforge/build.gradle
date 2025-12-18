@@ -135,6 +135,7 @@ dependencies {
     libraries "org.hamcrest:hamcrest:2.2"
     libraries "org.mockito:mockito-core:5.14.1"
     libraries "org.yaml:snakeyaml:2.2"
+    /*
     libraries "org.eclipse.aether:aether-api:1.1.0"
     libraries "org.eclipse.aether:aether-impl:1.1.0"
     libraries "org.eclipse.aether:aether-transport-http:1.1.0"
@@ -148,7 +149,7 @@ dependencies {
     libraries "org.apache.maven.resolver:maven-resolver-impl:1.9.18"
     libraries "org.apache.maven.resolver:maven-resolver-named-locks:1.9.18"
     libraries "org.apache.maven.resolver:maven-resolver-spi:1.9.18"
-    libraries "org.apache.maven.resolver:maven-resolver-util:1.9.18"
+    libraries "org.apache.maven.resolver:maven-resolver-util:1.9.18"*/
     libraries ("net.md-5:bungeecord-chat:1.21-R0.3") {
         transitive = false
     }

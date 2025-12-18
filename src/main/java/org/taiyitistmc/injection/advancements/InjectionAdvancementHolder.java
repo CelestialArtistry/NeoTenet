@@ -1,4 +1,4 @@
-package com.taiyitistmc.injection.advancements;
+package org.taiyitistmc.injection.advancements;
 
 public interface InjectionAdvancementHolder {
 

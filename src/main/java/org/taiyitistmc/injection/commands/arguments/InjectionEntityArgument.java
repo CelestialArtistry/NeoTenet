@@ -1,4 +1,4 @@
-package com.taiyitistmc.injection.commands.arguments;
+package org.taiyitistmc.injection.commands.arguments;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.arguments.selector.EntitySelector;
