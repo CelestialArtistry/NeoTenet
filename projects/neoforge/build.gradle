@@ -135,6 +135,26 @@ dependencies {
     libraries "org.junit.platform:junit-platform-suite-engine:1.10.0"
     libraries "org.hamcrest:hamcrest:2.2"
     libraries "org.mockito:mockito-core:5.14.1"
+    libraries "org.yaml:snakeyaml:2.2"
+    libraries "org.eclipse.aether:aether-api:1.1.0"
+    libraries "org.eclipse.aether:aether-impl:1.1.0"
+    libraries "org.eclipse.aether:aether-transport-http:1.1.0"
+    libraries "org.eclipse.aether:aether-connector-basic:1.1.0"
+    libraries "org.eclipse.aether:aether-util:0.9.0.M2"
+    libraries "org.apache.maven:maven-repository-metadata:3.9.6"
+    libraries "org.apache.maven:maven-core:3.9.6"
+    libraries ("net.md-5:bungeecord-chat:1.21-R0.3") {
+        transitive = false
+    }
+    libraries ("net.md-5:bungeecord-dialog:1.21-R0.3") {
+        transitive = false
+    }
+    libraries ("net.md-5:bungeecord-serializer:1.21-R0.3") {
+        transitive = false
+    }
+    libraries ("net.md-5:SpecialSource:1.11.2") {
+        transitive = false
+    }
     // CraftBukkit end
 
     libraries ("net.neoforged:JarJarSelector:${project.jarjar_version}") {
