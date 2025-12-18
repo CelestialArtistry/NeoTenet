@@ -20,6 +20,10 @@ dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     rulesMode = RulesMode.FAIL_ON_PROJECT_RULES
     repositories {
+        maven {
+            name = 'SpigotMC'
+            url = uri("https://hub.spigotmc.org/nexus/content/groups/public/")
+        }
         mavenCentral()
     }
 }

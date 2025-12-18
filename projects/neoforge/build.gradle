@@ -114,6 +114,51 @@ dependencies {
     libraries "net.minecrell:terminalconsoleappender:${project.terminalconsoleappender_version}"
     libraries("net.fabricmc:sponge-mixin:${project.mixin_version}") { transitive = false }
     libraries "org.openjdk.nashorn:nashorn-core:${project.nashorn_core_version}"
+
+    // Provided dependencies
+    libraries 'org.apache.maven:maven-resolver-provider:3.9.6'
+    libraries 'org.apache.maven.resolver:maven-resolver-connector-basic:1.9.18'
+    libraries 'org.apache.maven.resolver:maven-resolver-transport-http:1.9.18'
+    libraries 'org.junit.jupiter:junit-jupiter:5.10.2'
+    libraries 'org.hamcrest:hamcrest:2.2'
+    libraries 'org.mockito:mockito-core:5.14.1'
+
+    // CraftBukkit start
+    libraries "jline:jline:2.12.1"
+    libraries "org.apache.logging.log4j:log4j-iostreams:2.22.1"
+    libraries "org.ow2.asm:asm-commons:9.7.1"
+    libraries "commons-io:commons-io:2.15.1"
+    libraries "io.netty:netty-buffer:4.1.97.Final"
+    libraries "io.netty:netty-codec:4.1.125.Final"
+    libraries "io.netty:netty-common:4.1.118.Final"
+    libraries "io.netty:netty-handler:4.1.118.Final"
+    libraries "io.netty:netty-resolver:4.1.97.Final"
+    libraries "io.netty:netty-transport:4.1.97.Final"
+    libraries "io.netty:netty-transport-classes-epoll:4.1.97.Final"
+    libraries "io.netty:netty-transport-native-epoll:4.1.97.Final:linux-x86_64"
+    libraries "io.netty:netty-transport-native-epoll:4.1.97.Final:linux-aarch_64"
+    libraries "io.netty:netty-transport-native-unix-common:4.1.97.Final"
+    libraries "it.unimi.dsi:fastutil:8.5.12"
+    libraries "net.java.dev.jna:jna:5.14.0"
+    libraries "net.java.dev.jna:jna-platform:5.14.0"
+    libraries "net.sf.jopt-simple:jopt-simple:5.0.4"
+    libraries 'org.apache.commons:commons-lang3:3.18.0'
+    libraries "org.apache.logging.log4j:log4j-core:2.22.1"
+    libraries "org.apache.logging.log4j:log4j-slf4j2-impl:2.22.1"
+    libraries "org.slf4j:slf4j-api:2.0.9"
+    libraries "org.lz4:lz4-java:1.8.0"
+    libraries "commons-lang:commons-lang:2.6"
+    libraries "org.xerial:sqlite-jdbc:3.46.0.0"
+    libraries "com.mysql:mysql-connector-j:8.4.0"
+    libraries "org.apache.maven:maven-resolver-provider:3.9.6"
+    libraries "org.apache.maven.resolver:maven-resolver-connector-basic:1.9.18"
+    libraries "org.apache.maven.resolver:maven-resolver-transport-http:1.9.18"
+    libraries "org.junit.jupiter:junit-jupiter:5.10.2"
+    libraries "org.junit.platform:junit-platform-suite-engine:1.10.0"
+    libraries "org.hamcrest:hamcrest:2.2"
+    libraries "org.mockito:mockito-core:5.14.1"
+    // CraftBukkit end
+
     libraries ("net.neoforged:JarJarSelector:${project.jarjar_version}") {
         exclude group: 'org.slf4j'
     }
@@ -255,10 +300,7 @@ configurations {
             attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.DOCUMENTATION))
             attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType, "changelog"))
         }
-        // Publish it, but only for release versions
-        if (!rootProject.isPreReleaseVersion) {
-            javaComponent.addVariantsFromConfiguration(it) {}
-        }
+        javaComponent.addVariantsFromConfiguration(it) {}
     }
     modDevApiElements {
         canBeDeclared = false
