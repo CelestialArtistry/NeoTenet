@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.taiyitistmc.mixin",
+  "mixins": [
+    "advancements.AdvancementTreeMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "maxShiftBy": 2,
+    "defaultRequire": 1
+  },
+  "mixinPriority": 400,
+  "minVersion": "0.8"
+}

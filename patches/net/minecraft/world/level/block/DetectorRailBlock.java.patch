@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/DetectorRailBlock.java
 +++ b/net/minecraft/world/level/block/DetectorRailBlock.java
+@@ -11,7 +_,7 @@
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntitySelector;
+ import net.minecraft.world.entity.vehicle.AbstractMinecart;
+-import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
++import net.minecraft.world.entity.vehicle.MinecartCommandBlockCommandSource;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
 @@ -38,6 +_,10 @@
  
      public DetectorRailBlock(BlockBehaviour.Properties p_52431_) {
@@ -11,7 +20,13 @@
          this.registerDefaultState(
              this.stateDefinition
                  .any()
-@@ -152,9 +_,9 @@
+@@ -147,14 +_,14 @@
+     @Override
+     protected int getAnalogOutputSignal(BlockState p_52454_, Level p_52455_, BlockPos p_52456_) {
+         if (p_52454_.getValue(POWERED)) {
+-            List<MinecartCommandBlock> list = this.getInteractingMinecartOfType(p_52455_, p_52456_, MinecartCommandBlock.class, p_153123_ -> true);
++            List<MinecartCommandBlockCommandSource> list = this.getInteractingMinecartOfType(p_52455_, p_52456_, MinecartCommandBlockCommandSource.class, p_153123_ -> true);
+             if (!list.isEmpty()) {
                  return list.get(0).getCommandBlock().getSuccessCount();
              }
  

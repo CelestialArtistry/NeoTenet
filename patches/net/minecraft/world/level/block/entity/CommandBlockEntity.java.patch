@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/level/block/entity/CommandBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/CommandBlockEntity.java
+@@ -8,7 +_,7 @@
+ import net.minecraft.core.component.DataComponents;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.server.level.ServerLevel;
+-import net.minecraft.world.level.BaseCommandBlock;
++import net.minecraft.world.level.BaseCommandBlockCommandSource;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.CommandBlock;
+@@ -20,7 +_,7 @@
+     private boolean powered;
+     private boolean auto;
+     private boolean conditionMet;
+-    private final BaseCommandBlock commandBlock = new BaseCommandBlock() {
++    private final BaseCommandBlockCommandSource commandBlock = new BaseCommandBlockCommandSource() {
+         @Override
+         public void setCommand(String p_59157_) {
+             super.setCommand(p_59157_);
+@@ -92,7 +_,7 @@
+         return true;
+     }
+ 
+-    public BaseCommandBlock getCommandBlock() {
++    public BaseCommandBlockCommandSource getCommandBlock() {
+         return this.commandBlock;
+     }
+ 

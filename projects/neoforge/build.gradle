@@ -128,7 +128,6 @@ dependencies {
     libraries "org.apache.logging.log4j:log4j-slf4j2-impl:2.22.1"
     libraries "org.slf4j:slf4j-api:2.0.9"
     libraries "org.lz4:lz4-java:1.8.0"
-    libraries "commons-lang:commons-lang:2.6"
     libraries "org.xerial:sqlite-jdbc:3.46.0.0"
     libraries "com.mysql:mysql-connector-j:8.4.0"
     libraries "org.junit.jupiter:junit-jupiter:5.10.2"

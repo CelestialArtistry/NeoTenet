@@ -1,6 +1,6 @@
 package com.taiyitistmc.injection.advancements;
 
-public interface AdvancementHolderInjection {
+public interface InjectionAdvancementHolder {
 
     default org.bukkit.advancement.Advancement toBukkit() {
         throw new RuntimeException("Not Implemented");

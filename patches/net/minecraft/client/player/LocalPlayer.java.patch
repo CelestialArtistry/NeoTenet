@@ -1,5 +1,18 @@
 --- a/net/minecraft/client/player/LocalPlayer.java
 +++ b/net/minecraft/client/player/LocalPlayer.java
+@@ -69,11 +_,10 @@
+ import net.minecraft.world.entity.vehicle.AbstractMinecart;
+ import net.minecraft.world.entity.vehicle.Boat;
+ import net.minecraft.world.inventory.ClickAction;
+-import net.minecraft.world.item.ElytraItem;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.crafting.RecipeHolder;
+-import net.minecraft.world.level.BaseCommandBlock;
++import net.minecraft.world.level.BaseCommandBlockCommandSource;
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.block.Portal;
+ import net.minecraft.world.level.block.entity.CommandBlockEntity;
 @@ -297,6 +_,7 @@
          ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = p_108701_
              ? ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS
@@ -24,6 +37,15 @@
      }
  
      @Override
+@@ -574,7 +_,7 @@
+     }
+ 
+     @Override
+-    public void openMinecartCommandBlock(BaseCommandBlock p_108678_) {
++    public void openMinecartCommandBlock(BaseCommandBlockCommandSource p_108678_) {
+         this.minecraft.setScreen(new MinecartCommandBlockEditScreen(p_108678_));
+     }
+ 
 @@ -682,6 +_,7 @@
              && (this.isShiftKeyDown() || !this.isSleeping() && !this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.STANDING));
          float f = (float)this.getAttributeValue(Attributes.SNEAKING_SPEED);

@@ -97,7 +97,7 @@ public class CommandTests {
 
         test.onGameTest(helper -> helper.startSequence(helper::makeMockPlayer)
                 .thenSequence((seq, player) -> seq
-                        .thenMap(p -> ErrorCatchingStack.createCommandSourceStack(player.get(), Commands.LEVEL_ADMINS))
+                        .thenMap(p -> ErrorCatchingStackCommandSourceStack.createCommandSourceStack(player.get(), Commands.LEVEL_ADMINS))
                         .thenExecute(stack -> helper.getLevel().getServer().getCommands().performPrefixedCommand(stack, "/enumargumenttest ABC"))
                         .thenIdle(5) // Keep in mind that if a command errors, we have both the "error" failure and the failure with the position of the error
                         .thenExecute(stack -> helper.assertTrue(stack.errors.size() == 2, "Invalid command was successfully executed"))
@@ -112,9 +112,9 @@ public class CommandTests {
                         .thenSucceed()));
     }
 
-    public final static class ErrorCatchingStack extends CommandSourceStack {
-        public static ErrorCatchingStack createCommandSourceStack(Player player, int perm) {
-            return new ErrorCatchingStack(
+    public final static class ErrorCatchingStackCommandSourceStack extends CommandSourceStack {
+        public static ErrorCatchingStackCommandSourceStack createCommandSourceStack(Player player, int perm) {
+            return new ErrorCatchingStackCommandSourceStack(
                     player,
                     player.position(),
                     player.getRotationVector(),
@@ -126,7 +126,7 @@ public class CommandTests {
                     player);
         }
 
-        public ErrorCatchingStack(CommandSource p_81302_, Vec3 p_81303_, Vec2 p_81304_, ServerLevel p_81305_, int p_81306_, String p_81307_, Component p_81308_, MinecraftServer p_81309_, @Nullable Entity p_81310_) {
+        public ErrorCatchingStackCommandSourceStack(CommandSource p_81302_, Vec3 p_81303_, Vec2 p_81304_, ServerLevel p_81305_, int p_81306_, String p_81307_, Component p_81308_, MinecraftServer p_81309_, @Nullable Entity p_81310_) {
             super(p_81302_, p_81303_, p_81304_, p_81305_, p_81306_, p_81307_, p_81308_, p_81309_, p_81310_);
         }
 

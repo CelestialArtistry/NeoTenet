@@ -1,5 +1,26 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
+@@ -145,7 +_,7 @@
+ import net.minecraft.world.entity.vehicle.ChestBoat;
+ import net.minecraft.world.entity.vehicle.Minecart;
+ import net.minecraft.world.entity.vehicle.MinecartChest;
+-import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
++import net.minecraft.world.entity.vehicle.MinecartCommandBlockCommandSource;
+ import net.minecraft.world.entity.vehicle.MinecartFurnace;
+ import net.minecraft.world.entity.vehicle.MinecartHopper;
+ import net.minecraft.world.entity.vehicle.MinecartSpawner;
+@@ -260,9 +_,9 @@
+     public static final EntityType<Cod> COD = register(
+         "cod", EntityType.Builder.of(Cod::new, MobCategory.WATER_AMBIENT).sized(0.5F, 0.3F).eyeHeight(0.195F).clientTrackingRange(4)
+     );
+-    public static final EntityType<MinecartCommandBlock> COMMAND_BLOCK_MINECART = register(
++    public static final EntityType<MinecartCommandBlockCommandSource> COMMAND_BLOCK_MINECART = register(
+         "command_block_minecart",
+-        EntityType.Builder.<MinecartCommandBlock>of(MinecartCommandBlock::new, MobCategory.MISC)
++        EntityType.Builder.<MinecartCommandBlockCommandSource>of(MinecartCommandBlockCommandSource::new, MobCategory.MISC)
+             .sized(0.98F, 0.7F)
+             .passengerAttachments(0.1875F)
+             .clientTrackingRange(8)
 @@ -834,6 +_,10 @@
      private final float spawnDimensionsScale;
      private final FeatureFlagSet requiredFeatures;

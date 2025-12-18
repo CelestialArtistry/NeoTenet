@@ -1,0 +1,55 @@
+--- a/net/minecraft/world/level/block/CommandBlock.java
++++ b/net/minecraft/world/level/block/CommandBlock.java
+@@ -4,7 +_,6 @@
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.MapCodec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.component.DataComponents;
+@@ -16,7 +_,7 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.context.BlockPlaceContext;
+-import net.minecraft.world.level.BaseCommandBlock;
++import net.minecraft.world.level.BaseCommandBlockCommandSource;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+@@ -78,7 +_,7 @@
+     @Override
+     protected void tick(BlockState p_221005_, ServerLevel p_221006_, BlockPos p_221007_, RandomSource p_221008_) {
+         if (p_221006_.getBlockEntity(p_221007_) instanceof CommandBlockEntity commandblockentity) {
+-            BaseCommandBlock basecommandblock = commandblockentity.getCommandBlock();
++            BaseCommandBlockCommandSource basecommandblock = commandblockentity.getCommandBlock();
+             boolean flag = !StringUtil.isNullOrEmpty(basecommandblock.getCommand());
+             CommandBlockEntity.Mode commandblockentity$mode = commandblockentity.getMode();
+             boolean flag1 = commandblockentity.wasConditionMet();
+@@ -105,7 +_,7 @@
+         }
+     }
+ 
+-    private void execute(BlockState p_51832_, Level p_51833_, BlockPos p_51834_, BaseCommandBlock p_51835_, boolean p_51836_) {
++    private void execute(BlockState p_51832_, Level p_51833_, BlockPos p_51834_, BaseCommandBlockCommandSource p_51835_, boolean p_51836_) {
+         if (p_51836_) {
+             p_51835_.performCommand(p_51833_);
+         } else {
+@@ -140,7 +_,7 @@
+     @Override
+     public void setPlacedBy(Level p_51804_, BlockPos p_51805_, BlockState p_51806_, LivingEntity p_51807_, ItemStack p_51808_) {
+         if (p_51804_.getBlockEntity(p_51805_) instanceof CommandBlockEntity commandblockentity) {
+-            BaseCommandBlock basecommandblock = commandblockentity.getCommandBlock();
++            BaseCommandBlockCommandSource basecommandblock = commandblockentity.getCommandBlock();
+             if (!p_51804_.isClientSide) {
+                 if (!p_51808_.has(DataComponents.BLOCK_ENTITY_DATA)) {
+                     basecommandblock.setTrackOutput(p_51804_.getGameRules().getBoolean(GameRules.RULE_SENDCOMMANDFEEDBACK));
+@@ -194,7 +_,7 @@
+             }
+ 
+             if (commandblockentity.isPowered() || commandblockentity.isAutomatic()) {
+-                BaseCommandBlock basecommandblock = commandblockentity.getCommandBlock();
++                BaseCommandBlockCommandSource basecommandblock = commandblockentity.getCommandBlock();
+                 if (commandblockentity.markConditionMet()) {
+                     if (!basecommandblock.performCommand(p_51810_)) {
+                         break;

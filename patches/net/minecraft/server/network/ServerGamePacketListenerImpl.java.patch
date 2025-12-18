@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -163,7 +_,7 @@
+ import net.minecraft.world.item.component.WritableBookContent;
+ import net.minecraft.world.item.component.WrittenBookContent;
+ import net.minecraft.world.item.crafting.RecipeHolder;
+-import net.minecraft.world.level.BaseCommandBlock;
++import net.minecraft.world.level.BaseCommandBlockCommandSource;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.Level;
 @@ -439,9 +_,11 @@
                  }
  
@@ -44,6 +53,24 @@
      private boolean noBlocksAround(Entity p_9794_) {
          return p_9794_.level()
              .getBlockStates(p_9794_.getBoundingBox().inflate(0.0625).expandTowards(0.0, -0.55, 0.0))
+@@ -551,7 +_,7 @@
+         } else if (!this.player.canUseGameMasterBlocks()) {
+             this.player.sendSystemMessage(Component.translatable("advMode.notAllowed"));
+         } else {
+-            BaseCommandBlock basecommandblock = null;
++            BaseCommandBlockCommandSource basecommandblock = null;
+             CommandBlockEntity commandblockentity = null;
+             BlockPos blockpos = p_9911_.getPos();
+             BlockEntity blockentity = this.player.level().getBlockEntity(blockpos);
+@@ -607,7 +_,7 @@
+         } else if (!this.player.canUseGameMasterBlocks()) {
+             this.player.sendSystemMessage(Component.translatable("advMode.notAllowed"));
+         } else {
+-            BaseCommandBlock basecommandblock = p_9913_.getCommandBlock(this.player.level());
++            BaseCommandBlockCommandSource basecommandblock = p_9913_.getCommandBlock(this.player.level());
+             if (basecommandblock != null) {
+                 basecommandblock.setCommand(p_9913_.getCommand());
+                 basecommandblock.setTrackOutput(p_9913_.isTrackOutput());
 @@ -927,7 +_,7 @@
                                      && !flag1
                                      && this.player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR

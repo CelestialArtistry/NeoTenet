@@ -1,5 +1,23 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -42,7 +_,7 @@
+ import net.minecraft.server.packs.repository.PackRepository;
+ import net.minecraft.server.players.GameProfileCache;
+ import net.minecraft.server.players.OldUsersConverter;
+-import net.minecraft.server.rcon.RconConsoleSource;
++import net.minecraft.server.rcon.RconConsoleSourceCommandSource;
+ import net.minecraft.server.rcon.thread.QueryThreadGs4;
+ import net.minecraft.server.rcon.thread.RconThread;
+ import net.minecraft.util.Mth;
+@@ -67,7 +_,7 @@
+     private final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
+     @Nullable
+     private QueryThreadGs4 queryThreadGs4;
+-    private final RconConsoleSource rconConsoleSource;
++    private final RconConsoleSourceCommandSource rconConsoleSource;
+     @Nullable
+     private RconThread rconThread;
+     private final DedicatedServerSettings settings;
 @@ -80,6 +_,8 @@
      @Nullable
      private DebugSampleSubscriptionTracker debugSampleSubscriptionTracker;
@@ -9,6 +27,15 @@
  
      public DedicatedServer(
          Thread p_214789_,
+@@ -93,7 +_,7 @@
+     ) {
+         super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
+         this.settings = p_214793_;
+-        this.rconConsoleSource = new RconConsoleSource(this);
++        this.rconConsoleSource = new RconConsoleSourceCommandSource(this);
+         this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
+         this.serverLinks = createServerLinks(p_214793_);
+     }
 @@ -103,6 +_,7 @@
          Thread thread = new Thread("Server console handler") {
              @Override

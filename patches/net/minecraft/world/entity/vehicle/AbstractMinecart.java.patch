@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
+@@ -4,7 +_,7 @@
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Maps;
+ import com.mojang.datafixers.util.Pair;
+-import java.util.EnumMap;
++
+ import java.util.List;
+ import java.util.Map;
+ import javax.annotation.Nullable;
 @@ -63,6 +_,7 @@
      private double lerpYRot;
      private double lerpXRot;
@@ -31,6 +40,15 @@
      public static AbstractMinecart createMinecart(
          ServerLevel p_305794_,
          double p_38121_,
+@@ -112,7 +_,7 @@
+             case TNT -> new MinecartTNT(p_305794_, p_38121_, p_38122_, p_38123_);
+             case SPAWNER -> new MinecartSpawner(p_305794_, p_38121_, p_38122_, p_38123_);
+             case HOPPER -> new MinecartHopper(p_305794_, p_38121_, p_38122_, p_38123_);
+-            case COMMAND_BLOCK -> new MinecartCommandBlock(p_305794_, p_38121_, p_38122_, p_38123_);
++            case COMMAND_BLOCK -> new MinecartCommandBlockCommandSource(p_305794_, p_38121_, p_38122_, p_38123_);
+             default -> new Minecart(p_305794_, p_38121_, p_38122_, p_38123_);
+         });
+         EntityType.<AbstractMinecart>createDefaultStackConfig(p_305794_, p_305892_, p_306203_).accept(abstractminecart);
 @@ -139,7 +_,7 @@
  
      @Override

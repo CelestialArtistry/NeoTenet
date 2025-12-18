@@ -1,5 +1,44 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
+@@ -24,11 +_,9 @@
+ import net.minecraft.nbt.ListTag;
+ import net.minecraft.nbt.NbtOps;
+ import net.minecraft.nbt.NbtUtils;
+-import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.ClickEvent;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.MutableComponent;
+-import net.minecraft.network.chat.Style;
+ import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+@@ -72,7 +_,6 @@
+ import net.minecraft.world.entity.ai.attributes.Attributes;
+ import net.minecraft.world.entity.animal.Parrot;
+ import net.minecraft.world.entity.animal.horse.AbstractHorse;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.entity.decoration.ArmorStand;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
+@@ -85,17 +_,15 @@
+ import net.minecraft.world.inventory.ClickAction;
+ import net.minecraft.world.inventory.InventoryMenu;
+ import net.minecraft.world.inventory.PlayerEnderChestContainer;
+-import net.minecraft.world.item.ElytraItem;
+ import net.minecraft.world.item.ItemCooldowns;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.ProjectileWeaponItem;
+-import net.minecraft.world.item.SwordItem;
+ import net.minecraft.world.item.crafting.RecipeHolder;
+ import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
+ import net.minecraft.world.item.trading.MerchantOffers;
+-import net.minecraft.world.level.BaseCommandBlock;
++import net.minecraft.world.level.BaseCommandBlockCommandSource;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.Level;
 @@ -114,6 +_,7 @@
  import org.slf4j.Logger;
  
@@ -193,6 +232,15 @@
          }
      }
  
+@@ -981,7 +_,7 @@
+     public void openTextEdit(SignBlockEntity p_36193_, boolean p_277837_) {
+     }
+ 
+-    public void openMinecartCommandBlock(BaseCommandBlock p_36182_) {
++    public void openMinecartCommandBlock(BaseCommandBlockCommandSource p_36182_) {
+     }
+ 
+     public void openCommandBlock(CommandBlockEntity p_36191_) {
 @@ -1014,6 +_,8 @@
  
              return InteractionResult.PASS;

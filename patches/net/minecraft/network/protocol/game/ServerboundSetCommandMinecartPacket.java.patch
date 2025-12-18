@@ -1,0 +1,25 @@
+--- a/net/minecraft/network/protocol/game/ServerboundSetCommandMinecartPacket.java
++++ b/net/minecraft/network/protocol/game/ServerboundSetCommandMinecartPacket.java
+@@ -6,8 +_,8 @@
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.PacketType;
+ import net.minecraft.world.entity.Entity;
+-import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
+-import net.minecraft.world.level.BaseCommandBlock;
++import net.minecraft.world.entity.vehicle.MinecartCommandBlockCommandSource;
++import net.minecraft.world.level.BaseCommandBlockCommandSource;
+ import net.minecraft.world.level.Level;
+ 
+ public class ServerboundSetCommandMinecartPacket implements Packet<ServerGamePacketListener> {
+@@ -46,9 +_,9 @@
+     }
+ 
+     @Nullable
+-    public BaseCommandBlock getCommandBlock(Level p_134538_) {
++    public BaseCommandBlockCommandSource getCommandBlock(Level p_134538_) {
+         Entity entity = p_134538_.getEntity(this.entity);
+-        return entity instanceof MinecartCommandBlock ? ((MinecartCommandBlock)entity).getCommandBlock() : null;
++        return entity instanceof MinecartCommandBlockCommandSource ? ((MinecartCommandBlockCommandSource)entity).getCommandBlock() : null;
+     }
+ 
+     public String getCommand() {

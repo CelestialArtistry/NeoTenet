@@ -1,9 +1,9 @@
-package com.taiyitistmc.injection.advancements;
+package com.taiyitistmc.injection.commands;
 
 import com.mojang.brigadier.ParseResults;
 import net.minecraft.commands.CommandSourceStack;
 
-public interface CommandsInjection {
+public interface InjectionCommands {
 
     default void dispatchServerCommand(CommandSourceStack sender, String command) {
         throw new RuntimeException("Not Implemented");
