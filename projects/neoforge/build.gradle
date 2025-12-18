@@ -142,6 +142,7 @@ dependencies {
     libraries "org.eclipse.aether:aether-util:0.9.0.M2"
     libraries "org.apache.maven:maven-repository-metadata:3.9.6"
     libraries "org.apache.maven:maven-core:3.9.6"
+    libraries "org.apache.maven:maven-artifact:3.9.6"
     libraries ("net.md-5:bungeecord-chat:1.21-R0.3") {
         transitive = false
     }
