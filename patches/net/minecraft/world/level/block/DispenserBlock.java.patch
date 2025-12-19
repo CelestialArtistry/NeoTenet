@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/DispenserBlock.java
++++ b/net/minecraft/world/level/block/DispenserBlock.java
+@@ -49,6 +_,7 @@
+         new Object2ObjectOpenHashMap<>(), p_340795_ -> p_340795_.defaultReturnValue(DEFAULT_BEHAVIOR)
+     );
+     private static final int TRIGGER_DURATION = 4;
++    public static boolean eventFired = false; // CraftBukkit
+ 
+     @Override
+     public MapCodec<? extends DispenserBlock> codec() {

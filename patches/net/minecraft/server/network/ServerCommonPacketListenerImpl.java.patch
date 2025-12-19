@@ -1,17 +1,32 @@
 --- a/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -25,8 +_,9 @@
+@@ -8,6 +_,7 @@
+ import net.minecraft.ReportedException;
+ import net.minecraft.Util;
+ import net.minecraft.network.Connection;
++import net.minecraft.network.ConnectionProtocol;
+ import net.minecraft.network.DisconnectionDetails;
+ import net.minecraft.network.PacketSendListener;
+ import net.minecraft.network.chat.Component;
+@@ -21,12 +_,16 @@
+ import net.minecraft.network.protocol.common.ServerboundPongPacket;
+ import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
+ import net.minecraft.network.protocol.cookie.ServerboundCookieResponsePacket;
++import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.level.ClientInformation;
++import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.VisibleForDebug;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.server.network.InjectionServerCommonPacketListenerImpl;
  
 -public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
-+public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener, InjectionServerCommonPacketListenerImpl {
++public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener, InjectionServerCommonPacketListenerImpl, CraftPlayer.TransferCookieConnection {
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final int LATENCY_CHECK_INTERVAL = 15000;
      private static final int CLOSED_LISTENER_TIMEOUT = 15000;
-@@ -42,6 +_,10 @@
+@@ -42,6 +_,42 @@
      private boolean closed = false;
      private int latency;
      private volatile boolean suspendFlushingOnServerThread = false;
@@ -19,20 +34,59 @@
 +     * Holds the current connection type, based on the types of payloads that have been received so far.
 +     */
 +    protected net.neoforged.neoforge.network.connection.ConnectionType connectionType;
++    protected ServerPlayer player;
++    protected org.bukkit.craftbukkit.CraftServer cserver;
++    public boolean processedDisconnect;
++
++    @Override
++    public boolean isTransferred() {
++        return this.transferred;
++    }
++
++    @Override
++    public ConnectionProtocol getProtocol() {
++        return protocol();
++    }
++
++    @Override
++    public void sendPacket(Packet<?> packet) {
++        send(packet);
++    }
++
++    @Override
++    public void kickPlayer(Component reason) {
++        disconnect(reason);
++    }
++    // CraftBukkit end
++
++    public ServerCommonPacketListenerImpl(MinecraftServer p_295057_, Connection p_294822_, CommonListenerCookie p_301980_, ServerPlayer player) { // CraftBukkit
++        this(p_295057_, p_294822_, p_301980_);
++        // CraftBukkit start - add fields and methods
++        this.player = player;
++        this.player.transferCookieConnection = this;
++        this.cserver = p_295057_.server;
++    }
  
      public ServerCommonPacketListenerImpl(MinecraftServer p_295057_, Connection p_294822_, CommonListenerCookie p_301980_) {
          this.server = p_295057_;
-@@ -49,6 +_,8 @@
+@@ -49,6 +_,9 @@
          this.keepAliveTime = Util.getMillis();
          this.latency = p_301980_.latency();
          this.transferred = p_301980_.transferred();
 +        // Neo: Set the connection type based on the cookie from the previous phase.
 +        this.connectionType = p_301980_.connectionType();
++        this.cserver = p_295057_.server;
      }
  
      private void close() {
-@@ -83,6 +_,32 @@
+@@ -81,8 +_,38 @@
+     public void handlePong(ServerboundPongPacket p_295142_) {
+     }
  
++    // CraftBukkit start
++    private static final ResourceLocation CUSTOM_REGISTER = ResourceLocation.withDefaultNamespace("register");
++    private static final ResourceLocation CUSTOM_UNREGISTER = ResourceLocation.withDefaultNamespace("unregister");
++
      @Override
      public void handleCustomPayload(ServerboundCustomPayloadPacket p_294276_) {
 +        // Neo: Unconditionally handle register/unregister payloads.

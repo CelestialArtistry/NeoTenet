@@ -45,10 +45,10 @@ public class MixinPlayerList implements InjectionPlayerList {
     @Shadow
     private CraftServer cserver;
 
-    @Inject(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/server/players/PlayerList;bans:Lnet/minecraft/server/players/UserBanList;"))
+    @Inject(method = "<init>", at = @At("RETURN"))
     public void taiyitist$init(MinecraftServer p_203842_, LayeredRegistryAccess p_251844_, PlayerDataStorage p_203844_, int p_203845_, CallbackInfo ci) {
         this.players = new CopyOnWriteArrayList<>();
-        this.cserver = new CraftServer((DedicatedServer) p_203842_, ((PlayerList) (Object) this));
+        this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, ((PlayerList) (Object) this));
         p_203842_.console = ColouredConsoleSender.getInstance();
     }
 
