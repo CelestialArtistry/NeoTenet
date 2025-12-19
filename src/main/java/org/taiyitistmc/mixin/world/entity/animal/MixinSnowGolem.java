@@ -36,11 +36,11 @@ public abstract class MixinSnowGolem extends AbstractGolem {
 
     @Inject(method = "shear", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/SnowGolem;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"))
     private void taiyitist$forceDropOn(SoundSource pCategory, CallbackInfo ci) {
-        this.taiyitist$setForceDrops(true);
+        this.forceDrops = true;
     }
 
     @Inject(method = "shear", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/SnowGolem;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"))
     private void taiyitist$forceDropOff(SoundSource pCategory, CallbackInfo ci) {
-        this.taiyitist$setForceDrops(false);
+        this.forceDrops = false;
     }
 }

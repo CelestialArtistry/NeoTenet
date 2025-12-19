@@ -56,6 +56,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -76,48 +77,15 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, In
     @Shadow
     @Final
     private static Logger LOGGER;
-    @Shadow
-    @Final
-    public Map<Holder<MobEffect>, MobEffectInstance> activeEffects;
-    @Shadow
-    @Final
-    public WalkAnimationState walkAnimation;
-    @Shadow
-    public int invulnerableDuration;
-    @Shadow
-    public float lastHurt;
-    @Shadow
-    @Nullable
-    public Player lastHurtByPlayer;
-    @Shadow
-    public int hurtDuration;
-    @Shadow
-    public int hurtTime;
-    public int expToDrop;
-    public boolean forceDrops;
-    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<>();
-    public CraftAttributeMap craftAttributes;
-    public boolean collides = true;
-    public Set<UUID> collidableExemptions = new HashSet<>();
-    public boolean bukkitPickUpLoot;
 
-    // Banner - fix mixin(locals = LocalCapture.CAPTURE_FAILHARD)
     public EntityPotionEffectEvent.Cause cause;
     @Shadow
     protected int lastHurtByPlayerTime;
     @Shadow
     protected ItemStack useItem;
     @Shadow
-    protected int noActionTime;
-    @Shadow
     @Final
     private AttributeMap attributes;
-    @Shadow
-    @Nullable
-    private DamageSource lastDamageSource;
-    @Shadow
-    private long lastDamageStamp;
-    private boolean isTickingEffects = false;
     private final AtomicReference<BlockState> taiyitist$FallState = new AtomicReference<>();
     private final AtomicBoolean taiyitist$silent = new AtomicBoolean(false);
     private transient EntityPotionEffectEvent.Cause taiyitist$cause;
@@ -143,19 +111,6 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, In
 
     @Shadow
     public abstract void onEquipItem(EquipmentSlot equipmentSlot, ItemStack itemStack, ItemStack itemStack2);
-
-    @Shadow
-    protected abstract void onEffectUpdated(MobEffectInstance effectInstance, boolean forced, @Nullable Entity entity);
-
-    @Shadow
-    public abstract boolean checkTotemDeathProtection(DamageSource damageSource);
-
-    @Shadow
-    public abstract boolean canBeAffected(MobEffectInstance effectInstance);
-
-    @Shadow
-    protected abstract void onEffectAdded(MobEffectInstance instance, @Nullable Entity entity);
-
     @Shadow
     public abstract boolean wasExperienceConsumed();
 
@@ -170,33 +125,6 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, In
 
     @Shadow
     public abstract ItemStack getItemBySlot(EquipmentSlot slot);
-
-    @Shadow
-    public abstract boolean isDamageSourceBlocked(DamageSource damageSource);
-
-    @Shadow
-    protected abstract float getDamageAfterArmorAbsorb(DamageSource damageSource, float damageAmount);
-
-    @Shadow
-    protected abstract float getDamageAfterMagicAbsorb(DamageSource damageSource, float damageAmount);
-
-    @Shadow
-    public abstract float getAbsorptionAmount();
-
-    @Shadow
-    public abstract void setAbsorptionAmount(float absorptionAmount);
-
-    @Shadow
-    public abstract void hurtHelmet(DamageSource damageSource, float damageAmount);
-
-    @Shadow
-    public abstract void hurtArmor(DamageSource damageSource, float damageAmount);
-
-    @Shadow
-    public abstract void hurtCurrentlyUsedShield(float damageAmount);
-
-    @Shadow
-    protected abstract void blockUsingShield(LivingEntity attacker);
 
     @Shadow
     public abstract float getHealth();
@@ -221,25 +149,14 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, In
 
     @Shadow
     protected abstract boolean doesEmitEquipEvent(EquipmentSlot slot);
-
-    @Shadow
-    public abstract void indicateDamage(double d, double e);
-
     @Shadow
     public abstract boolean isSleeping();
-
-    @Shadow
-    public abstract void stopSleeping();
 
     @Shadow
     protected abstract void actuallyHurt(DamageSource damageSource, float f);
 
     @Shadow
     public abstract void die(DamageSource damageSource);
-
-    @Shadow
-    protected abstract void playHurtSound(DamageSource damageSource);
-
     @Shadow
     public abstract boolean isDeadOrDying();
 
@@ -267,6 +184,14 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, In
 
     @Shadow
     public abstract int getExperienceReward(ServerLevel serverLevel, @Nullable Entity entity);
+
+    @Shadow
+    public boolean collides;
+
+    @Mutable
+    @Shadow
+    @Final
+    public CraftAttributeMap craftAttributes;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void taiyitist$init(EntityType<? extends LivingEntity> type, Level worldIn, CallbackInfo ci) {

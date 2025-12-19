@@ -149,7 +149,7 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
         uuid = WorldUUID.getUUID(convertable.levelDirectory.path().toFile());
         // CraftBukkit end
         // CraftBukkit start
-        K.setWorld(((ServerLevel) (Object) this));
+        //K.setWorld(((ServerLevel) (Object) this));
 
         if (biomeProvider != null) {
             BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
@@ -164,11 +164,6 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
             chunkgenerator = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(((ServerLevel) (Object) this), chunkgenerator, generator);
         }
         // CraftBukkit end
-    }
-
-    @Inject(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/attachment/LevelAttachmentsSavedData;init(Lnet/minecraft/server/level/ServerLevel;)V"))
-    private void taiyitist$addWorld(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List p_215008_, boolean p_215009_, RandomSequences p_288977_, CallbackInfo ci) {
-        this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
     }
 
     @Inject(method = "gameEvent", cancellable = true, at = @At("HEAD"))

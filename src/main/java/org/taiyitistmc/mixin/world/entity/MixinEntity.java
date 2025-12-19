@@ -141,10 +141,6 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     private transient CreatureSpawnEvent.SpawnReason taiyitist$spawnReason;
     private final AtomicReference<Vec3> taiyitist$location = new AtomicReference<>();
 
-    private static boolean isLevelAtLeast(CompoundTag tag, int level) {
-        return tag.contains("Bukkit.updateLevel") && tag.getInt("Bukkit.updateLevel") >= level;
-    }
-
     @Shadow
     public abstract double getX();
 
@@ -460,53 +456,6 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     public void taiyitist$writeUnlessRemoved$persistCheck(CompoundTag compound, CallbackInfoReturnable<Boolean> cir) {
         if (!this.persist)
             cir.setReturnValue(false);
-    }
-
-    @Inject(method = "saveWithoutId", at = @At(value = "INVOKE_ASSIGN", ordinal = 1, target = "Lnet/minecraft/nbt/CompoundTag;put(Ljava/lang/String;Lnet/minecraft/nbt/Tag;)Lnet/minecraft/nbt/Tag;"))
-    public void taiyitist$writeWithoutTypeId$InfiniteValueCheck(CompoundTag compound, CallbackInfoReturnable<CompoundTag> cir) {
-        if (Float.isNaN(this.getYRot())) {
-            this.yRot = 0;
-        }
-
-        if (Float.isNaN(this.getXRot())) {
-            this.xRot = 0;
-        }
-    }
-
-    @Inject(method = "saveWithoutId", at = @At(value = "INVOKE", shift = At.Shift.AFTER, ordinal = 0, target = "Lnet/minecraft/nbt/CompoundTag;putUUID(Ljava/lang/String;Ljava/util/UUID;)V"))
-    public void taiyitist$writeWithoutTypeId$CraftBukkitNBT(CompoundTag compound, CallbackInfoReturnable<CompoundTag> cir) {
-        compound.putLong("WorldUUIDLeast", this.level.getWorld().getUID().getLeastSignificantBits());
-        compound.putLong("WorldUUIDMost", this.level.getWorld().getUID().getMostSignificantBits());
-        compound.putInt("Bukkit.updateLevel", CURRENT_LEVEL);
-        compound.putInt("Spigot.ticksLived", this.tickCount);
-        if (!this.persist) {
-            compound.putBoolean("Bukkit.persist", this.persist);
-        }
-        if (!this.visibleByDefault) {
-            compound.putBoolean("Bukkit.visibleByDefault", this.visibleByDefault);
-        }
-        if (this.persistentInvisibility) {
-            compound.putBoolean("Bukkit.invisible", this.persistentInvisibility);
-        }
-        if (maxAirTicks != getDefaultMaxAirSupply()) {
-            compound.putInt("Bukkit.MaxAirSupply", getMaxAirSupply());
-        }
-    }
-
-    @Inject(method = "saveWithoutId", at = @At(value = "RETURN"))
-    public void taiyitist$writeWithoutTypeId$StoreBukkitValues(CompoundTag compound, CallbackInfoReturnable<CompoundTag> cir) {
-        if (this.bukkitEntity != null) {
-            this.bukkitEntity.storeBukkitValues(compound);
-        }
-        // Paper start - Save the entity's origin location
-        if (this.origin != null) {
-            UUID originWorld = this.originWorld != null ? this.originWorld : this.level != null ? this.level.getWorld().getUID() : null;
-            if (originWorld != null) {
-                compound.putUUID("Paper.OriginWorld", originWorld);
-            }
-            compound.put("Paper.Origin", this.newDoubleList(origin.getX(), origin.getY(), origin.getZ()));
-        }
-        // Paper end
     }
 
     @Inject(method = "load", at = @At(value = "RETURN"))

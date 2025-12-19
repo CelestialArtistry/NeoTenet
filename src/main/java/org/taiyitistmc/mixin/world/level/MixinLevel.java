@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
@@ -105,7 +107,7 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
     @Inject(method = "<init>(Lnet/minecraft/world/level/storage/WritableLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/core/Holder;Ljava/util/function/Supplier;ZZJI)V", at = @At("RETURN"), order = 1001)
     private void taiyitist$init(WritableLevelData writableLevelData, ResourceKey resourceKey, RegistryAccess registryAccess, Holder holder, Supplier supplier, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_, CallbackInfo ci) {
         if ((Object) this instanceof ServerLevel serverLevel) {
-            this.spigotConfig = new SpigotWorldConfig(((PrimaryLevelData) writableLevelData).getLevelName()); // Spigot
+            this.spigotConfig = new SpigotWorldConfig((MinecraftServer.getServer().storageSource.getDimensionPath(resourceKey).getFileName().toFile().getName()));
             getWorldBorder().world = serverLevel;
         }
         // CraftBukkit Ticks things
