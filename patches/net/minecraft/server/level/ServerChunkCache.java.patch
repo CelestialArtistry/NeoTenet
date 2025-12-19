@@ -30,6 +30,15 @@
                  ChunkAccess chunkaccess1 = chunkholder.getChunkIfPresent(ChunkStatus.FULL);
                  if (chunkaccess1 != null) {
                      this.storeInCache(i, chunkaccess1, ChunkStatus.FULL);
+@@ -306,7 +_,7 @@
+     @Override
+     public void tick(BooleanSupplier p_201913_, boolean p_201914_) {
+         this.level.getProfiler().push("purge");
+-        if (this.level.tickRateManager().runsNormally() || !p_201914_) {
++        if (this.level.tickRateManager().runsNormally() || !p_201914_ || this.level.spigotConfig.unloadFrozenChunks) {
+             this.distanceManager.purgeStaleTickets();
+         }
+ 
 @@ -356,7 +_,7 @@
                  for (ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
                      LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;
