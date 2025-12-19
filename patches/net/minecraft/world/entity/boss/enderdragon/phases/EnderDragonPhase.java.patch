@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhase.java
++++ b/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhase.java
+@@ -3,8 +_,9 @@
+ import java.lang.reflect.Constructor;
+ import java.util.Arrays;
+ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
++import org.taiyitistmc.injection.world.entity.boss.enderdragon.phases.InjectionEnderDragonPhase;
+ 
+-public class EnderDragonPhase<T extends DragonPhaseInstance> {
++public class EnderDragonPhase<T extends DragonPhaseInstance> implements InjectionEnderDragonPhase {
+     private static EnderDragonPhase<?>[] phases = new EnderDragonPhase[0];
+     public static final EnderDragonPhase<DragonHoldingPatternPhase> HOLDING_PATTERN = create(DragonHoldingPatternPhase.class, "HoldingPattern");
+     public static final EnderDragonPhase<DragonStrafePlayerPhase> STRAFE_PLAYER = create(DragonStrafePlayerPhase.class, "StrafePlayer");

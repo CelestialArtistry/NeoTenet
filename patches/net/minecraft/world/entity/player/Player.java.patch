@@ -39,10 +39,14 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -114,6 +_,7 @@
+@@ -112,8 +_,10 @@
+ import net.minecraft.world.scores.Scoreboard;
+ import net.minecraft.world.scores.Team;
  import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.entity.player.InjectionPlayer;
  
- public abstract class Player extends LivingEntity implements net.neoforged.neoforge.common.extensions.IPlayerExtension {
+-public abstract class Player extends LivingEntity implements net.neoforged.neoforge.common.extensions.IPlayerExtension {
++public abstract class Player extends LivingEntity implements net.neoforged.neoforge.common.extensions.IPlayerExtension, InjectionPlayer {
 +    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final HumanoidArm DEFAULT_MAIN_HAND = HumanoidArm.RIGHT;

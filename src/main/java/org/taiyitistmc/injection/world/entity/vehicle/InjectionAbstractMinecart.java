@@ -4,22 +4,6 @@ import org.bukkit.util.Vector;
 
 public interface InjectionAbstractMinecart {
 
-    default double bridge$maxSpeed() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setMaxSpeed(double maxSpeed) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default boolean bridge$slowWhenEmpty() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setSlowWhenEmpty(boolean slowWhenEmpty) {
-        throw new IllegalStateException("Not implemented");
-    }
-
     default Vector getFlyingVelocityMod() {
         throw new IllegalStateException("Not implemented");
     }

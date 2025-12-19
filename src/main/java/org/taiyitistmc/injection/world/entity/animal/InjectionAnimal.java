@@ -1,4 +1,4 @@
-package org.taiyitistmc.injection.world.entity;
+package org.taiyitistmc.injection.world.entity.animal;
 
 import net.minecraft.world.item.ItemStack;
 

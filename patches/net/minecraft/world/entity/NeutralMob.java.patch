@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/NeutralMob.java
++++ b/net/minecraft/world/entity/NeutralMob.java
+@@ -8,8 +_,9 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
++import org.taiyitistmc.injection.world.entity.InjectionNeutralMob;
+ 
+-public interface NeutralMob {
++public interface NeutralMob extends InjectionNeutralMob {
+     String TAG_ANGER_TIME = "AngerTime";
+     String TAG_ANGRY_AT = "AngryAt";
+ 

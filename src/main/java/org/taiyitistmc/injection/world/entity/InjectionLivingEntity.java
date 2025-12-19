@@ -1,11 +1,6 @@
 package org.taiyitistmc.injection.world.entity;
 
-import com.taiyitistmc.bukkit.ProcessableEffect;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -14,7 +9,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.jetbrains.annotations.Nullable;
@@ -34,78 +28,6 @@ public interface InjectionLivingEntity extends InjectionEntity {
     }
 
     default void pushEffectCause(EntityPotionEffectEvent.Cause cause) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default int bridge$expToDrop() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setExpToDrop(int expToDrop) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default boolean bridge$forceDrops() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setForceDrops(boolean forceDrops) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default ArrayList<org.bukkit.inventory.ItemStack> bridge$drops() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setDrops(ArrayList<org.bukkit.inventory.ItemStack> drops) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default CraftAttributeMap bridge$craftAttributes() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setCraftAttributes(CraftAttributeMap craftAttributes) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default boolean bridge$collides() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setCollides(boolean collides) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default Set<UUID> bridge$collidableExemptions() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setCollidableExemptions(Set<UUID> collidableExemptions) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default boolean bridge$bukkitPickUpLoot() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setBukkitPickUpLoot(boolean bukkitPickUpLoot) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default boolean bridge$isTickingEffects() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setIsTickingEffects(boolean isTickingEffects) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default List<ProcessableEffect> bridge$effectsToProcess() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setEffectsToProcess(List<ProcessableEffect> effectsToProcess) {
         throw new IllegalStateException("Not implemented");
     }
 

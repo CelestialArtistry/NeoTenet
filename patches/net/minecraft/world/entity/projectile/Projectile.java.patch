@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
+@@ -27,8 +_,9 @@
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.taiyitistmc.injection.world.entity.projectile.InjectionProjectile;
+ 
+-public abstract class Projectile extends Entity implements TraceableEntity {
++public abstract class Projectile extends Entity implements TraceableEntity, InjectionProjectile {
+     @Nullable
+     private UUID ownerUUID;
+     @Nullable
 @@ -284,7 +_,7 @@
          Entity entity = this.getOwner();
          return entity instanceof Player

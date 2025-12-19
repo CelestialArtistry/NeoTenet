@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
+@@ -28,8 +_,9 @@
+ import net.minecraft.world.level.LevelReader;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.pathfinder.PathType;
++import org.taiyitistmc.injection.world.entity.animal.InjectionAnimal;
+ 
+-public abstract class Animal extends AgeableMob {
++public abstract class Animal extends AgeableMob implements InjectionAnimal {
+     protected static final int PARENT_AGE_AFTER_BREEDING = 6000;
+     private int inLove;
+     @Nullable
 @@ -201,6 +_,17 @@
  
      public void spawnChildFromBreeding(ServerLevel p_27564_, Animal p_27565_) {

@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/decoration/ItemFrame.java
 +++ b/net/minecraft/world/entity/decoration/ItemFrame.java
+@@ -38,8 +_,9 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ import org.apache.commons.lang3.Validate;
++import org.taiyitistmc.injection.world.entity.decoration.InjectionItemFrame;
+ 
+-public class ItemFrame extends HangingEntity {
++public class ItemFrame extends HangingEntity implements InjectionItemFrame {
+     private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.ITEM_STACK);
+     private static final EntityDataAccessor<Integer> DATA_ROTATION = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.INT);
+     public static final int NUM_ROTATIONS = 8;
 @@ -212,7 +_,7 @@
      private void removeFramedMap(ItemStack p_31811_) {
          MapId mapid = this.getFramedMapId(p_31811_);

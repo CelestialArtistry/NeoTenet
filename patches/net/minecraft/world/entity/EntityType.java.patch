@@ -9,6 +9,17 @@
  import net.minecraft.world.entity.vehicle.MinecartFurnace;
  import net.minecraft.world.entity.vehicle.MinecartHopper;
  import net.minecraft.world.entity.vehicle.MinecartSpawner;
+@@ -169,8 +_,9 @@
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.entity.InjectionEntityType;
+ 
+-public class EntityType<T extends Entity> implements FeatureElement, EntityTypeTest<Entity, T> {
++public class EntityType<T extends Entity> implements FeatureElement, EntityTypeTest<Entity, T>, InjectionEntityType {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final Holder.Reference<EntityType<?>> builtInRegistryHolder = BuiltInRegistries.ENTITY_TYPE.createIntrusiveHolder(this);
+     private static final float MAGIC_HORSE_WIDTH = 1.3964844F;
 @@ -260,9 +_,9 @@
      public static final EntityType<Cod> COD = register(
          "cod", EntityType.Builder.of(Cod::new, MobCategory.WATER_AMBIENT).sized(0.5F, 0.3F).eyeHeight(0.195F).clientTrackingRange(4)

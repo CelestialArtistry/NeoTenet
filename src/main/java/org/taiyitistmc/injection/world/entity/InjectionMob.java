@@ -12,18 +12,6 @@ import org.bukkit.event.entity.EntityTransformEvent;
 
 public interface InjectionMob extends InjectionNeutralMob {
 
-    default boolean gettaiyitist$targetSuccess() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default boolean bridge$aware() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setAware(boolean aware){
-        throw new IllegalStateException("Not implemented");
-    }
-
     default void setPersistenceRequired(boolean persistenceRequired) {
         throw new IllegalStateException("Not implemented");
     }

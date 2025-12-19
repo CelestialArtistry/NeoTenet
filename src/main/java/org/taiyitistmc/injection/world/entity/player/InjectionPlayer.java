@@ -1,8 +1,7 @@
 package org.taiyitistmc.injection.world.entity.player;
 
-import com.taiyitistmc.injection.world.entity.InjectionLivingEntity;
+import org.taiyitistmc.injection.world.entity.InjectionLivingEntity;
 import com.mojang.datafixers.util.Either;
-import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Unit;
@@ -13,14 +12,6 @@ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.event.entity.EntityExhaustionEvent;
 
 public interface InjectionPlayer extends InjectionLivingEntity {
-
-    default boolean bridge$affectsSpawning() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setAffectsSpawning(boolean affectsSpawning) {
-        throw new IllegalStateException("Not implemented");
-    }
 
     @Override
     default CraftHumanEntity getBukkitEntity() {
@@ -45,27 +36,7 @@ public interface InjectionPlayer extends InjectionLivingEntity {
         throw new IllegalStateException("Not implemented");
     }
 
-    default boolean bridge$fauxSleeping() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setFauxSleeping(boolean fauxSleeping) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default int bridge$oldLevel() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setOldLevel(int oldLevel) {
-        throw new IllegalStateException("Not implemented");
-    }
-
     default Player forceSleepInBed(boolean force) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default AtomicBoolean bridge$startSleepInBed_force() {
         throw new IllegalStateException("Not implemented");
     }
 }

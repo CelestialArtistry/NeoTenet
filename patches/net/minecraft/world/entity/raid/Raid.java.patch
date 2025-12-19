@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
+@@ -58,8 +_,9 @@
+ import net.minecraft.world.level.block.entity.BannerPatterns;
+ import net.minecraft.world.level.levelgen.Heightmap;
+ import net.minecraft.world.phys.Vec3;
++import org.taiyitistmc.injection.world.entity.raid.InjectionRaid;
+ 
+-public class Raid {
++public class Raid implements InjectionRaid {
+     private static final int SECTION_RADIUS_FOR_FINDING_NEW_VILLAGE_CENTER = 2;
+     private static final int ATTEMPT_RAID_FARTHEST = 0;
+     private static final int ATTEMPT_RAID_CLOSE = 1;
 @@ -503,7 +_,7 @@
              int k = 0;
  

@@ -1,4 +1,4 @@
-package org.taiyitistmc.injection.world.entity;
+package org.taiyitistmc.injection.world.entity.animal.allay;
 
 import net.minecraft.world.entity.animal.allay.Allay;
 
@@ -9,14 +9,6 @@ public interface InjectionAllay {
     }
 
     default void setCanDuplicate(boolean canDuplicate) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default boolean bridge$forceDancing() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default void taiyitist$setForceDancing(boolean forceDancing) {
         throw new IllegalStateException("Not implemented");
     }
 }
