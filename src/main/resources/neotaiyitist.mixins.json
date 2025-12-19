@@ -6,7 +6,13 @@
     "MixinCrashReport",
     "advancements.MixinAdvancementHolder",
     "advancements.MixinAdvancementTree",
-    "server.dedicated.MixinDedicatedServer"
+    "server.MixinMain",
+    "server.MixinMinecraftServer",
+    "server.MixinWorldLoader",
+    "server.dedicated.MixinDedicatedServer",
+    "server.dedicated.MixinDedicatedServerProperties",
+    "server.dedicated.MixinSettings",
+    "server.players.MixinPlayerList"
   ],
   "injectors": {
     "maxShiftBy": 2,

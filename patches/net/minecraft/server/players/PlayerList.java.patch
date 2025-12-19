@@ -1,8 +1,10 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -99,8 +_,9 @@
+@@ -98,9 +_,11 @@
+ import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
++import org.bukkit.craftbukkit.CraftServer;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.server.players.InjectionPlayerList;
  
@@ -11,11 +13,13 @@
      public static final File USERBANLIST_FILE = new File("banned-players.json");
      public static final File IPBANLIST_FILE = new File("banned-ips.json");
      public static final File OPLIST_FILE = new File("ops.json");
-@@ -128,6 +_,7 @@
+@@ -128,6 +_,9 @@
      private boolean allowCommandsForAllPlayers;
      private static final boolean ALLOW_LOGOUTIVATOR = false;
      private int sendAllPlayerInfoIn;
 +    private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(players);
++    // CraftBukkit start
++    private CraftServer cserver;
  
      public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
          this.server = p_203842_;

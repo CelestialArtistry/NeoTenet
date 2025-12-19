@@ -41,7 +41,7 @@
      public static final Logger LOGGER = LogUtils.getLogger();
      public static final String VANILLA_BRAND = "vanilla";
      private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
-@@ -261,10 +_,27 @@
+@@ -261,10 +_,29 @@
      private final PotionBrewing potionBrewing;
      private volatile boolean isSaving;
      private static final AtomicReference<RuntimeException> fatalException = new AtomicReference<>();
@@ -62,6 +62,8 @@
 +            new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Chat Thread - #%d").build());
 +    // CraftBukkit end
 +    public final double[] recentTps = new double[ 4 ];
++    private final Object stopLock = new Object();
++    private boolean hasStopped = false;
  
      public static <S extends MinecraftServer> S spin(Function<Thread, S> p_129873_) {
          AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -266,8 +268,14 @@
      }
  
      public void forceTimeSynchronization() {
-@@ -1118,7 +_,7 @@
+@@ -1116,9 +_,13 @@
+         return this.playerList.getPlayerNamesArray();
+     }
  
++    public static double calcTps(double avg, double exp, double tps) {
++        return (avg * exp) + (tps * (1 - exp));
++    }
++
      @DontObfuscate
      public String getServerModName() {
 -        return "vanilla";
