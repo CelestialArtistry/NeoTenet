@@ -1,119 +1,16 @@
 --- a/net/minecraft/world/level/block/ChestBlock.java
 +++ b/net/minecraft/world/level/block/ChestBlock.java
-@@ -2,11 +_,13 @@
- 
- import com.mojang.serialization.MapCodec;
- import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
-+
- import java.util.List;
- import java.util.Optional;
- import java.util.function.BiPredicate;
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
-+
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.network.chat.Component;
-@@ -50,8 +_,11 @@
+@@ -50,8 +_,9 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.inventory.PlayerInventory;
 +import org.taiyitistmc.injection.world.level.block.InjectionChestBlock;
-+import org.taiyitistmc.injection.world.level.block.InjectionChestBlockDoubleInventory;
  
 -public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements SimpleWaterloggedBlock {
 +public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements SimpleWaterloggedBlock, InjectionChestBlock {
      public static final MapCodec<ChestBlock> CODEC = simpleCodec(p_304364_ -> new ChestBlock(p_304364_, () -> BlockEntityType.CHEST));
      public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
      public static final EnumProperty<ChestType> TYPE = BlockStateProperties.CHEST_TYPE;
-@@ -98,7 +_,7 @@
-                     if (p_51604_.hasCustomName()) {
-                         return p_51604_.getDisplayName();
-                     } else {
--                        return (Component)(p_51605_.hasCustomName() ? p_51605_.getDisplayName() : Component.translatable("container.chestDouble"));
-+                        return (Component) (p_51605_.hasCustomName() ? p_51605_.getDisplayName() : Component.translatable("container.chestDouble"));
-                     }
-                 }
-             });
-@@ -121,7 +_,7 @@
-     public ChestBlock(BlockBehaviour.Properties p_51490_, Supplier<BlockEntityType<? extends ChestBlockEntity>> p_51491_) {
-         super(p_51490_, p_51491_);
-         this.registerDefaultState(
--            this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(TYPE, ChestType.SINGLE).setValue(WATERLOGGED, Boolean.valueOf(false))
-+                this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(TYPE, ChestType.SINGLE).setValue(WATERLOGGED, Boolean.valueOf(false))
-         );
-     }
- 
-@@ -148,9 +_,9 @@
-         if (p_51557_.is(this) && p_51556_.getAxis().isHorizontal()) {
-             ChestType chesttype = p_51557_.getValue(TYPE);
-             if (p_51555_.getValue(TYPE) == ChestType.SINGLE
--                && chesttype != ChestType.SINGLE
--                && p_51555_.getValue(FACING) == p_51557_.getValue(FACING)
--                && getConnectedDirection(p_51557_) == p_51556_.getOpposite()) {
-+                    && chesttype != ChestType.SINGLE
-+                    && p_51555_.getValue(FACING) == p_51557_.getValue(FACING)
-+                    && getConnectedDirection(p_51557_) == p_51556_.getOpposite()) {
-                 return p_51555_.setValue(TYPE, chesttype.getOpposite());
-             }
-         } else if (getConnectedDirection(p_51555_) == p_51556_) {
-@@ -208,9 +_,9 @@
-         }
- 
-         return this.defaultBlockState()
--            .setValue(FACING, direction)
--            .setValue(TYPE, chesttype)
--            .setValue(WATERLOGGED, Boolean.valueOf(fluidstate.getType() == Fluids.WATER));
-+                .setValue(FACING, direction)
-+                .setValue(TYPE, chesttype)
-+                .setValue(WATERLOGGED, Boolean.valueOf(fluidstate.getType() == Fluids.WATER));
-     }
- 
-     @Override
-@@ -261,7 +_,7 @@
- 
-     @Override
-     public DoubleBlockCombiner.NeighborCombineResult<? extends ChestBlockEntity> combine(
--        BlockState p_51544_, Level p_51545_, BlockPos p_51546_, boolean p_51547_
-+            BlockState p_51544_, Level p_51545_, BlockPos p_51546_, boolean p_51547_
-     ) {
-         BiPredicate<LevelAccessor, BlockPos> bipredicate;
-         if (p_51547_) {
-@@ -271,7 +_,7 @@
-         }
- 
-         return DoubleBlockCombiner.combineWithNeigbour(
--            this.blockEntityType.get(), ChestBlock::getBlockType, ChestBlock::getConnectedDirection, FACING, p_51544_, p_51545_, p_51546_, bipredicate
-+                this.blockEntityType.get(), ChestBlock::getBlockType, ChestBlock::getConnectedDirection, FACING, p_51544_, p_51545_, p_51546_, bipredicate
-         );
-     }
- 
-@@ -319,15 +_,15 @@
- 
-     private static boolean isCatSittingOnChest(LevelAccessor p_51564_, BlockPos p_51565_) {
-         List<Cat> list = p_51564_.getEntitiesOfClass(
--            Cat.class,
--            new AABB(
--                (double)p_51565_.getX(),
--                (double)(p_51565_.getY() + 1),
--                (double)p_51565_.getZ(),
--                (double)(p_51565_.getX() + 1),
--                (double)(p_51565_.getY() + 2),
--                (double)(p_51565_.getZ() + 1)
--            )
-+                Cat.class,
-+                new AABB(
-+                        (double) p_51565_.getX(),
-+                        (double) (p_51565_.getY() + 1),
-+                        (double) p_51565_.getZ(),
-+                        (double) (p_51565_.getX() + 1),
-+                        (double) (p_51565_.getY() + 2),
-+                        (double) (p_51565_.getZ() + 1)
-+                )
-         );
-         if (!list.isEmpty()) {
-             for (Cat cat : list) {
 @@ -357,7 +_,8 @@
  
      @Override
@@ -124,33 +21,3 @@
      }
  
      @Override
-@@ -374,7 +_,26 @@
-     protected void tick(BlockState p_220958_, ServerLevel p_220959_, BlockPos p_220960_, RandomSource p_220961_) {
-         BlockEntity blockentity = p_220959_.getBlockEntity(p_220960_);
-         if (blockentity instanceof ChestBlockEntity) {
--            ((ChestBlockEntity)blockentity).recheckOpen();
--        }
--    }
-+            ((ChestBlockEntity) blockentity).recheckOpen();
-+        }
-+    }
-+
-+    // CraftBukkit start
-+    public static class DoubleInventory implements MenuProvider, InjectionChestBlockDoubleInventory {
-+
-+        private final ChestBlockEntity tileentitychest;
-+
-+        private final ChestBlockEntity tileentitychest1;
-+
-+        public final CompoundContainer inventorylargechest;
-+
-+        public DoubleInventory(ChestBlockEntity tileentitychest, ChestBlockEntity tileentitychest1, CompoundContainer inventorylargechest) {
-+            this.tileentitychest = tileentitychest;
-+            this.tileentitychest1 = tileentitychest1;
-+            this.inventorylargechest = inventorylargechest;
-+
-+        }
-+
-+    }
-+    // CraftBukkit end
- }

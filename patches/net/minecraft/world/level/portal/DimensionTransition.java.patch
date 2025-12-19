@@ -1,52 +1,19 @@
 --- a/net/minecraft/world/level/portal/DimensionTransition.java
 +++ b/net/minecraft/world/level/portal/DimensionTransition.java
-@@ -6,6 +_,8 @@
+@@ -6,6 +_,7 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.taiyitistmc.injection.world.level.portal.InjectionDimensionTransition;
  
  public record DimensionTransition(
      ServerLevel newLevel,
-@@ -14,22 +_,35 @@
-     float yRot,
+@@ -15,7 +_,7 @@
      float xRot,
      boolean missingRespawnBlock,
--    DimensionTransition.PostDimensionTransition postDimensionTransition
+     DimensionTransition.PostDimensionTransition postDimensionTransition
 -) {
-+    DimensionTransition.PostDimensionTransition postDimensionTransition,
-+    PlayerTeleportEvent.TeleportCause teleportCause// CraftBukkit
 +) implements InjectionDimensionTransition {
      public static final DimensionTransition.PostDimensionTransition DO_NOTHING = p_352417_ -> {
      };
      public static final DimensionTransition.PostDimensionTransition PLAY_PORTAL_SOUND = DimensionTransition::playPortalSound;
-     public static final DimensionTransition.PostDimensionTransition PLACE_PORTAL_TICKET = DimensionTransition::placePortalTicket;
- 
-+    // CraftBukkit Start
-     public DimensionTransition(
-         ServerLevel p_348637_, Vec3 p_348645_, Vec3 p_348472_, float p_348548_, float p_348664_, DimensionTransition.PostDimensionTransition p_352139_
-     ) {
--        this(p_348637_, p_348645_, p_348472_, p_348548_, p_348664_, false, p_352139_);
-+        this(p_348637_, p_348645_, p_348472_, p_348548_, p_348664_, false, p_352139_, PlayerTeleportEvent.TeleportCause.UNKNOWN);
-     }
- 
-     public DimensionTransition(ServerLevel p_348609_, Entity p_352432_, DimensionTransition.PostDimensionTransition p_352373_) {
--        this(p_348609_, findAdjustedSharedSpawnPos(p_348609_, p_352432_), Vec3.ZERO, 0.0F, 0.0F, false, p_352373_);
--    }
-+        this(p_348609_, findAdjustedSharedSpawnPos(p_348609_, p_352432_), Vec3.ZERO, 0.0F, 0.0F, false, p_352373_, PlayerTeleportEvent.TeleportCause.UNKNOWN);
-+    }
-+
-+    public DimensionTransition(ServerLevel p_348609_, Entity p_352432_, DimensionTransition.PostDimensionTransition p_352373_,  PlayerTeleportEvent.TeleportCause teleportCause) {
-+        this(p_348609_, findAdjustedSharedSpawnPos(p_348609_, p_352432_), Vec3.ZERO, 0.0F, 0.0F, false, p_352373_,teleportCause);
-+    }
-+
-+    public DimensionTransition(
-+            ServerLevel p_348637_, Vec3 p_348645_, Vec3 p_348472_, float p_348548_, float p_348664_, DimensionTransition.PostDimensionTransition p_352139_,  PlayerTeleportEvent.TeleportCause teleportCause
-+    ) {
-+        this(p_348637_, p_348645_, p_348472_, p_348548_, p_348664_, false, p_352139_,teleportCause);
-+    }
-+    // CraftBukkit End
- 
-     private static void playPortalSound(Entity p_352075_) {
-         if (p_352075_ instanceof ServerPlayer serverplayer) {

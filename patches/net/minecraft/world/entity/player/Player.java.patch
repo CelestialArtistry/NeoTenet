@@ -121,15 +121,6 @@
          if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
              Pose pose;
              if (this.isFallFlying()) {
-@@ -464,7 +_,7 @@
-     }
- 
-     @Override
--    protected int getFireImmuneTicks() {
-+    public int getFireImmuneTicks() {
-         return 20;
-     }
- 
 @@ -630,6 +_,7 @@
  
      @Override

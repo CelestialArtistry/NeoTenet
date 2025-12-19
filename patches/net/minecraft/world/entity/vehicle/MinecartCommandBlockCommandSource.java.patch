@@ -24,7 +24,7 @@
 +import net.minecraft.world.phys.Vec3;
 +
 +public class MinecartCommandBlockCommandSource extends AbstractMinecart {
-+    public static final EntityDataAccessor<String> DATA_ID_COMMAND_NAME = SynchedEntityData.defineId(MinecartCommandBlockCommandSource.class, EntityDataSerializers.STRING);
++    static final EntityDataAccessor<String> DATA_ID_COMMAND_NAME = SynchedEntityData.defineId(MinecartCommandBlockCommandSource.class, EntityDataSerializers.STRING);
 +    static final EntityDataAccessor<Component> DATA_ID_LAST_OUTPUT = SynchedEntityData.defineId(MinecartCommandBlockCommandSource.class, EntityDataSerializers.COMPONENT);
 +    private final BaseCommandBlockCommandSource commandBlock = new MinecartCommandBaseCommandSource();
 +    private static final int ACTIVATION_DELAY = 4;
