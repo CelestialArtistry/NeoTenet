@@ -83,7 +83,7 @@
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
      public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("overworld"));
      public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("the_nether"));
-@@ -114,6 +_,53 @@
+@@ -114,6 +_,55 @@
      private final RegistryAccess registryAccess;
      private final DamageSources damageSources;
      private long subTickCount;
@@ -107,6 +107,8 @@
 +    public boolean populating;
 +    public abstract ResourceKey<LevelStem> getTypeKey();
 +    public SpigotWorldConfig spigotConfig; // Spigot
++    protected org.bukkit.World.Environment environment;
++    protected org.bukkit.generator.BiomeProvider biomeProvider;
 +    public static BlockPos lastPhysicsProblem; // Spigot
 +
 +    protected Level(
@@ -137,7 +139,15 @@
  
      protected Level(
          WritableLevelData p_270739_,
-@@ -216,11 +_,40 @@
+@@ -209,6 +_,7 @@
+ 
+     @Override
+     public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
++        boolean captured = false;
+         if (this.isOutsideBuildHeight(p_46605_)) {
+             return false;
+         } else if (!this.isClientSide && this.isDebug()) {
+@@ -216,11 +_,45 @@
          } else {
              LevelChunk levelchunk = this.getChunkAt(p_46605_);
              Block block = p_46606_.getBlock();
@@ -155,6 +165,11 @@
 +
              BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
              if (blockstate == null) {
++                // CraftBukkit start - remove blockstate if failed (or the same)
++                if (this.captureBlockStates && captured) {
++                    this.capturedBlockStates.remove(p_46605_);
++                }
++                // CraftBukkit end
 +                if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
                  return false;
              } else {
@@ -314,7 +329,7 @@
              : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
              case TRIGGER -> Explosion.BlockInteraction.TRIGGER_BLOCK;
-+            case STANDARD -> Explosion.BlockInteraction.TRIGGER_BLOCK;// NeoTaiyitist TODO - fixme
++            case STANDARD -> Explosion.BlockInteraction.DESTROY;
          };
          Explosion explosion = new Explosion(
              this,

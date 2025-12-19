@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -28,8 +_,9 @@
+@@ -28,12 +_,14 @@
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.pathfinder.PathType;
@@ -11,6 +11,11 @@
      protected static final int PARENT_AGE_AFTER_BREEDING = 6000;
      public int inLove;
      @Nullable
+     public UUID loveCause;
++    public ItemStack breedItem;
+ 
+     protected Animal(EntityType<? extends Animal> p_27557_, Level p_27558_) {
+         super(p_27557_, p_27558_);
 @@ -201,6 +_,17 @@
  
      public void spawnChildFromBreeding(ServerLevel p_27564_, Animal p_27565_) {

@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/level/levelgen/FlatLevelSource.java
++++ b/net/minecraft/world/level/levelgen/FlatLevelSource.java
+@@ -16,6 +_,7 @@
+ import net.minecraft.world.level.NoiseColumn;
+ import net.minecraft.world.level.StructureManager;
+ import net.minecraft.world.level.biome.BiomeManager;
++import net.minecraft.world.level.biome.BiomeSource;
+ import net.minecraft.world.level.biome.FixedBiomeSource;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
+@@ -32,6 +_,12 @@
+                 .apply(p_255577_, p_255577_.stable(FlatLevelSource::new))
+     );
+     private final FlatLevelGeneratorSettings settings;
++
++    public FlatLevelSource(FlatLevelGeneratorSettings p_256337_, BiomeSource biomeSource) {
++        super(biomeSource, Util.memoize(p_256337_::adjustGenerationSettings));
++        this.settings = p_256337_;
++        // CraftBukkit end
++    }
+ 
+     public FlatLevelSource(FlatLevelGeneratorSettings p_256337_) {
+         super(new FixedBiomeSource(p_256337_.getBiome()), Util.memoize(p_256337_::adjustGenerationSettings));

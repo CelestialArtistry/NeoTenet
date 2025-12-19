@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -126,9 +_,11 @@
+@@ -126,9 +_,12 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreHolder;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.util.Vector;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.world.entity.InjectionEntity;
  
@@ -32,7 +33,7 @@
      private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
      public int invulnerableTime;
      protected boolean firstTick = true;
-@@ -243,6 +_,31 @@
+@@ -243,6 +_,35 @@
      public boolean hasVisualFire;
      @Nullable
      private BlockState inBlockState = null;
@@ -61,6 +62,10 @@
 +    public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
 +    public long activatedTick = Integer.MIN_VALUE;
 +    public boolean defaultActivationState;
++    @Nullable
++    private Vector origin;
++    @Nullable
++    private UUID originWorld;
  
      public Entity(EntityType<?> p_19870_, Level p_19871_) {
          this.type = p_19870_;

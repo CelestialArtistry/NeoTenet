@@ -1,0 +1,75 @@
+package org.taiyitistmc.mixin.world.entity.moster;
+
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+@Mixin(EnderMan.class)
+public abstract class MixinEnderMan extends Monster {
+
+    @Shadow @Final private static EntityDataAccessor<Boolean> DATA_CREEPY;
+    @Shadow @Final private static EntityDataAccessor<Boolean> DATA_STARED_AT;
+    @Shadow @Final private static AttributeModifier SPEED_MODIFIER_ATTACKING;
+    // @formatter:off
+    @Shadow private int targetChangeTime;
+
+    protected MixinEnderMan(EntityType<? extends Monster> entityType, Level level) {
+        super(entityType, level);
+    }
+
+    @Shadow abstract boolean isLookingAtMe(Player player);
+    // @formatter:on
+
+    public void bridge$updateTarget(LivingEntity livingEntity) {
+        AttributeInstance modifiableattributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (livingEntity == null) {
+            this.targetChangeTime = 0;
+            this.entityData.set(DATA_CREEPY, false);
+            this.entityData.set(DATA_STARED_AT, false);
+            modifiableattributeinstance.removeModifier(SPEED_MODIFIER_ATTACKING.id());
+        } else {
+            this.targetChangeTime = this.tickCount;
+            this.entityData.set(DATA_CREEPY, true);
+            if (!modifiableattributeinstance.hasModifier(SPEED_MODIFIER_ATTACKING.id())) {
+                modifiableattributeinstance.addTransientModifier(SPEED_MODIFIER_ATTACKING);
+            }
+        }
+    }
+
+    @Override
+    public boolean setTarget(LivingEntity livingEntity, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
+        if (!super.setTarget(livingEntity, reason, fireEvent)) {
+            return false;
+        }
+        bridge$updateTarget(getTarget());
+        return true;
+    }
+
+    private boolean isLookingAtMe_check(Player player) {
+        ItemStack itemStack = player.getInventory().armor.get(3);
+        if (itemStack.is(Blocks.CARVED_PUMPKIN.asItem())) {
+            return false;
+        } else {
+            Vec3 vec3 = player.getViewVector(1.0F).normalize();
+            Vec3 vec32 = new Vec3(this.getX() - player.getX(), this.getEyeY() - player.getEyeY(), this.getZ() - player.getZ());
+            double d = vec32.length();
+            vec32 = vec32.normalize();
+            double e = vec3.dot(vec32);
+            return e > 1.0 - 0.025 / d && player.hasLineOfSight(this);
+        }
+    }
+}

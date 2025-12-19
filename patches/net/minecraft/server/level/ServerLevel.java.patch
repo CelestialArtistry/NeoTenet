@@ -38,7 +38,7 @@
 +
 +    @Override
 +    public ResourceKey<LevelStem> getTypeKey() {
-+        return null;
++        return convertable.dimensionType;
 +    }
 +
 +    public ServerLevel(
