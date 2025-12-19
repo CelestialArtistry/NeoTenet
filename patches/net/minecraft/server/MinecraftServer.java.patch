@@ -1,5 +1,23 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
+@@ -9,6 +_,7 @@
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.GameProfileRepository;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
++import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
+ import it.unimi.dsi.fastutil.longs.LongIterator;
+@@ -48,6 +_,9 @@
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+ import javax.imageio.ImageIO;
++
++import jline.console.ConsoleReader;
++import joptsimple.OptionSet;
+ import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
+ import net.minecraft.FileUtil;
 @@ -166,8 +_,9 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
@@ -8,10 +26,29 @@
  
 -public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, ChunkIOErrorReporter, CommandSource, AutoCloseable {
 +public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, ChunkIOErrorReporter, CommandSource, AutoCloseable, InjectionMinecraftServer {
-     private static final Logger LOGGER = LogUtils.getLogger();
+     public static final Logger LOGGER = LogUtils.getLogger();
      public static final String VANILLA_BRAND = "vanilla";
      private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
-@@ -264,7 +_,7 @@
+@@ -261,10 +_,26 @@
+     private final PotionBrewing potionBrewing;
+     private volatile boolean isSaving;
+     private static final AtomicReference<RuntimeException> fatalException = new AtomicReference<>();
++    // CraftBukkit start
++    public WorldLoader.DataLoadContext worldLoader;
++    public org.bukkit.craftbukkit.CraftServer server;
++    public OptionSet options;
++    public org.bukkit.command.ConsoleCommandSender console;
++    public ConsoleReader reader;
++    public static int currentTick = (int) (System.currentTimeMillis() / 50);
++    public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
++    public int autosavePeriod;
++    public Commands vanillaCommandDispatcher;
++    private boolean forceTicks;
++    // CraftBukkit end
++    // CraftBukkit start
++    public final java.util.concurrent.ExecutorService chatExecutor = java.util.concurrent.Executors.newCachedThreadPool(
++            new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Chat Thread - #%d").build());
++    // CraftBukkit end
  
      public static <S extends MinecraftServer> S spin(Function<Thread, S> p_129873_) {
          AtomicReference<S> atomicreference = new AtomicReference<>();

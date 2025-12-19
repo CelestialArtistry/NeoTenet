@@ -8,8 +8,8 @@
  
 -public class ItemFrame extends HangingEntity {
 +public class ItemFrame extends HangingEntity implements InjectionItemFrame {
-     private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.ITEM_STACK);
-     private static final EntityDataAccessor<Integer> DATA_ROTATION = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.INT);
+     public static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.ITEM_STACK);
+     public static final EntityDataAccessor<Integer> DATA_ROTATION = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.INT);
      public static final int NUM_ROTATIONS = 8;
 @@ -212,7 +_,7 @@
      private void removeFramedMap(ItemStack p_31811_) {

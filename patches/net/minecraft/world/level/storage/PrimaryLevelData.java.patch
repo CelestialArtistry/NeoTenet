@@ -1,6 +1,29 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -38,8 +_,9 @@
+@@ -16,6 +_,7 @@
+ import net.minecraft.SharedConstants;
+ import net.minecraft.Util;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.Registry;
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.core.UUIDUtil;
+ import net.minecraft.nbt.CompoundTag;
+@@ -25,6 +_,7 @@
+ import net.minecraft.nbt.StringTag;
+ import net.minecraft.nbt.Tag;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameType;
+@@ -32,14 +_,16 @@
+ import net.minecraft.world.level.LevelSettings;
+ import net.minecraft.world.level.WorldDataConfiguration;
+ import net.minecraft.world.level.border.WorldBorder;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.dimension.end.EndDragonFight;
+ import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.timers.TimerCallbacks;
  import net.minecraft.world.level.timers.TimerQueue;
  import org.slf4j.Logger;
@@ -11,11 +34,15 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final String LEVEL_NAME = "LevelName";
      protected static final String PLAYER = "Player";
-@@ -74,6 +_,7 @@
+@@ -74,6 +_,11 @@
      private boolean wasModded;
      private final Set<String> removedFeatureFlags;
      private final TimerQueue<MinecraftServer> scheduledEvents;
 +    private boolean confirmedExperimentalWarning = false;
++    // CraftBukkit start - Add world and pdc
++    public Registry<LevelStem> customDimensions;
++    private ServerLevel world;
++    protected Tag pdc;
  
      private PrimaryLevelData(
          @Nullable CompoundTag p_277888_,

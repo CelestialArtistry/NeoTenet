@@ -8,6 +8,6 @@
  
 -public class FoodData {
 +public class FoodData implements InjectionFoodData {
-     private int foodLevel = 20;
-     private float saturationLevel;
-     private float exhaustionLevel;
+     public int foodLevel = 20;
+     public float saturationLevel;
+     public float exhaustionLevel;

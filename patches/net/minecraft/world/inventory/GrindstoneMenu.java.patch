@@ -3,7 +3,7 @@
 @@ -38,6 +_,7 @@
          }
      };
-     private final ContainerLevelAccess access;
+     public final ContainerLevelAccess access;
 +    private int xp = -1;
  
      public GrindstoneMenu(int p_39563_, Inventory p_39564_) {

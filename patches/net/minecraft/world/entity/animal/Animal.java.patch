@@ -9,7 +9,7 @@
 -public abstract class Animal extends AgeableMob {
 +public abstract class Animal extends AgeableMob implements InjectionAnimal {
      protected static final int PARENT_AGE_AFTER_BREEDING = 6000;
-     private int inLove;
+     public int inLove;
      @Nullable
 @@ -201,6 +_,17 @@
  

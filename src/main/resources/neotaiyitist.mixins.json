@@ -3,10 +3,12 @@
   "package": "org.taiyitistmc.mixin",
   "plugin": "org.taiyitistmc.mixin.NeoTaiyitistMixinPlugin",
   "mixins": [
+    "MixinCrashReport",
+    "advancements.MixinAdvancementHolder",
     "advancements.MixinAdvancementTree",
+    "commands.MixinCommandSourceStack",
     "server.dedicated.MixinDedicatedServer"
   ],
-  "client": [],
   "injectors": {
     "maxShiftBy": 2,
     "defaultRequire": 1

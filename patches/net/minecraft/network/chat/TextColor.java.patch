@@ -11,7 +11,7 @@
          .collect(ImmutableMap.toImmutableMap(p_237297_ -> p_237297_.name, Function.identity()));
      private final int value;
      @Nullable
-     private final String name;
+     public final String name;
 +    // CraftBukkit start
 +    @Nullable
 +    public final ChatFormatting format;

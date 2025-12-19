@@ -23,7 +23,7 @@
  
 -    public static class Builder {
 +    public static class Builder implements InjectionDataComponentPatch_Builder {
-         private final Reference2ObjectMap<DataComponentType<?>, Optional<?>> map = new Reference2ObjectArrayMap<>();
+         public final Reference2ObjectMap<DataComponentType<?>, Optional<?>> map = new Reference2ObjectArrayMap<>();
  
          Builder() {
          }

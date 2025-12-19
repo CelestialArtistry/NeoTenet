@@ -47,6 +47,14 @@
      private static final ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT = new ThreadLocal<>();
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final int LEVEL_ALL = 0;
+@@ -149,6 +_,7 @@
+     private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
+ 
+     public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
++        this(); // CraftBukkit
+         AdvancementCommands.register(this.dispatcher);
+         AttributeCommand.register(this.dispatcher, p_230944_);
+         ExecuteCommand.register(this.dispatcher, p_230944_);
 @@ -214,7 +_,7 @@
              JfrCommand.register(this.dispatcher);
          }
@@ -56,14 +64,19 @@
              TestCommand.register(this.dispatcher);
              RaidCommand.register(this.dispatcher, p_230944_);
              DebugPathCommand.register(this.dispatcher);
-@@ -248,6 +_,7 @@
+@@ -248,7 +_,12 @@
          if (p_230943_.includeIntegrated) {
              PublishCommand.register(this.dispatcher);
          }
 +        net.neoforged.neoforge.event.EventHooks.onCommandRegister(this.dispatcher, p_230943_, p_230944_);
++        // CraftBukkit start
++    }
  
++    public Commands() {
++        // CraftBukkkit end
          this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
      }
+ 
 @@ -265,6 +_,16 @@
  
      public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {

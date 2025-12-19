@@ -17,11 +17,11 @@
 +    private final RconConsoleSourceCommandSource rconConsoleSource;
      @Nullable
      private RconThread rconThread;
-     private final DedicatedServerSettings settings;
+     public DedicatedServerSettings settings;
 @@ -80,6 +_,8 @@
      @Nullable
      private DebugSampleSubscriptionTracker debugSampleSubscriptionTracker;
-     private final ServerLinks serverLinks;
+     public ServerLinks serverLinks;
 +    @Nullable
 +    private net.minecraft.client.server.LanServerPinger dediLanPinger;
  
