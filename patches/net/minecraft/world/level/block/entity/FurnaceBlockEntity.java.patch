@@ -11,3 +11,9 @@
      public FurnaceBlockEntity(BlockPos p_155545_, BlockState p_155546_) {
          super(BlockEntityType.FURNACE, p_155545_, p_155546_, RecipeType.SMELTING);
      }
+@@ -22,4 +_,5 @@
+     protected AbstractContainerMenu createMenu(int p_59293_, Inventory p_59294_) {
+         return new FurnaceMenu(p_59293_, p_59294_, this, this.dataAccess);
+     }
++
+ }

@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
+import net.minecraft.world.entity.vehicle.MinecartCommandBlockCommandSource;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
@@ -64,7 +64,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
     public static CommandSourceStack getListener(CommandSender sender) {
         if (sender instanceof Entity) {
             if (sender instanceof CommandMinecart) {
-                return ((MinecartCommandBlock) ((CraftMinecartCommand) sender).getHandle()).getCommandBlock().createCommandSourceStack();
+                return ((MinecartCommandBlockCommandSource) ((CraftMinecartCommand) sender).getHandle()).getCommandBlock().createCommandSourceStack();
             }
 
             return ((CraftEntity) sender).getHandle().createCommandSourceStack();

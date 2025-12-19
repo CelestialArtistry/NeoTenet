@@ -2,18 +2,18 @@ package org.bukkit.craftbukkit.command;
 
 import java.net.SocketAddress;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.rcon.RconConsoleSource;
+import net.minecraft.server.rcon.RconConsoleSourceCommandSource;
 import org.bukkit.command.RemoteConsoleCommandSender;
 
 public class CraftRemoteConsoleCommandSender extends ServerCommandSender implements RemoteConsoleCommandSender {
 
-    private final RconConsoleSource listener;
+    private final RconConsoleSourceCommandSource listener;
 
-    public CraftRemoteConsoleCommandSender(RconConsoleSource listener) {
+    public CraftRemoteConsoleCommandSender(RconConsoleSourceCommandSource listener) {
         this.listener = listener;
     }
 
-    public RconConsoleSource getListener() {
+    public RconConsoleSourceCommandSource getListener() {
         return this.listener;
     }
 
