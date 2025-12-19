@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
+@@ -44,8 +_,9 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.levelgen.Heightmap;
+ import net.minecraft.world.phys.AABB;
++import org.taiyitistmc.injection.world.level.block.entity.InjectionBeaconBlockEntity;
+ 
+-public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable {
++public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable, InjectionBeaconBlockEntity {
+     private static final int MAX_LEVELS = 4;
+     public static final List<List<Holder<MobEffect>>> BEACON_EFFECTS = List.of(
+         List.of(MobEffects.MOVEMENT_SPEED, MobEffects.DIG_SPEED),
 @@ -137,8 +_,8 @@
  
          for (int i1 = 0; i1 < 10 && blockpos.getY() <= l; i1++) {

@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+@@ -25,8 +_,9 @@
+ import net.minecraft.server.level.ClientInformation;
+ import net.minecraft.util.VisibleForDebug;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.server.network.InjectionServerCommonPacketListenerImpl;
+ 
+-public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
++public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener, InjectionServerCommonPacketListenerImpl {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     public static final int LATENCY_CHECK_INTERVAL = 15000;
+     private static final int CLOSED_LISTENER_TIMEOUT = 15000;
 @@ -42,6 +_,10 @@
      private boolean closed = false;
      private int latency;

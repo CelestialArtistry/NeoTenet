@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
+@@ -99,8 +_,9 @@
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Team;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.server.players.InjectionPlayerList;
+ 
+-public abstract class PlayerList {
++public abstract class PlayerList implements InjectionPlayerList {
+     public static final File USERBANLIST_FILE = new File("banned-players.json");
+     public static final File IPBANLIST_FILE = new File("banned-ips.json");
+     public static final File OPLIST_FILE = new File("ops.json");
 @@ -128,6 +_,7 @@
      private boolean allowCommandsForAllPlayers;
      private static final boolean ALLOW_LOGOUTIVATOR = false;

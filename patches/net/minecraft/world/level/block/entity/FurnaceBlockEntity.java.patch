@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/entity/FurnaceBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/FurnaceBlockEntity.java
+@@ -7,8 +_,9 @@
+ import net.minecraft.world.inventory.FurnaceMenu;
+ import net.minecraft.world.item.crafting.RecipeType;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.taiyitistmc.injection.world.level.block.entity.InjectionFurnaceBlockEntity;
+ 
+-public class FurnaceBlockEntity extends AbstractFurnaceBlockEntity {
++public class FurnaceBlockEntity extends AbstractFurnaceBlockEntity implements InjectionFurnaceBlockEntity {
+     public FurnaceBlockEntity(BlockPos p_155545_, BlockState p_155546_) {
+         super(BlockEntityType.FURNACE, p_155545_, p_155546_, RecipeType.SMELTING);
+     }

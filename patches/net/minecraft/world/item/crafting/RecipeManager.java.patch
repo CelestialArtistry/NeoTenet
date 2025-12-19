@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
+@@ -32,8 +_,9 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.item.crafting.InjectionRecipeManager;
+ 
+-public class RecipeManager extends SimpleJsonResourceReloadListener {
++public class RecipeManager extends SimpleJsonResourceReloadListener implements InjectionRecipeManager {
+     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final HolderLookup.Provider registries;
 @@ -50,16 +_,22 @@
          this.hasErrors = false;
          Builder<RecipeType<?>, RecipeHolder<?>> builder = ImmutableMultimap.builder();

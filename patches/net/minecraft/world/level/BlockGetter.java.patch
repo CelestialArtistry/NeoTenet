@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/BlockGetter.java
 +++ b/net/minecraft/world/level/BlockGetter.java
+@@ -17,8 +_,9 @@
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.taiyitistmc.injection.world.level.InjectionBlockGetter;
+ 
+-public interface BlockGetter extends LevelHeightAccessor, net.neoforged.neoforge.common.extensions.IBlockGetterExtension {
++public interface BlockGetter extends LevelHeightAccessor, net.neoforged.neoforge.common.extensions.IBlockGetterExtension, InjectionBlockGetter {
+     @Nullable
+     BlockEntity getBlockEntity(BlockPos p_45570_);
+ 
 @@ -32,7 +_,7 @@
      FluidState getFluidState(BlockPos p_45569_);
  

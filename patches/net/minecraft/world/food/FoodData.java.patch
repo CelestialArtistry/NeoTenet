@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/food/FoodData.java
++++ b/net/minecraft/world/food/FoodData.java
+@@ -5,8 +_,9 @@
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.GameRules;
++import org.taiyitistmc.injection.world.food.InjectionFoodData;
+ 
+-public class FoodData {
++public class FoodData implements InjectionFoodData {
+     private int foodLevel = 20;
+     private float saturationLevel;
+     private float exhaustionLevel;

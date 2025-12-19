@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/block/ChestBlock.java
 +++ b/net/minecraft/world/level/block/ChestBlock.java
+@@ -50,8 +_,9 @@
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.taiyitistmc.injection.world.level.block.InjectionChestBlock;
+ 
+-public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements SimpleWaterloggedBlock {
++public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements SimpleWaterloggedBlock, InjectionChestBlock {
+     public static final MapCodec<ChestBlock> CODEC = simpleCodec(p_304364_ -> new ChestBlock(p_304364_, () -> BlockEntityType.CHEST));
+     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+     public static final EnumProperty<ChestType> TYPE = BlockStateProperties.CHEST_TYPE;
 @@ -357,7 +_,8 @@
  
      @Override

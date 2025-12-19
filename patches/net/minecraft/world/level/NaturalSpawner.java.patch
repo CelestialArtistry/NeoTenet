@@ -1,13 +1,21 @@
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
-@@ -45,6 +_,7 @@
+@@ -40,12 +_,13 @@
+ import net.minecraft.world.level.levelgen.Heightmap;
+ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
+ import net.minecraft.world.level.levelgen.structure.Structure;
+-import net.minecraft.world.level.levelgen.structure.structures.NetherFortressStructure;
+ import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.level.InjectionNaturalSpawner_SpawnState;
  
+-public final class NaturalSpawner {
 +// TODO: ForgeHooks.canEntitySpawn
- public final class NaturalSpawner {
++public final class NaturalSpawner implements InjectionNaturalSpawner_SpawnState {
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int MIN_SPAWN_DISTANCE = 24;
+     public static final int SPAWN_DISTANCE_CHUNK = 8;
 @@ -69,7 +_,7 @@
                  continue;
              }

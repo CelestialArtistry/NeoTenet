@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
+@@ -38,8 +_,9 @@
+ import net.minecraft.world.level.timers.TimerCallbacks;
+ import net.minecraft.world.level.timers.TimerQueue;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.level.storage.InjectionPrimaryLevelData;
+ 
+-public class PrimaryLevelData implements ServerLevelData, WorldData {
++public class PrimaryLevelData implements ServerLevelData, WorldData, InjectionPrimaryLevelData {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     public static final String LEVEL_NAME = "LevelName";
+     protected static final String PLAYER = "Player";
 @@ -74,6 +_,7 @@
      private boolean wasModded;
      private final Set<String> removedFeatureFlags;

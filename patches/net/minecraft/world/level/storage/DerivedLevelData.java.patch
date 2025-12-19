@@ -1,9 +1,21 @@
 --- a/net/minecraft/world/level/storage/DerivedLevelData.java
 +++ b/net/minecraft/world/level/storage/DerivedLevelData.java
-@@ -191,4 +_,26 @@
+@@ -10,8 +_,9 @@
+ import net.minecraft.world.level.LevelHeightAccessor;
+ import net.minecraft.world.level.border.WorldBorder;
+ import net.minecraft.world.level.timers.TimerQueue;
++import org.taiyitistmc.injection.world.level.storage.InjectionDerivedLevelData;
+ 
+-public class DerivedLevelData implements ServerLevelData {
++public class DerivedLevelData implements ServerLevelData, InjectionDerivedLevelData {
+     private final WorldData worldData;
+     private final ServerLevelData wrapped;
+ 
+@@ -190,5 +_,27 @@
+     public void fillCrashReportCategory(CrashReportCategory p_164852_, LevelHeightAccessor p_164853_) {
          p_164852_.setDetail("Derived", true);
          this.wrapped.fillCrashReportCategory(p_164852_, p_164853_);
-     }
++    }
 +
 +    // Neo: Variable day time code
 +
@@ -25,5 +37,5 @@
 +    @Override
 +    public void setDayTimePerTick(float dayTimePerTick) {
 +        wrapped.setDayTimePerTick(dayTimePerTick);
-+    }
+     }
  }

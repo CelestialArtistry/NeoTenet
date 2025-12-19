@@ -9,6 +9,21 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
+@@ -185,12 +_,13 @@
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.server.network.InjectionServerGamePacketListenerImpl;
+ 
+ public class ServerGamePacketListenerImpl
+     extends ServerCommonPacketListenerImpl
+     implements ServerGamePacketListener,
+     ServerPlayerConnection,
+-    TickablePacketListener {
++    TickablePacketListener, InjectionServerGamePacketListenerImpl {
+     static final Logger LOGGER = LogUtils.getLogger();
+     private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
+     private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
 @@ -439,9 +_,11 @@
                  }
  

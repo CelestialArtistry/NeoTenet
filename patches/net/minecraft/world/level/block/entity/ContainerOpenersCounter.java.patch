@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
++++ b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
+@@ -8,8 +_,9 @@
+ import net.minecraft.world.level.entity.EntityTypeTest;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AABB;
++import org.taiyitistmc.injection.world.level.block.entity.InjectionContainerOpenersCounter;
+ 
+-public abstract class ContainerOpenersCounter {
++public abstract class ContainerOpenersCounter implements InjectionContainerOpenersCounter {
+     private static final int CHECK_TICK_DELAY = 5;
+     private int openCount;
+     private double maxInteractionRange;

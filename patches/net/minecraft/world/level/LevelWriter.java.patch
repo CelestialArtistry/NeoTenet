@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/LevelWriter.java
++++ b/net/minecraft/world/level/LevelWriter.java
+@@ -4,8 +_,9 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.taiyitistmc.injection.world.level.InjectionLevelWriter;
+ 
+-public interface LevelWriter {
++public interface LevelWriter extends InjectionLevelWriter {
+     boolean setBlock(BlockPos p_46947_, BlockState p_46948_, int p_46949_, int p_46950_);
+ 
+     default boolean setBlock(BlockPos p_46944_, BlockState p_46945_, int p_46946_) {

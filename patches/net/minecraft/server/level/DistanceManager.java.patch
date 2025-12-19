@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/level/DistanceManager.java
 +++ b/net/minecraft/server/level/DistanceManager.java
+@@ -34,8 +_,9 @@
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.chunk.LevelChunk;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.server.level.InjectionDistanceManager;
+ 
+-public abstract class DistanceManager {
++public abstract class DistanceManager implements InjectionDistanceManager {
+     static final Logger LOGGER = LogUtils.getLogger();
+     static final int PLAYER_TICKET_LEVEL = ChunkLevel.byStatus(FullChunkStatus.ENTITY_TICKING);
+     private static final int INITIAL_TICKET_LIST_CAPACITY = 4;
 @@ -54,6 +_,8 @@
      private long ticketTickCounter;
      private int simulationDistance = 10;

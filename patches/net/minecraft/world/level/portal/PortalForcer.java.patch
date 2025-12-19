@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/portal/PortalForcer.java
++++ b/net/minecraft/world/level/portal/PortalForcer.java
+@@ -18,8 +_,9 @@
+ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+ import net.minecraft.world.level.border.WorldBorder;
+ import net.minecraft.world.level.levelgen.Heightmap;
++import org.taiyitistmc.injection.world.level.portal.InjectionPortalForcer;
+ 
+-public class PortalForcer {
++public class PortalForcer implements InjectionPortalForcer {
+     public static final int TICKET_RADIUS = 3;
+     private static final int NETHER_PORTAL_RADIUS = 16;
+     private static final int OVERWORLD_PORTAL_RADIUS = 128;

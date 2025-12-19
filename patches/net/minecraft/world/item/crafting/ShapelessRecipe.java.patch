@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -18,12 +_,14 @@
+@@ -12,18 +_,21 @@
+ import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
++import org.taiyitistmc.injection.world.item.crafting.InjectionShapelessRecipe;
+ 
+-public class ShapelessRecipe implements CraftingRecipe {
++public class ShapelessRecipe implements CraftingRecipe, InjectionShapelessRecipe {
+     final String group;
      final CraftingBookCategory category;
      final ItemStack result;
      final NonNullList<Ingredient> ingredients;

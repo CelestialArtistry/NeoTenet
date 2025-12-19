@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
+@@ -40,8 +_,9 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.level.block.entity.InjectionBeehiveBlockEntity;
+ 
+-public class BeehiveBlockEntity extends BlockEntity {
++public class BeehiveBlockEntity extends BlockEntity implements InjectionBeehiveBlockEntity {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final String TAG_FLOWER_POS = "flower_pos";
+     private static final String BEES = "bees";

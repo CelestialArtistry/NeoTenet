@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
+@@ -28,8 +_,9 @@
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.level.ChunkPos;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.level.entity.InjectionPersistentEntitySectionManager;
+ 
+-public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {
++public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable, InjectionPersistentEntitySectionManager {
+     static final Logger LOGGER = LogUtils.getLogger();
+     final Set<UUID> knownUuids = Sets.newHashSet();
+     final LevelCallback<T> callbacks;
 @@ -71,7 +_,16 @@
          return this.addEntity(p_157534_, false);
      }

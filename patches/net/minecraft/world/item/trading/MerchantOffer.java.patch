@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/item/trading/MerchantOffer.java
++++ b/net/minecraft/world/item/trading/MerchantOffer.java
+@@ -8,8 +_,9 @@
+ import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.item.ItemStack;
++import org.taiyitistmc.injection.world.item.trading.InjectionMerchantOffer;
+ 
+-public class MerchantOffer {
++public class MerchantOffer implements InjectionMerchantOffer {
+     public static final Codec<MerchantOffer> CODEC = RecordCodecBuilder.create(
+         p_324269_ -> p_324269_.group(
+                     ItemCost.CODEC.fieldOf("buy").forGetter(p_330121_ -> p_330121_.baseCostA),

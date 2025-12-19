@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/item/SuspiciousStewItem.java
++++ b/net/minecraft/world/item/SuspiciousStewItem.java
+@@ -9,8 +_,9 @@
+ import net.minecraft.world.item.alchemy.PotionContents;
+ import net.minecraft.world.item.component.SuspiciousStewEffects;
+ import net.minecraft.world.level.Level;
++import org.taiyitistmc.injection.world.item.InjectionSuspiciousStewItem;
+ 
+-public class SuspiciousStewItem extends Item {
++public class SuspiciousStewItem extends Item implements InjectionSuspiciousStewItem {
+     public static final int DEFAULT_DURATION = 160;
+ 
+     public SuspiciousStewItem(Item.Properties p_43257_) {

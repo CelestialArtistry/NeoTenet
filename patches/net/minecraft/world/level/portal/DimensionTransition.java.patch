@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/portal/DimensionTransition.java
++++ b/net/minecraft/world/level/portal/DimensionTransition.java
+@@ -6,6 +_,7 @@
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.phys.Vec3;
++import org.taiyitistmc.injection.world.level.portal.InjectionDimensionTransition;
+ 
+ public record DimensionTransition(
+     ServerLevel newLevel,
+@@ -15,7 +_,7 @@
+     float xRot,
+     boolean missingRespawnBlock,
+     DimensionTransition.PostDimensionTransition postDimensionTransition
+-) {
++) implements InjectionDimensionTransition {
+     public static final DimensionTransition.PostDimensionTransition DO_NOTHING = p_352417_ -> {
+     };
+     public static final DimensionTransition.PostDimensionTransition PLAY_PORTAL_SOUND = DimensionTransition::playPortalSound;

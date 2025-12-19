@@ -1,13 +1,7 @@
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
-@@ -9,11 +_,15 @@
- import java.util.Objects;
- import javax.annotation.Nullable;
- import net.minecraft.network.RegistryFriendlyByteBuf;
-+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-+import net.minecraft.server.level.ServerPlayer;
+@@ -12,8 +_,9 @@
  import net.minecraft.util.ClassTreeIdRegistry;
-+import net.minecraft.world.entity.Entity;
  import org.apache.commons.lang3.ObjectUtils;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.network.syncher.InjectionSynchedEntityData;
@@ -17,26 +11,9 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int MAX_ID_VALUE = 254;
      static final ClassTreeIdRegistry ID_REGISTRY = new ClassTreeIdRegistry();
-@@ -26,12 +_,30 @@
-         this.itemsById = p_326032_;
+@@ -27,11 +_,13 @@
      }
  
-+    @Override
-+    // CraftBukkit start - add method from above
-+    public <T> void markDirty(EntityDataAccessor<T> datawatcherobject) {
-+        this.getItem(datawatcherobject).setDirty(true);
-+        this.isDirty = true;
-+    }
-+    // CraftBukkit end
-+
-+    @Override
-+    public void refresh(ServerPlayer player) {
-+        var list = this.getNonDefaultValues();
-+        if (list != null && this.entity instanceof Entity entity) {
-+            player.connection.send(new ClientboundSetEntityDataPacket(entity.getId(), list));
-+        }
-+    }
-+
      public static <T> EntityDataAccessor<T> defineId(Class<? extends SyncedDataHolder> p_135354_, EntityDataSerializer<T> p_135355_) {
 -        if (LOGGER.isDebugEnabled()) {
 +        if (true || LOGGER.isDebugEnabled()) { // Forge: This is very useful for mods that register keys on classes that are not their own

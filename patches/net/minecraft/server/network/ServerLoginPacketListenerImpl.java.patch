@@ -1,0 +1,13 @@
+--- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+@@ -43,8 +_,9 @@
+ import net.minecraft.util.StringUtil;
+ import org.apache.commons.lang3.Validate;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.server.network.InjectionServerLoginPacketListenerImpl;
+ 
+-public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
++public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener, InjectionServerLoginPacketListenerImpl {
+     private static final AtomicInteger UNIQUE_THREAD_ID = new AtomicInteger(0);
+     static final Logger LOGGER = LogUtils.getLogger();
+     private static final int MAX_TICKS_BEFORE_LOGIN = 600;

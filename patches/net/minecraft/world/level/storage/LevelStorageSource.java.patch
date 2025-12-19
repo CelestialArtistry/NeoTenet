@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
+@@ -74,8 +_,9 @@
+ import net.minecraft.world.level.validation.ForbiddenSymlinkInfo;
+ import net.minecraft.world.level.validation.PathAllowList;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.level.storage.InjectionLevelStorageSource;
+ 
+-public class LevelStorageSource {
++public class LevelStorageSource implements InjectionLevelStorageSource {
+     static final Logger LOGGER = LogUtils.getLogger();
+     static final DateTimeFormatter FORMATTER = FileNameDateFormatter.create();
+     private static final String TAG_DATA = "Data";
 @@ -463,6 +_,19 @@
              }
          }

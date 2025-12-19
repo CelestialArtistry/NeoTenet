@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
+@@ -17,8 +_,9 @@
+ import net.minecraft.util.datafix.DataFixTypes;
+ import net.minecraft.world.entity.player.Player;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.level.storage.InjectionPlayerDataStorage;
+ 
+-public class PlayerDataStorage {
++public class PlayerDataStorage implements InjectionPlayerDataStorage {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final File playerDir;
+     protected final DataFixer fixerUpper;
 @@ -39,6 +_,7 @@
              Path path2 = path.resolve(p_78434_.getStringUUID() + ".dat");
              Path path3 = path.resolve(p_78434_.getStringUUID() + ".dat_old");

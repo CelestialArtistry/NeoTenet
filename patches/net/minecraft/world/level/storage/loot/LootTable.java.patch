@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
+@@ -28,8 +_,9 @@
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.world.level.storage.loot.InjectionLootTable;
+ 
+-public class LootTable {
++public class LootTable implements InjectionLootTable {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     public static final LootTable EMPTY = new LootTable(LootContextParamSets.EMPTY, Optional.empty(), List.of(), List.of());
+     public static final LootContextParamSet DEFAULT_PARAM_SET = LootContextParamSets.ALL_PARAMS;
 @@ -38,8 +_,8 @@
          p_338123_ -> p_338123_.group(
                      LootContextParamSets.CODEC.lenientOptionalFieldOf("type", DEFAULT_PARAM_SET).forGetter(p_298001_ -> p_298001_.paramSet),

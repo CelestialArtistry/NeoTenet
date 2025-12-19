@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/LevelAccessor.java
++++ b/net/minecraft/world/level/LevelAccessor.java
+@@ -26,8 +_,9 @@
+ import net.minecraft.world.ticks.LevelTickAccess;
+ import net.minecraft.world.ticks.ScheduledTick;
+ import net.minecraft.world.ticks.TickPriority;
++import org.taiyitistmc.injection.world.level.InjectionLevelAccessor;
+ 
+-public interface LevelAccessor extends CommonLevelAccessor, LevelTimeAccess {
++public interface LevelAccessor extends CommonLevelAccessor, LevelTimeAccess, InjectionLevelAccessor {
+     @Override
+     default long dayTime() {
+         return this.getLevelData().getDayTime();

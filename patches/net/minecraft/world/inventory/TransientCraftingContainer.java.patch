@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/inventory/TransientCraftingContainer.java
++++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
+@@ -6,8 +_,9 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.player.StackedContents;
+ import net.minecraft.world.item.ItemStack;
++import org.taiyitistmc.injection.world.inventory.InjectionTransientCraftingContainer;
+ 
+-public class TransientCraftingContainer implements CraftingContainer {
++public class TransientCraftingContainer implements CraftingContainer, InjectionTransientCraftingContainer {
+     private final NonNullList<ItemStack> items;
+     private final int width;
+     private final int height;

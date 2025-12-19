@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
+@@ -43,8 +_,9 @@
+ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+ import net.minecraft.world.phys.Vec3;
+ import org.slf4j.Logger;
++import org.taiyitistmc.injection.server.level.InjectionServerEntity;
+ 
+-public class ServerEntity {
++public class ServerEntity implements InjectionServerEntity {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final int TOLERANCE_LEVEL_ROTATION = 1;
+     private static final double TOLERANCE_LEVEL_POSITION = 7.6293945E-6F;
 @@ -101,9 +_,9 @@
  
          if (this.entity instanceof ItemFrame itemframe && this.tickCount % 10 == 0) {

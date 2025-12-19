@@ -1,0 +1,13 @@
+--- a/net/minecraft/server/players/BanListEntry.java
++++ b/net/minecraft/server/players/BanListEntry.java
+@@ -7,8 +_,9 @@
+ import java.util.Locale;
+ import javax.annotation.Nullable;
+ import net.minecraft.network.chat.Component;
++import org.taiyitistmc.injection.server.players.InjectionBanListEntry;
+ 
+-public abstract class BanListEntry<T> extends StoredUserEntry<T> {
++public abstract class BanListEntry<T> extends StoredUserEntry<T> implements InjectionBanListEntry {
+     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.ROOT);
+     public static final String EXPIRES_NEVER = "forever";
+     protected final Date created;
