@@ -1,58 +1,32 @@
 --- a/net/minecraft/server/rcon/RconConsoleSource.java
-+++ /dev/null
-@@ -1,55 +_,0 @@
--package net.minecraft.server.rcon;
--
--import net.minecraft.commands.CommandSource;
--import net.minecraft.commands.CommandSourceStack;
--import net.minecraft.network.chat.Component;
--import net.minecraft.server.MinecraftServer;
--import net.minecraft.server.level.ServerLevel;
--import net.minecraft.world.phys.Vec2;
--import net.minecraft.world.phys.Vec3;
++++ b/net/minecraft/server/rcon/RconConsoleSource.java
+@@ -7,14 +_,27 @@
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
 -
 -public class RconConsoleSource implements CommandSource {
--    private static final String RCON = "Rcon";
--    private static final Component RCON_COMPONENT = Component.literal("Rcon");
--    private final StringBuffer buffer = new StringBuffer();
--    private final MinecraftServer server;
--
--    public RconConsoleSource(MinecraftServer p_11505_) {
--        this.server = p_11505_;
--    }
--
--    public void prepareForCommand() {
--        this.buffer.setLength(0);
--    }
--
--    public String getCommandResponse() {
--        return this.buffer.toString();
--    }
--
--    public CommandSourceStack createCommandSourceStack() {
--        ServerLevel serverlevel = this.server.overworld();
--        return new CommandSourceStack(
--            this, Vec3.atLowerCornerOf(serverlevel.getSharedSpawnPos()), Vec2.ZERO, serverlevel, 4, "Rcon", RCON_COMPONENT, this.server, null
--        );
--    }
--
--    @Override
--    public void sendSystemMessage(Component p_215653_) {
--        this.buffer.append(p_215653_.getString());
--    }
--
--    @Override
--    public boolean acceptsSuccess() {
--        return true;
--    }
--
--    @Override
--    public boolean acceptsFailure() {
--        return true;
--    }
--
--    @Override
--    public boolean shouldInformAdmins() {
--        return this.server.shouldRconBroadcast();
--    }
--}
++import org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender;
++import org.taiyitistmc.injection.server.rcon.InjectionRconConsoleSource;
++
++import java.net.SocketAddress;
++
++public class RconConsoleSource implements CommandSource, InjectionRconConsoleSource {
+     private static final String RCON = "Rcon";
+     private static final Component RCON_COMPONENT = Component.literal("Rcon");
+     private final StringBuffer buffer = new StringBuffer();
+     private final MinecraftServer server;
++    // CraftBukkit start
++    public SocketAddress socketAddress;
++    private final CraftRemoteConsoleCommandSender remoteConsole = new CraftRemoteConsoleCommandSender(this);
++
++    public RconConsoleSource(MinecraftServer p_11505_, SocketAddress socketAddress) {
++        this(p_11505_);
++        this.socketAddress = socketAddress;
++    }
+ 
+     public RconConsoleSource(MinecraftServer p_11505_) {
++        // CraftBukkit end
+         this.server = p_11505_;
+     }
+ 

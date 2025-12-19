@@ -28,3 +28,12 @@
      }
  
      @Override
+@@ -336,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_55630_, Level p_55631_, BlockPos p_55632_, BlockState p_55633_, boolean p_55634_) {
++    public void onPlace(BlockState p_55630_, Level p_55631_, BlockPos p_55632_, BlockState p_55633_, boolean p_55634_) {
+         if (!p_55633_.is(p_55630_.getBlock()) && !p_55631_.isClientSide) {
+             this.updatePowerStrength(p_55631_, p_55632_, p_55630_);
+ 

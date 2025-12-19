@@ -11,3 +11,11 @@
      private static final EntityDataAccessor<Integer> DATA_SWELL_DIR = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.INT);
      private static final EntityDataAccessor<Boolean> DATA_IS_POWERED = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Boolean> DATA_IS_IGNITED = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.BOOLEAN);
+@@ -50,6 +_,7 @@
+     public int maxSwell = 30;
+     public int explosionRadius = 3;
+     private int droppedSkulls;
++    public Entity entityIgniter; // CraftBukkit
+ 
+     public Creeper(EntityType<? extends Creeper> p_32278_, Level p_32279_) {
+         super(p_32278_, p_32279_);

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/DiodeBlock.java
 +++ b/net/minecraft/world/level/block/DiodeBlock.java
+@@ -158,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_52566_, Level p_52567_, BlockPos p_52568_, BlockState p_52569_, boolean p_52570_) {
++    public void onPlace(BlockState p_52566_, Level p_52567_, BlockPos p_52568_, BlockState p_52569_, boolean p_52570_) {
+         this.updateNeighborsInFront(p_52567_, p_52568_, p_52566_);
+     }
+ 
 @@ -173,6 +_,8 @@
      protected void updateNeighborsInFront(Level p_52581_, BlockPos p_52582_, BlockState p_52583_) {
          Direction direction = p_52583_.getValue(FACING);

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/SpongeBlock.java
 +++ b/net/minecraft/world/level/block/SpongeBlock.java
+@@ -29,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_56811_, Level p_56812_, BlockPos p_56813_, BlockState p_56814_, boolean p_56815_) {
++    public void onPlace(BlockState p_56811_, Level p_56812_, BlockPos p_56813_, BlockState p_56814_, boolean p_56815_) {
+         if (!p_56814_.is(p_56811_.getBlock())) {
+             this.tryAbsorbWater(p_56812_, p_56813_);
+         }
 @@ -49,6 +_,7 @@
      }
  

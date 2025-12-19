@@ -1,5 +1,24 @@
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
+@@ -31,6 +_,7 @@
+ import net.minecraft.world.level.material.PushReaction;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer {
+     public static final int COLUMNS = 9;
+@@ -48,6 +_,10 @@
+     private float progressOld;
+     @Nullable
+     private final DyeColor color;
++    // CraftBukkit start - add fields and methods
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++    public boolean opened;
+ 
+     public ShulkerBoxBlockEntity(@Nullable DyeColor p_155666_, BlockPos p_155667_, BlockState p_155668_) {
+         super(BlockEntityType.SHULKER_BOX, p_155667_, p_155668_);
 @@ -231,7 +_,8 @@
  
      @Override

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CoralWallFanBlock.java
++++ b/net/minecraft/world/level/block/CoralWallFanBlock.java
+@@ -31,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_52217_, Level p_52218_, BlockPos p_52219_, BlockState p_52220_, boolean p_52221_) {
++    public void onPlace(BlockState p_52217_, Level p_52218_, BlockPos p_52219_, BlockState p_52220_, boolean p_52221_) {
+         this.tryScheduleDieTick(p_52217_, p_52218_, p_52219_);
+     }
+ 

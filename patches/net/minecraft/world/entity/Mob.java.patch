@@ -11,13 +11,14 @@
      private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
      private static final int MOB_FLAG_NO_AI = 1;
      private static final int MOB_FLAG_LEFTHANDED = 2;
-@@ -131,6 +_,9 @@
+@@ -131,6 +_,10 @@
      private Leashable.LeashData leashData;
      private BlockPos restrictCenter = BlockPos.ZERO;
      private float restrictRadius = -1.0F;
 +    @Nullable
 +    private MobSpawnType spawnType;
 +    private boolean spawnCancelled = false;
++    public boolean aware = true; // CraftBukkit
  
      protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
          super(p_21368_, p_21369_);

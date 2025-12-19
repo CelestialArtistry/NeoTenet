@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
-@@ -28,8 +_,9 @@
+@@ -27,9 +_,11 @@
+ import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
++import org.bukkit.craftbukkit.CraftLootTable;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.world.level.storage.loot.InjectionLootTable;
  
@@ -22,7 +24,12 @@
                  )
                  .apply(p_338123_, LootTable::new)
      );
-@@ -53,7 +_,7 @@
+@@ -49,11 +_,12 @@
+     private final List<LootPool> pools;
+     private final List<LootItemFunction> functions;
+     private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
++    public CraftLootTable craftLootTable; // CraftBukkit
+ 
      LootTable(LootContextParamSet p_287716_, Optional<ResourceLocation> p_299055_, List<LootPool> p_298390_, List<LootItemFunction> p_298775_) {
          this.paramSet = p_287716_;
          this.randomSequence = p_299055_;

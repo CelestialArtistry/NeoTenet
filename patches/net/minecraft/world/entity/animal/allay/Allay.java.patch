@@ -11,6 +11,14 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final Vec3i ITEM_PICKUP_REACH = new Vec3i(1, 1, 1);
      private static final int LIFTING_ITEM_ANIMATION_DURATION = 5;
+@@ -116,6 +_,7 @@
+     private float dancingAnimationTicks;
+     private float spinningAnimationTicks;
+     private float spinningAnimationTicks0;
++    public boolean forceDancing = false; // CraftBukkit
+ 
+     public Allay(EntityType<? extends Allay> p_218310_, Level p_218311_) {
+         super(p_218310_, p_218311_);
 @@ -368,9 +_,9 @@
      public boolean wantsToPickUp(ItemStack p_218387_) {
          ItemStack itemstack = this.getItemInHand(InteractionHand.MAIN_HAND);

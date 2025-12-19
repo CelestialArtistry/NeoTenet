@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -5,8 +_,9 @@
+@@ -5,17 +_,31 @@
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.level.GameRules;
@@ -11,3 +11,25 @@
      public int foodLevel = 20;
      public float saturationLevel;
      public float exhaustionLevel;
+     private int tickTimer;
+     private int lastFoodLevel = 20;
++    // CraftBukkit start
++    private Player entityhuman;
++    public int saturatedRegenRate = 10;
++    public int unsaturatedRegenRate = 80;
++    public int starvationRate = 80;
++    // CraftBukkit end
+ 
+     public FoodData() {
+         this.saturationLevel = 5.0F;
+     }
++
++    // CraftBukkit start - added EntityHuman constructor
++    public FoodData(Player entityhuman) {
++        org.apache.commons.lang3.Validate.notNull(entityhuman);
++        this.entityhuman = entityhuman;
++    }
++    // CraftBukkit end
+ 
+     private void add(int p_340988_, float p_340961_) {
+         this.foodLevel = Mth.clamp(p_340988_ + this.foodLevel, 0, 20);

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/WetSpongeBlock.java
++++ b/net/minecraft/world/level/block/WetSpongeBlock.java
+@@ -24,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_58229_, Level p_58230_, BlockPos p_58231_, BlockState p_58232_, boolean p_58233_) {
++    public void onPlace(BlockState p_58229_, Level p_58230_, BlockPos p_58231_, BlockState p_58232_, boolean p_58233_) {
+         if (p_58230_.dimensionType().ultraWarm()) {
+             p_58230_.setBlock(p_58231_, Blocks.SPONGE.defaultBlockState(), 3);
+             p_58230_.levelEvent(2009, p_58231_, 0);

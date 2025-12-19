@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/item/trading/MerchantOffer.java
 +++ b/net/minecraft/world/item/trading/MerchantOffer.java
-@@ -8,8 +_,9 @@
+@@ -8,8 +_,10 @@
  import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.util.Mth;
  import net.minecraft.world.item.ItemStack;
++import org.bukkit.craftbukkit.inventory.CraftMerchantRecipe;
 +import org.taiyitistmc.injection.world.item.trading.InjectionMerchantOffer;
  
 -public class MerchantOffer {
@@ -11,3 +12,25 @@
      public static final Codec<MerchantOffer> CODEC = RecordCodecBuilder.create(
          p_324269_ -> p_324269_.group(
                      ItemCost.CODEC.fieldOf("buy").forGetter(p_330121_ -> p_330121_.baseCostA),
+@@ -38,7 +_,20 @@
+     public int demand;
+     public float priceMultiplier;
+     public int xp;
+-
++    // CraftBukkit start
++    private CraftMerchantRecipe bukkitHandle;
++
++    @Override
++    public CraftMerchantRecipe asBukkit() {
++        return (bukkitHandle == null) ? bukkitHandle = new CraftMerchantRecipe(this) : bukkitHandle;
++    }
++
++    public MerchantOffer(ItemCost baseCostA, Optional<ItemCost> costB, ItemStack result, int uses, int maxUses, int experience, float priceMultiplier, int demand, CraftMerchantRecipe bukkit) {
++        this(baseCostA, costB, result, uses, maxUses, experience, priceMultiplier, demand);
++        this.bukkitHandle = bukkit;
++    }
++
++    // CraftBukkit end
+     private MerchantOffer(
+         ItemCost p_330734_,
+         Optional<ItemCost> p_331500_,

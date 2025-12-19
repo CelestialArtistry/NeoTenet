@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/LightningRodBlock.java
++++ b/net/minecraft/world/level/block/LightningRodBlock.java
+@@ -114,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_153753_, Level p_153754_, BlockPos p_153755_, BlockState p_153756_, boolean p_153757_) {
++    public void onPlace(BlockState p_153753_, Level p_153754_, BlockPos p_153755_, BlockState p_153756_, boolean p_153757_) {
+         if (!p_153753_.is(p_153756_.getBlock())) {
+             if (p_153753_.getValue(POWERED) && !p_153754_.getBlockTicks().hasScheduledTick(p_153755_, this)) {
+                 p_153754_.setBlock(p_153755_, p_153753_.setValue(POWERED, Boolean.valueOf(false)), 18);

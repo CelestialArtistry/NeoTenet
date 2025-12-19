@@ -13,3 +13,18 @@
                          }
                      }
                  }
+@@ -163,6 +_,14 @@
+         }
+ 
+         return p_155417_.size() >= 16;
++    }
++
++    public static int getRange(List<BlockPos> list) {
++        // CraftBukkit end
++        int i = list.size();
++        int j = i / 7 * 16;
++        // CraftBukkit start
++        return j;
+     }
+ 
+     private static void applyEffects(Level p_155444_, BlockPos p_155445_, List<BlockPos> p_155446_) {

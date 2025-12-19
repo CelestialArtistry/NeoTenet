@@ -32,7 +32,7 @@
      private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
      public int invulnerableTime;
      protected boolean firstTick = true;
-@@ -243,6 +_,28 @@
+@@ -243,6 +_,31 @@
      public boolean hasVisualFire;
      @Nullable
      private BlockState inBlockState = null;
@@ -58,6 +58,9 @@
 +    // Marks an entity, that it was removed by a plugin via Entity#remove
 +    // Main use case currently is for SPIGOT-7487, preventing dropping of leash when leash is removed
 +    public boolean pluginRemoved = false;
++    public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
++    public long activatedTick = Integer.MIN_VALUE;
++    public boolean defaultActivationState;
  
      public Entity(EntityType<?> p_19870_, Level p_19871_) {
          this.type = p_19870_;

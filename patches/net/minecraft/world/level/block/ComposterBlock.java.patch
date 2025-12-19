@@ -9,7 +9,12 @@
      public static final Object2FloatMap<ItemLike> COMPOSTABLES = new Object2FloatOpenHashMap<>();
      private static final int AABB_SIDE_THICKNESS = 2;
      private static final VoxelShape OUTER_SHAPE = Shapes.block();
-@@ -227,6 +_,15 @@
+@@ -223,10 +_,19 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_51978_, Level p_51979_, BlockPos p_51980_, BlockState p_51981_, boolean p_51982_) {
++    public void onPlace(BlockState p_51978_, Level p_51979_, BlockPos p_51980_, BlockState p_51981_, boolean p_51982_) {
          if (p_51978_.getValue(LEVEL) == 7) {
              p_51979_.scheduleTick(p_51980_, p_51978_.getBlock(), 20);
          }

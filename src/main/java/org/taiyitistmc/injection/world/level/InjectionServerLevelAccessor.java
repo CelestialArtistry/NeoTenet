@@ -9,7 +9,7 @@ public interface InjectionServerLevelAccessor {
         throw new IllegalStateException("Not implemented");
     }
 
-    default boolean addFreshEntityWithPassengers(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    default void addFreshEntityWithPassengers(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
         throw new IllegalStateException("Not implemented");
     }
 }

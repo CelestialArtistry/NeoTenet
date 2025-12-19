@@ -41,7 +41,7 @@
      public static final Logger LOGGER = LogUtils.getLogger();
      public static final String VANILLA_BRAND = "vanilla";
      private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
-@@ -261,10 +_,26 @@
+@@ -261,10 +_,27 @@
      private final PotionBrewing potionBrewing;
      private volatile boolean isSaving;
      private static final AtomicReference<RuntimeException> fatalException = new AtomicReference<>();
@@ -61,6 +61,7 @@
 +    public final java.util.concurrent.ExecutorService chatExecutor = java.util.concurrent.Executors.newCachedThreadPool(
 +            new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Chat Thread - #%d").build());
 +    // CraftBukkit end
++    public final double[] recentTps = new double[ 4 ];
  
      public static <S extends MinecraftServer> S spin(Function<Thread, S> p_129873_) {
          AtomicReference<S> atomicreference = new AtomicReference<>();

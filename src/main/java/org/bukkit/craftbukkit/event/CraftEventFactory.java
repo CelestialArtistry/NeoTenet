@@ -253,6 +253,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.view.AnvilView;
+import org.bukkit.inventory.view.MerchantView;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -373,7 +374,7 @@ public class CraftEventFactory {
      * Trade Index Change Event
      */
     public static TradeSelectEvent callTradeSelectEvent(ServerPlayer player, int newIndex, MerchantMenu merchant) {
-        TradeSelectEvent tradeSelectEvent = new TradeSelectEvent(merchant.getBukkitView(), newIndex);
+        TradeSelectEvent tradeSelectEvent = new TradeSelectEvent((MerchantView) merchant.getBukkitView(), newIndex);
         Bukkit.getPluginManager().callEvent(tradeSelectEvent);
         return tradeSelectEvent;
     }

@@ -141,7 +141,7 @@ public final class CraftFoodComponent implements FoodComponent {
     public FoodEffect addEffect(PotionEffect effect, float probability) {
         List<FoodProperties.PossibleEffect> effects = new ArrayList<>(this.handle.effects());
 
-        FoodProperties.PossibleEffect newEffect = new FoodProperties.PossibleEffect(CraftPotionUtil.fromBukkit(effect), probability);
+        FoodProperties.PossibleEffect newEffect = new net.minecraft.world.food.FoodProperties.PossibleEffect(() -> CraftPotionUtil.fromBukkit(effect), probability);
         effects.add(newEffect);
 
         this.handle = new FoodProperties(this.handle.nutrition(), this.handle.saturation(), this.handle.canAlwaysEat(), this.handle.eatSeconds(), this.handle.usingConvertsTo(), effects);
@@ -186,7 +186,7 @@ public final class CraftFoodComponent implements FoodComponent {
         }
 
         public CraftFoodEffect(FoodEffect bukkit) {
-            this.handle = new FoodProperties.PossibleEffect(CraftPotionUtil.fromBukkit(bukkit.getEffect()), bukkit.getProbability());
+            this.handle = new FoodProperties.PossibleEffect(() -> CraftPotionUtil.fromBukkit(bukkit.getEffect()), bukkit.getProbability());
         }
 
         public CraftFoodEffect(Map<String, Object> map) {
@@ -197,7 +197,7 @@ public final class CraftFoodComponent implements FoodComponent {
                 probability = 1.0f;
             }
 
-            this.handle = new FoodProperties.PossibleEffect(CraftPotionUtil.fromBukkit(effect), probability);
+            this.handle = new FoodProperties.PossibleEffect(() -> CraftPotionUtil.fromBukkit(effect), probability);
         }
 
         @Override
@@ -219,7 +219,7 @@ public final class CraftFoodComponent implements FoodComponent {
 
         @Override
         public void setEffect(PotionEffect effect) {
-            this.handle = new FoodProperties.PossibleEffect(CraftPotionUtil.fromBukkit(effect), this.handle.probability());
+            this.handle = new FoodProperties.PossibleEffect(() -> CraftPotionUtil.fromBukkit(effect), this.handle.probability());
         }
 
         @Override
@@ -230,7 +230,7 @@ public final class CraftFoodComponent implements FoodComponent {
         @Override
         public void setProbability(float probability) {
             Preconditions.checkArgument(0 <= probability && probability <= 1, "Probability cannot be outside range [0,1]");
-            this.handle = new FoodProperties.PossibleEffect(this.handle.effect(), probability);
+            this.handle = new FoodProperties.PossibleEffect(() -> this.handle.effect(), probability);
         }
 
         @Override

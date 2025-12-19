@@ -1,8 +1,11 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -26,9 +_,11 @@
+@@ -25,10 +_,14 @@
+ import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.world.level.block.entity.InjectionBlockEntity;
  
@@ -13,12 +16,15 @@
      private final BlockEntityType<?> type;
      @Nullable
      protected Level level;
-@@ -36,6 +_,8 @@
+@@ -36,6 +_,11 @@
      protected boolean remove;
      private BlockState blockState;
      private DataComponentMap components = DataComponentMap.EMPTY;
 +    @Nullable
 +    private CompoundTag customPersistentData;
++    // CraftBukkit start - data containers
++    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
++    public CraftPersistentDataContainer persistentDataContainer;
  
      public BlockEntity(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
          this.type = p_155228_;

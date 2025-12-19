@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CoralPlantBlock.java
++++ b/net/minecraft/world/level/block/CoralPlantBlock.java
+@@ -36,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_52195_, Level p_52196_, BlockPos p_52197_, BlockState p_52198_, boolean p_52199_) {
++    public void onPlace(BlockState p_52195_, Level p_52196_, BlockPos p_52197_, BlockState p_52198_, boolean p_52199_) {
+         this.tryScheduleDieTick(p_52195_, p_52196_, p_52197_);
+     }
+ 

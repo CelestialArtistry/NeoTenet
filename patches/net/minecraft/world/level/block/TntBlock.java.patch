@@ -4,11 +4,12 @@
      }
  
      @Override
+-    protected void onPlace(BlockState p_57466_, Level p_57467_, BlockPos p_57468_, BlockState p_57469_, boolean p_57470_) {
 +    public void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable net.minecraft.core.Direction face, @Nullable LivingEntity igniter) {
 +        explode(world, pos, igniter);
 +    }
 +
-     protected void onPlace(BlockState p_57466_, Level p_57467_, BlockPos p_57468_, BlockState p_57469_, boolean p_57470_) {
++    public void onPlace(BlockState p_57466_, Level p_57467_, BlockPos p_57468_, BlockState p_57469_, boolean p_57470_) {
          if (!p_57469_.is(p_57466_.getBlock())) {
              if (p_57467_.hasNeighborSignal(p_57468_)) {
 -                explode(p_57467_, p_57468_);

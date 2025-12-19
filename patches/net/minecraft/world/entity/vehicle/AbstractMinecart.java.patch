@@ -36,7 +36,7 @@
  
      protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
          super(p_38087_, p_38088_);
-@@ -97,6 +_,14 @@
+@@ -97,6 +_,24 @@
          this.zo = p_38094_;
      }
  
@@ -47,6 +47,16 @@
 +    public static void registerCollisionHandler(@Nullable net.neoforged.neoforge.common.IMinecartCollisionHandler handler) {
 +        COLLISIONS = handler;
 +    }
++    // CraftBukkit start
++    public boolean slowWhenEmpty = true;
++    private double derailedX = 0.5;
++    private double derailedY = 0.5;
++    private double derailedZ = 0.5;
++    private double flyingX = 0.95;
++    private double flyingY = 0.95;
++    private double flyingZ = 0.95;
++    public double maxSpeed = 0.4D;
++    // CraftBukkit end
 +
      public static AbstractMinecart createMinecart(
          ServerLevel p_305794_,

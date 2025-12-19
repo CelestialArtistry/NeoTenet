@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/level/block/BaseFireBlock.java
 +++ b/net/minecraft/world/level/block/BaseFireBlock.java
-@@ -143,6 +_,7 @@
+@@ -139,10 +_,11 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_49279_, Level p_49280_, BlockPos p_49281_, BlockState p_49282_, boolean p_49283_) {
++    public void onPlace(BlockState p_49279_, Level p_49280_, BlockPos p_49281_, BlockState p_49282_, boolean p_49283_) {
          if (!p_49282_.is(p_49279_.getBlock())) {
              if (inPortalDimension(p_49280_)) {
                  Optional<PortalShape> optional = PortalShape.findEmptyPortalShape(p_49280_, p_49281_, Direction.Axis.X);

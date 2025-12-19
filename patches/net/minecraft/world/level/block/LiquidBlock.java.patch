@@ -1,10 +1,12 @@
 --- a/net/minecraft/world/level/block/LiquidBlock.java
 +++ b/net/minecraft/world/level/block/LiquidBlock.java
-@@ -134,7 +_,7 @@
+@@ -133,8 +_,8 @@
+     }
  
      @Override
-     protected void onPlace(BlockState p_54754_, Level p_54755_, BlockPos p_54756_, BlockState p_54757_, boolean p_54758_) {
+-    protected void onPlace(BlockState p_54754_, Level p_54755_, BlockPos p_54756_, BlockState p_54757_, boolean p_54758_) {
 -        if (this.shouldSpreadLiquid(p_54755_, p_54756_, p_54754_)) {
++    public void onPlace(BlockState p_54754_, Level p_54755_, BlockPos p_54756_, BlockState p_54757_, boolean p_54758_) {
 +        if (!net.neoforged.neoforge.fluids.FluidInteractionRegistry.canInteract(p_54755_, p_54756_)) {
              p_54755_.scheduleTick(p_54756_, p_54754_.getFluidState().getType(), this.fluid.getTickDelay(p_54755_));
          }

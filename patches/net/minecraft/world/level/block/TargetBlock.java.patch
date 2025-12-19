@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/TargetBlock.java
++++ b/net/minecraft/world/level/block/TargetBlock.java
+@@ -104,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_57412_, Level p_57413_, BlockPos p_57414_, BlockState p_57415_, boolean p_57416_) {
++    public void onPlace(BlockState p_57412_, Level p_57413_, BlockPos p_57414_, BlockState p_57415_, boolean p_57416_) {
+         if (!p_57413_.isClientSide() && !p_57412_.is(p_57415_.getBlock())) {
+             if (p_57412_.getValue(OUTPUT_POWER) > 0 && !p_57413_.getBlockTicks().hasScheduledTick(p_57414_, this)) {
+                 p_57413_.setBlock(p_57414_, p_57412_.setValue(OUTPUT_POWER, Integer.valueOf(0)), 18);

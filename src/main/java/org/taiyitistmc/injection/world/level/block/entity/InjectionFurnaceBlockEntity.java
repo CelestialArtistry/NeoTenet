@@ -11,8 +11,9 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
+import org.taiyitistmc.injection.world.InjectionContainer;
 
-public interface InjectionFurnaceBlockEntity {
+public interface InjectionFurnaceBlockEntity extends InjectionContainer {
 
     default List<ItemStack> getContents() {
         throw new IllegalStateException("Not implemented");
@@ -23,10 +24,6 @@ public interface InjectionFurnaceBlockEntity {
     }
 
     default void onClose(CraftHumanEntity who) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default Object2IntOpenHashMap<ResourceLocation> getRecipesUsed() {
         throw new IllegalStateException("Not implemented");
     }
 

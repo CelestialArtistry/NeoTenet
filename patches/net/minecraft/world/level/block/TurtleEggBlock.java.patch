@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/TurtleEggBlock.java
 +++ b/net/minecraft/world/level/block/TurtleEggBlock.java
+@@ -124,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_57814_, Level p_57815_, BlockPos p_57816_, BlockState p_57817_, boolean p_57818_) {
++    public void onPlace(BlockState p_57814_, Level p_57815_, BlockPos p_57816_, BlockState p_57817_, boolean p_57818_) {
+         if (onSand(p_57815_, p_57816_) && !p_57815_.isClientSide) {
+             p_57815_.levelEvent(2012, p_57816_, 15);
+         }
 @@ -171,7 +_,7 @@
          if (p_57769_ instanceof Turtle || p_57769_ instanceof Bat) {
              return false;

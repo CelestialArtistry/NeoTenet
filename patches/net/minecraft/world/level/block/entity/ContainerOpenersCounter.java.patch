@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 +++ b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
-@@ -8,8 +_,9 @@
+@@ -8,11 +_,13 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
@@ -11,3 +11,7 @@
      private static final int CHECK_TICK_DELAY = 5;
      private int openCount;
      private double maxInteractionRange;
++    public boolean opened; // CraftBukkit
+ 
+     protected abstract void onOpen(Level p_155460_, BlockPos p_155461_, BlockState p_155462_);
+ 

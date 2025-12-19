@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/net/minecraft/world/level/block/piston/PistonBaseBlock.java
+@@ -107,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_60225_, Level p_60226_, BlockPos p_60227_, BlockState p_60228_, boolean p_60229_) {
++    public void onPlace(BlockState p_60225_, Level p_60226_, BlockPos p_60227_, BlockState p_60228_, boolean p_60229_) {
+         if (!p_60228_.is(p_60225_.getBlock())) {
+             if (!p_60226_.isClientSide && p_60226_.getBlockEntity(p_60227_) == null) {
+                 this.checkIfExtend(p_60226_, p_60227_, p_60225_);
 @@ -186,6 +_,7 @@
          }
  

@@ -51,7 +51,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final HumanoidArm DEFAULT_MAIN_HAND = HumanoidArm.RIGHT;
      public static final int DEFAULT_MODEL_CUSTOMIZATION = 0;
-@@ -193,6 +_,10 @@
+@@ -193,6 +_,13 @@
      public Entity currentExplosionCause;
      private boolean ignoreFallDamageFromCurrentImpulse;
      private int currentImpulseContextResetGraceTime;
@@ -59,6 +59,9 @@
 +    private final java.util.Collection<MutableComponent> suffixes = new java.util.LinkedList<>();
 +    @Nullable private Pose forcedPose;
 +    private long lastDayTimeTick = -1L; // Neo: Used to limit TIME_SINCE_REST increases when day length is non-standard. No need to persist, at most Phantoms will spawn one tick too early for each save/load cycle.
++    // CraftBukkit start
++    public boolean fauxSleeping;
++    public int oldLevel = -1;
  
      public Player(Level p_250508_, BlockPos p_250289_, float p_251702_, GameProfile p_252153_) {
          super(EntityType.PLAYER, p_250508_);
@@ -121,6 +124,15 @@
          if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
              Pose pose;
              if (this.isFallFlying()) {
+@@ -464,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected int getFireImmuneTicks() {
++    public int getFireImmuneTicks() {
+         return 20;
+     }
+ 
 @@ -630,6 +_,7 @@
  
      @Override

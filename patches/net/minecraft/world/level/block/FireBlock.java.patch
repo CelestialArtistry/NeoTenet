@@ -111,13 +111,20 @@
              }
  
              return i;
-@@ -301,6 +_,7 @@
+@@ -301,12 +_,13 @@
      }
  
      @Override
 +    @Deprecated //Forge: Use canCatchFire with more context
      protected boolean canBurn(BlockState p_53489_) {
          return this.getIgniteOdds(p_53489_) > 0;
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_53479_, Level p_53480_, BlockPos p_53481_, BlockState p_53482_, boolean p_53483_) {
++    public void onPlace(BlockState p_53479_, Level p_53480_, BlockPos p_53481_, BlockState p_53482_, boolean p_53483_) {
+         super.onPlace(p_53479_, p_53480_, p_53481_, p_53482_, p_53483_);
+         p_53480_.scheduleTick(p_53481_, this, getFireTickDelay(p_53480_.random));
      }
 @@ -321,8 +_,21 @@
      }

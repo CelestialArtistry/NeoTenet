@@ -1,5 +1,6 @@
 package org.taiyitistmc.injection.server.network;
 
+import java.net.SocketAddress;
 import java.util.Set;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.world.entity.RelativeMovement;
@@ -52,6 +53,10 @@ public interface InjectionServerGamePacketListenerImpl extends InjectionServerCo
     }
 
     default void detectRateSpam(String s) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default public SocketAddress getRawAddress() {
         throw new IllegalStateException("Not implemented");
     }
 }

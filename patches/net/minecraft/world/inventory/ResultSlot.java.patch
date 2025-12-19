@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/inventory/ResultSlot.java
 +++ b/net/minecraft/world/inventory/ResultSlot.java
+@@ -39,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onSwapCraft(int p_40183_) {
++    public void onSwapCraft(int p_40183_) {
+         this.removeCount += p_40183_;
+     }
+ 
 @@ -47,6 +_,7 @@
      protected void checkTakeAchievements(ItemStack p_40185_) {
          if (this.removeCount > 0) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/ScaffoldingBlock.java
++++ b/net/minecraft/world/level/block/ScaffoldingBlock.java
+@@ -87,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_56062_, Level p_56063_, BlockPos p_56064_, BlockState p_56065_, boolean p_56066_) {
++    public void onPlace(BlockState p_56062_, Level p_56063_, BlockPos p_56064_, BlockState p_56065_, boolean p_56066_) {
+         if (!p_56063_.isClientSide) {
+             p_56063_.scheduleTick(p_56064_, this, 1);
+         }

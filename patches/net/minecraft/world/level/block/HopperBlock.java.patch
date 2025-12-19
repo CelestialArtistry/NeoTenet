@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/HopperBlock.java
++++ b/net/minecraft/world/level/block/HopperBlock.java
+@@ -116,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_54110_, Level p_54111_, BlockPos p_54112_, BlockState p_54113_, boolean p_54114_) {
++    public void onPlace(BlockState p_54110_, Level p_54111_, BlockPos p_54112_, BlockState p_54113_, boolean p_54114_) {
+         if (!p_54113_.is(p_54110_.getBlock())) {
+             this.checkPoweredState(p_54111_, p_54112_, p_54110_);
+         }

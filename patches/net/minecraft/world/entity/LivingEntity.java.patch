@@ -1,8 +1,29 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -131,8 +_,9 @@
+@@ -14,14 +_,18 @@
+ import it.unimi.dsi.fastutil.doubles.DoubleDoubleImmutablePair;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
++
++import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.ConcurrentModificationException;
++import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.Map.Entry;
++import java.util.UUID;
+ import java.util.function.Predicate;
+ import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+@@ -130,9 +_,11 @@
+ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
++import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.world.entity.InjectionLivingEntity;
  
@@ -11,7 +32,16 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final String TAG_ACTIVE_EFFECTS = "active_effects";
      private static final ResourceLocation SPEED_MODIFIER_POWDER_SNOW_ID = ResourceLocation.withDefaultNamespace("powder_snow");
-@@ -254,6 +_,14 @@
+@@ -158,7 +_,7 @@
+     private static final double MAX_LINE_OF_SIGHT_TEST_RANGE = 128.0;
+     protected static final int LIVING_ENTITY_FLAG_IS_USING = 1;
+     protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
+-    protected static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
++    public static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
+     protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
+     public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
+     private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(
+@@ -254,11 +_,34 @@
      private boolean skipDropExperience;
      private final Reference2ObjectMap<Enchantment, Set<EnchantmentLocationBasedEffect>> activeLocationDependentEnchantments = new Reference2ObjectArrayMap<>();
      protected float appliedScale = 1.0F;
@@ -23,9 +53,30 @@
 +    **/
 +    @Nullable
 +    protected java.util.Stack<net.neoforged.neoforge.common.damagesource.DamageContainer> damageContainers = new java.util.Stack<>();
++    // CraftBukkit start
++    public int expToDrop;
++    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
++    public final org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
++    public boolean collides = true;
++    public Set<UUID> collidableExemptions = new HashSet<>();
++    public boolean bukkitPickUpLoot;
++
++    @Override
++    public float getBukkitYaw() {
++        return getYHeadRot();
++    }
++    // CraftBukkit end
  
      protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
          super(p_20966_, p_20967_);
+         this.attributes = new AttributeMap(DefaultAttributes.getSupplier(p_20966_));
+-        this.setHealth(this.getMaxHealth());
++        this.craftAttributes = new CraftAttributeMap(attributes); // CraftBukkit
++        // CraftBukkit - setHealth(getMaxHealth()) inlined and simplified to skip the instanceof check for EntityPlayer, as getBukkitEntity() is not initialized in constructor
++        this.entityData.set(LivingEntity.DATA_HEALTH_ID, (float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
+         this.blocksBuilding = true;
+         this.rotA = (float)((Math.random() + 1.0) * 0.01F);
+         this.reapplyPosition();
 @@ -320,7 +_,9 @@
              .add(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE)
              .add(Attributes.WATER_MOVEMENT_EFFICIENCY)
@@ -114,7 +165,12 @@
                  iterator.remove();
              }
  
-@@ -929,11 +_,12 @@
+@@ -925,15 +_,16 @@
+     }
+ 
+     public final boolean addEffect(MobEffectInstance p_21165_) {
+-        return this.addEffect(p_21165_, null);
++        return this.addEffect(p_21165_, (Entity) null);
      }
  
      public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {

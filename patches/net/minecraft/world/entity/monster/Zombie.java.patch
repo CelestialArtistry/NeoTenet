@@ -1,10 +1,65 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -259,6 +_,7 @@
+@@ -63,15 +_,16 @@
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class Zombie extends Monster {
+     private static final ResourceLocation SPEED_MODIFIER_BABY_ID = ResourceLocation.withDefaultNamespace("baby");
+     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(
+-        SPEED_MODIFIER_BABY_ID, 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE
++            SPEED_MODIFIER_BABY_ID, 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE
+     );
+     private static final ResourceLocation REINFORCEMENT_CALLER_CHARGE_ID = ResourceLocation.withDefaultNamespace("reinforcement_caller_charge");
+     private static final AttributeModifier ZOMBIE_REINFORCEMENT_CALLEE_CHARGE = new AttributeModifier(
+-        ResourceLocation.withDefaultNamespace("reinforcement_callee_charge"), -0.05F, AttributeModifier.Operation.ADD_VALUE
++            ResourceLocation.withDefaultNamespace("reinforcement_callee_charge"), -0.05F, AttributeModifier.Operation.ADD_VALUE
+     );
+     private static final ResourceLocation LEADER_ZOMBIE_BONUS_ID = ResourceLocation.withDefaultNamespace("leader_zombie_bonus");
+     private static final ResourceLocation ZOMBIE_RANDOM_SPAWN_BONUS_ID = ResourceLocation.withDefaultNamespace("zombie_random_spawn_bonus");
+@@ -119,11 +_,11 @@
+ 
+     public static AttributeSupplier.Builder createAttributes() {
+         return Monster.createMonsterAttributes()
+-            .add(Attributes.FOLLOW_RANGE, 35.0)
+-            .add(Attributes.MOVEMENT_SPEED, 0.23F)
+-            .add(Attributes.ATTACK_DAMAGE, 3.0)
+-            .add(Attributes.ARMOR, 2.0)
+-            .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE);
++                .add(Attributes.FOLLOW_RANGE, 35.0)
++                .add(Attributes.MOVEMENT_SPEED, 0.23F)
++                .add(Attributes.ATTACK_DAMAGE, 3.0)
++                .add(Attributes.ARMOR, 2.0)
++                .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE);
+     }
+ 
+     @Override
+@@ -146,7 +_,7 @@
+         if (this.supportsBreakDoorGoal() && GoalUtils.hasGroundPathNavigation(this)) {
+             if (this.canBreakDoors != p_34337_) {
+                 this.canBreakDoors = p_34337_;
+-                ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(p_34337_);
++                ((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(p_34337_);
+                 if (p_34337_) {
+                     this.goalSelector.addGoal(1, this.breakDoorGoal);
+                 } else {
+@@ -171,7 +_,7 @@
+     @Override
+     protected int getBaseExperienceReward() {
+         if (this.isBaby()) {
+-            this.xpReward = (int)((double)this.xpReward * 2.5);
++            this.xpReward = (int) ((double) this.xpReward * 2.5);
+         }
+ 
+         return super.getBaseExperienceReward();
+@@ -259,6 +_,8 @@
      }
  
      protected void doUnderWaterConversion() {
-+        if (!net.neoforged.neoforge.event.EventHooks.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer)) return;
++        if (!net.neoforged.neoforge.event.EventHooks.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer))
++            return;
          this.convertToZombieType(EntityType.DROWNED);
          if (!this.isSilent()) {
              this.level().levelEvent(null, 1040, this.blockPosition(), 0);
@@ -16,20 +71,115 @@
          }
      }
  
-@@ -406,7 +_,7 @@
+@@ -284,16 +_,16 @@
+         } else if (!(this.level() instanceof ServerLevel)) {
+             return false;
+         } else {
+-            ServerLevel serverlevel = (ServerLevel)this.level();
++            ServerLevel serverlevel = (ServerLevel) this.level();
+             LivingEntity livingentity = this.getTarget();
+             if (livingentity == null && p_34288_.getEntity() instanceof LivingEntity) {
+-                livingentity = (LivingEntity)p_34288_.getEntity();
++                livingentity = (LivingEntity) p_34288_.getEntity();
+             }
+ 
+             if (livingentity != null
+-                && this.level().getDifficulty() == Difficulty.HARD
+-                && (double)this.random.nextFloat() < this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE)
+-                && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
++                    && this.level().getDifficulty() == Difficulty.HARD
++                    && (double) this.random.nextFloat() < this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE)
++                    && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
+                 int i = Mth.floor(this.getX());
+                 int j = Mth.floor(this.getY());
+                 int k = Mth.floor(this.getZ());
+@@ -306,12 +_,12 @@
+                     BlockPos blockpos = new BlockPos(i1, j1, k1);
+                     EntityType<?> entitytype = zombie.getType();
+                     if (SpawnPlacements.isSpawnPositionOk(entitytype, this.level(), blockpos)
+-                        && SpawnPlacements.checkSpawnRules(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.level().random)) {
+-                        zombie.setPos((double)i1, (double)j1, (double)k1);
+-                        if (!this.level().hasNearbyAlivePlayer((double)i1, (double)j1, (double)k1, 7.0)
+-                            && this.level().isUnobstructed(zombie)
+-                            && this.level().noCollision(zombie)
+-                            && !this.level().containsAnyLiquid(zombie.getBoundingBox())) {
++                            && SpawnPlacements.checkSpawnRules(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.level().random)) {
++                        zombie.setPos((double) i1, (double) j1, (double) k1);
++                        if (!this.level().hasNearbyAlivePlayer((double) i1, (double) j1, (double) k1, 7.0)
++                                && this.level().isUnobstructed(zombie)
++                                && this.level().noCollision(zombie)
++                                && !this.level().containsAnyLiquid(zombie.getBoundingBox())) {
+                             zombie.setTarget(livingentity);
+                             zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, null);
+                             serverlevel.addFreshEntityWithPassengers(zombie);
+@@ -320,7 +_,7 @@
+                             double d0 = attributemodifier != null ? attributemodifier.amount() : 0.0;
+                             attributeinstance.removeModifier(REINFORCEMENT_CALLER_CHARGE_ID);
+                             attributeinstance.addPermanentModifier(
+-                                new AttributeModifier(REINFORCEMENT_CALLER_CHARGE_ID, d0 - 0.05, AttributeModifier.Operation.ADD_VALUE)
++                                    new AttributeModifier(REINFORCEMENT_CALLER_CHARGE_ID, d0 - 0.05, AttributeModifier.Operation.ADD_VALUE)
+                             );
+                             zombie.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).addPermanentModifier(ZOMBIE_REINFORCEMENT_CALLEE_CHARGE);
+                             break;
+@@ -339,7 +_,7 @@
+         if (flag) {
+             float f = this.level().getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
+             if (this.getMainHandItem().isEmpty() && this.isOnFire() && this.random.nextFloat() < f * 0.3F) {
+-                p_34276_.igniteForSeconds((float)(2 * (int)f));
++                p_34276_.igniteForSeconds((float) (2 * (int) f));
+             }
+         }
+ 
+@@ -406,32 +_,35 @@
      @Override
      public boolean killedEntity(ServerLevel p_219160_, LivingEntity p_219161_) {
          boolean flag = super.killedEntity(p_219160_, p_219161_);
 -        if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager) {
-+        if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager && net.neoforged.neoforge.event.EventHooks.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {})) {
++        if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager && net.neoforged.neoforge.event.EventHooks.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {
++        })) {
              if (p_219160_.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
-                 return flag;
+-                return flag;
++                flag = zombifyVillager(p_219160_, (Villager) p_219161_, this.blockPosition(), this.isSilent(), CreatureSpawnEvent.SpawnReason.INFECTION) == null;
              }
-@@ -423,6 +_,7 @@
-                 zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
-                 zombievillager.setTradeOffers(villager.getOffers().copy());
-                 zombievillager.setVillagerXp(villager.getVillagerXp());
-+                net.neoforged.neoforge.event.EventHooks.onLivingConvert(p_219161_, zombievillager);
-                 if (!this.isSilent()) {
-                     p_219160_.levelEvent(null, 1026, this.blockPosition(), 0);
-                 }
++        }
++        return flag;
++    }
+ 
+-            ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
+-            if (zombievillager != null) {
+-                zombievillager.finalizeSpawn(
++    public static ZombieVillager zombifyVillager(ServerLevel p_219160_, Villager villager, net.minecraft.core.BlockPos blockPosition, boolean silent, CreatureSpawnEvent.SpawnReason spawnReason) {
++        ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
++        if (zombievillager != null) {
++            zombievillager.finalizeSpawn(
+                     p_219160_,
+                     p_219160_.getCurrentDifficultyAt(zombievillager.blockPosition()),
+                     MobSpawnType.CONVERSION,
+                     new Zombie.ZombieGroupData(false, true)
+-                );
+-                zombievillager.setVillagerData(villager.getVillagerData());
+-                zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
+-                zombievillager.setTradeOffers(villager.getOffers().copy());
+-                zombievillager.setVillagerXp(villager.getVillagerXp());
+-                if (!this.isSilent()) {
+-                    p_219160_.levelEvent(null, 1026, this.blockPosition(), 0);
+-                }
+-
+-                flag = false;
++            );
++            zombievillager.setVillagerData(villager.getVillagerData());
++            zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
++            zombievillager.setTradeOffers(villager.getOffers().copy());
++            zombievillager.setVillagerXp(villager.getVillagerXp());
++            net.neoforged.neoforge.event.EventHooks.onLivingConvert(zombievillager, zombievillager);
++            // CraftBukkit start
++            if (!silent) {
++                // p_219160_.levelEvent(null, 1026, this.blockPosition(), 0);
+             }
+         }
+-
+-        return flag;
++        return zombievillager;
+     }
+ 
+     @Override

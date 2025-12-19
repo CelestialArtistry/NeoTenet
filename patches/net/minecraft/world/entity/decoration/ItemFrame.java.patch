@@ -11,6 +11,22 @@
      public static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.ITEM_STACK);
      public static final EntityDataAccessor<Integer> DATA_ROTATION = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.INT);
      public static final int NUM_ROTATIONS = 8;
+@@ -84,6 +_,15 @@
+         this.yRotO = this.getYRot();
+         this.recalculateBoundingBox();
+     }
++    public static AABB calculateBoundingBoxStatic(BlockPos p_345363_, Direction p_344892_) {
++        float f = 0.46875F;
++        Vec3 vec3 = Vec3.atCenterOf(p_345363_).relative(p_344892_, -0.46875);
++        Direction.Axis direction$axis = p_344892_.getAxis();
++        double d0 = direction$axis == Direction.Axis.X ? 0.0625 : 0.75;
++        double d1 = direction$axis == Direction.Axis.Y ? 0.0625 : 0.75;
++        double d2 = direction$axis == Direction.Axis.Z ? 0.0625 : 0.75;
++        return AABB.ofSize(vec3, d0, d1, d2);
++    }
+ 
+     @Override
+     protected AABB calculateBoundingBox(BlockPos p_345363_, Direction p_344892_) {
 @@ -212,7 +_,7 @@
      private void removeFramedMap(ItemStack p_31811_) {
          MapId mapid = this.getFramedMapId(p_31811_);

@@ -20,6 +20,15 @@
          this.registerDefaultState(
              this.stateDefinition
                  .any()
+@@ -127,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_52483_, Level p_52484_, BlockPos p_52485_, BlockState p_52486_, boolean p_52487_) {
++    public void onPlace(BlockState p_52483_, Level p_52484_, BlockPos p_52485_, BlockState p_52486_, boolean p_52487_) {
+         if (!p_52486_.is(p_52483_.getBlock())) {
+             BlockState blockstate = this.updateState(p_52483_, p_52484_, p_52485_, p_52487_);
+             this.checkPressed(p_52484_, p_52485_, blockstate);
 @@ -147,14 +_,14 @@
      @Override
      protected int getAnalogOutputSignal(BlockState p_52454_, Level p_52455_, BlockPos p_52456_) {

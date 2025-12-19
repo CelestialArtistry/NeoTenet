@@ -5,10 +5,14 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
-import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.inventory.InventoryHolder;
+import org.taiyitistmc.injection.world.InjectionContainer;
 
-public interface InjectionBlockEntity {
+public interface InjectionBlockEntity extends InjectionContainer {
+
+    default InventoryHolder getOwner() {
+        throw new IllegalStateException("Not implemented");
+    }
 
     default void setPatterns(BannerPatternLayers bannerPatternLayers) {
         throw new IllegalStateException("Not implemented");

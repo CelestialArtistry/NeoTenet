@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/FrogspawnBlock.java
++++ b/net/minecraft/world/level/block/FrogspawnBlock.java
+@@ -53,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_221227_, Level p_221228_, BlockPos p_221229_, BlockState p_221230_, boolean p_221231_) {
++    public void onPlace(BlockState p_221227_, Level p_221228_, BlockPos p_221229_, BlockState p_221230_, boolean p_221231_) {
+         p_221228_.scheduleTick(p_221229_, this, getFrogspawnHatchDelay(p_221228_.getRandom()));
+     }
+ 
