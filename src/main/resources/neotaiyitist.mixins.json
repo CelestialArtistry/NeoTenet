@@ -6,7 +6,6 @@
     "MixinCrashReport",
     "advancements.MixinAdvancementHolder",
     "advancements.MixinAdvancementTree",
-    "commands.MixinCommandSourceStack",
     "server.dedicated.MixinDedicatedServer"
   ],
   "injectors": {

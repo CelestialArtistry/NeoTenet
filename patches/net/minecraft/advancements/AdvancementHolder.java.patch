@@ -11,7 +11,7 @@
  import net.minecraft.resources.ResourceLocation;
 +import org.taiyitistmc.injection.advancements.InjectionAdvancementHolder;
  
--public record AdvancementHolder(ResourceLocation id, Advancement value) {
+-public record AdvancementHolder(ResourceLocation id, Advancement value) implements org.taiyitistmc.injection.advancements.InjectionAdvancementHolder {
 +public record AdvancementHolder(ResourceLocation id, Advancement value) implements InjectionAdvancementHolder {
      public static final StreamCodec<RegistryFriendlyByteBuf, AdvancementHolder> STREAM_CODEC = StreamCodec.composite(
          ResourceLocation.STREAM_CODEC, AdvancementHolder::id, Advancement.STREAM_CODEC, AdvancementHolder::value, AdvancementHolder::new

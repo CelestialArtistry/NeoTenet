@@ -267,5 +267,8 @@
     ],
     "net/minecraft/world/level/biome/BiomeSpecialEffects$GrassColorModifier": [
         "net/neoforged/fml/common/asm/enumextension/IExtensibleEnum"
+    ],
+    "net/minecraft/advancements/AdvancementHolder": [
+        "org/taiyitistmc/injection/advancements/InjectionAdvancementHolder"
     ]
 }

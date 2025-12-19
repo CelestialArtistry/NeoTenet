@@ -11,12 +11,21 @@
                      BiomeGenerationSettings.CODEC.forGetter(p_220548_ -> p_220548_.generationSettings),
                      MobSpawnSettings.CODEC.forGetter(p_220546_ -> p_220546_.mobSettings)
                  )
-@@ -60,9 +_,11 @@
+@@ -60,9 +_,20 @@
      )
      public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
      private static final int TEMPERATURE_CACHE_SIZE = 1024;
++
++    /**
++     * Taiyitist added for bukkit
++     * @return wdog5734
++     */
++    public ClimateSettings getClimateSettings() {
++        return climateSettings;
++    }
++
 +    /** Neo: Field accesses are redirected to {@link #getModifiedClimateSettings()} with a coremod. */
-     public final Biome.ClimateSettings climateSettings;
+     private final Biome.ClimateSettings climateSettings;
      private final BiomeGenerationSettings generationSettings;
      private final MobSpawnSettings mobSettings;
 +    /** Neo: Field accesses are redirected to {@link #getModifiedSpecialEffects()} with a coremod. */
