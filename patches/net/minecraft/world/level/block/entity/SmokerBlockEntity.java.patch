@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/SmokerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SmokerBlockEntity.java
+@@ -20,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected int getBurnDuration(ItemStack p_59786_) {
++    public int getBurnDuration(ItemStack p_59786_) {
+         return super.getBurnDuration(p_59786_) / 2;
+     }
+ 

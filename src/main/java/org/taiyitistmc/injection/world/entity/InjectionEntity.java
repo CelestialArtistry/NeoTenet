@@ -2,6 +2,8 @@ package org.taiyitistmc.injection.world.entity;
 
 import java.util.Set;
 import java.util.UUID;
+
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -105,6 +107,9 @@ public interface InjectionEntity {
     }
 
     default void igniteForSeconds(float i, boolean callEvent) {
+        throw new IllegalStateException("Not implemented");
+    }
+    default boolean saveAsPassenger(CompoundTag p_20087_,boolean includeAll)  {
         throw new IllegalStateException("Not implemented");
     }
 }

@@ -114,7 +114,12 @@
                  iterator.remove();
              }
  
-@@ -929,11 +_,12 @@
+@@ -925,15 +_,16 @@
+     }
+ 
+     public final boolean addEffect(MobEffectInstance p_21165_) {
+-        return this.addEffect(p_21165_, null);
++        return this.addEffect(p_21165_, (Entity) null);
      }
  
      public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
