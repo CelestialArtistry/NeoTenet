@@ -1,13 +1,13 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -9,6 +_,7 @@
- import com.mojang.authlib.GameProfile;
- import com.mojang.authlib.GameProfileRepository;
- import com.mojang.authlib.minecraft.MinecraftSessionService;
-+import com.mojang.brigadier.CommandDispatcher;
- import com.mojang.datafixers.DataFixer;
- import com.mojang.logging.LogUtils;
- import it.unimi.dsi.fastutil.longs.LongIterator;
+@@ -33,7 +_,6 @@
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Map;
+-import java.util.Objects;
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.UUID;
 @@ -48,6 +_,9 @@
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
@@ -18,9 +18,21 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.FileUtil;
-@@ -166,8 +_,9 @@
+@@ -60,7 +_,6 @@
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.commands.Commands;
+ import net.minecraft.core.BlockPos;
+-import net.minecraft.core.Holder;
+ import net.minecraft.core.HolderGetter;
+ import net.minecraft.core.LayeredRegistryAccess;
+ import net.minecraft.core.Registry;
+@@ -165,9 +_,13 @@
+ import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.CraftRegistry;
++import org.bukkit.craftbukkit.CraftServer;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.server.InjectionMinecraftServer;
  
@@ -332,6 +344,24 @@
      public void dumpServerProperties(Path p_177911_) throws IOException {
      }
  
+@@ -1807,6 +_,17 @@
+         }
+     }
+ 
++    @Deprecated
++    public static MinecraftServer getServer() {
++        return (Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
++    }
++
++    @Deprecated
++    public static RegistryAccess getDefaultRegistryAccess() {
++        return CraftRegistry.getMinecraftRegistry();
++    }
++    // CraftBukkit end
++
+     private void startMetricsRecordingTick() {
+         if (this.willStartRecordingMetrics) {
+             this.metricsRecorder = ActiveMetricsRecorder.createStarted(
 @@ -1873,6 +_,10 @@
  
      public WorldData getWorldData() {

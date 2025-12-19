@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
+@@ -157,6 +_,7 @@
+ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+ import net.minecraft.world.level.storage.DimensionDataStorage;
+ import net.minecraft.world.level.storage.LevelStorageSource;
++import net.minecraft.world.level.storage.PrimaryLevelData;
+ import net.minecraft.world.level.storage.ServerLevelData;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
 @@ -164,9 +_,11 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -13,7 +21,7 @@
      public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
      public static final IntProvider RAIN_DELAY = UniformInt.of(12000, 180000);
      public static final IntProvider RAIN_DURATION = UniformInt.of(12000, 24000);
-@@ -199,11 +_,38 @@
+@@ -199,11 +_,39 @@
      private final List<CustomSpawner> customSpawners;
      @Nullable
      private EndDragonFight dragonFight;
@@ -26,6 +34,7 @@
 +    // CraftBukkit start
 +    public LevelStorageSource.LevelStorageAccess convertable;
 +    public UUID uuid;
++    public PrimaryLevelData K;
 +
 +    @Override
 +    public ResourceKey<LevelStem> getTypeKey() {

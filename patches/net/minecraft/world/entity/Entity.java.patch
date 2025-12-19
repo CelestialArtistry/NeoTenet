@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -127,8 +_,9 @@
+@@ -126,9 +_,11 @@
+ import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreHolder;
  import net.minecraft.world.scores.Team;
++import org.bukkit.craftbukkit.entity.CraftEntity;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.world.entity.InjectionEntity;
  
@@ -30,6 +32,35 @@
      private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
      public int invulnerableTime;
      protected boolean firstTick = true;
+@@ -243,6 +_,28 @@
+     public boolean hasVisualFire;
+     @Nullable
+     private BlockState inBlockState = null;
++    // CraftBukkit start
++    private static final int CURRENT_LEVEL = 2;
++    static boolean isLevelAtLeast(CompoundTag tag, int level) {
++        return tag.contains("Bukkit.updateLevel") && tag.getInt("Bukkit.updateLevel") >= level;
++    }
++
++    private CraftEntity bukkitEntity;
++    // CraftBukkit start
++    public boolean forceDrops;
++    public boolean persist = true;
++    public boolean visibleByDefault = true;
++    public boolean valid;
++    public boolean inWorld = false;
++    public boolean generation;
++    public int maxAirTicks = getDefaultMaxAirSupply(); // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++    public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
++    public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
++    public boolean persistentInvisibility = false;
++    public BlockPos lastLavaContact;
++    // Marks an entity, that it was removed by a plugin via Entity#remove
++    // Main use case currently is for SPIGOT-7487, preventing dropping of leash when leash is removed
++    public boolean pluginRemoved = false;
+ 
+     public Entity(EntityType<?> p_19870_, Level p_19871_) {
+         this.type = p_19870_;
 @@ -263,7 +_,10 @@
          this.defineSynchedData(synchedentitydata$builder);
          this.entityData = synchedentitydata$builder.build();

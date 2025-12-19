@@ -1,20 +1,24 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -17,7 +_,6 @@
+@@ -17,9 +_,9 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
 -import net.minecraft.core.BlockPos;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.network.chat.Component;
  import net.minecraft.server.level.ServerPlayer;
-@@ -28,12 +_,12 @@
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.Container;
+@@ -28,12 +_,13 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.flag.FeatureFlagSet;
  import net.minecraft.world.item.ItemStack;
 -import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
++import org.bukkit.inventory.InventoryView;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.world.inventory.InjectionAbstractContainerMenu;
  
@@ -23,6 +27,18 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final int SLOT_CLICKED_OUTSIDE = -999;
      public static final int QUICKCRAFT_TYPE_CHARITABLE = 0;
+@@ -61,7 +_,10 @@
+     @Nullable
+     private ContainerSynchronizer synchronizer;
+     private boolean suppressRemoteUpdates;
+-
++    // CraftBukkit start
++    public boolean checkReachable = true;
++    public abstract InventoryView getBukkitView();
++    private Component title;
+     protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
+         this.menuType = p_38851_;
+         this.containerId = p_38852_;
 @@ -511,6 +_,12 @@
      }
  
