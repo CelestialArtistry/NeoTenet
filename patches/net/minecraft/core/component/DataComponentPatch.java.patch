@@ -1,8 +1,73 @@
 --- a/net/minecraft/core/component/DataComponentPatch.java
 +++ b/net/minecraft/core/component/DataComponentPatch.java
-@@ -239,6 +_,7 @@
+@@ -6,7 +_,7 @@
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
+-import java.util.Map;
++
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.Map.Entry;
+@@ -17,6 +_,7 @@
+ import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.util.Unit;
++import org.taiyitistmc.injection.core.component.InjectionDataComponentPatch_Builder;
+ 
+ public final class DataComponentPatch {
+     public static final DataComponentPatch EMPTY = new DataComponentPatch(Reference2ObjectMaps.emptyMap());
+@@ -232,13 +_,54 @@
+         return stringbuilder.toString();
+     }
+ 
+-    public static class Builder {
++    public static class Builder implements InjectionDataComponentPatch_Builder {
+         private final Reference2ObjectMap<DataComponentType<?>, Optional<?>> map = new Reference2ObjectArrayMap<>();
+ 
+         Builder() {
          }
  
++        // CraftBukkit start
++        @Override
++        public void copy(DataComponentPatch orig) {
++            this.map.putAll(orig.map);
++        }
++
++        @Override
++        public void clear(DataComponentType<?> type) {
++            this.map.remove(type);
++        }
++
++        @Override
++        public boolean isSet(DataComponentType<?> type) {
++            return map.containsKey(type);
++        }
++
++        @Override
++        public boolean isEmpty() {
++            return this.map.isEmpty();
++        }
++
++        @Override
++        public boolean equals(Object object) {
++            if (this == object) {
++                return true;
++            }
++
++            if (object instanceof DataComponentPatch.Builder patch) {
++                return this.map.equals(patch.map);
++            }
++
++            return false;
++        }
++
++        @Override
++        public int hashCode() {
++            return this.map.hashCode();
++        }
++        // CraftBukkit end
++
          public <T> DataComponentPatch.Builder set(DataComponentType<T> p_332004_, T p_331566_) {
 +            net.neoforged.neoforge.common.CommonHooks.validateComponent(p_331566_);
              this.map.put(p_332004_, Optional.of(p_331566_));
