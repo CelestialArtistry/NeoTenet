@@ -10,7 +10,7 @@ plugins {
 }
 
 
-project.version = '1.21.1' + gradleutils.gitInfo.abbreviatedId // Taiyitist
+project.version = '1.21.1-' + gradleutils.gitInfo.abbreviatedId // Taiyitist
 
 
 // Print version, generally useful to know - also appears on CI
@@ -33,20 +33,6 @@ sourceSets {
         }
         resources {
             srcDirs = []
-        }
-    }
-}
-
-// Put licenser here otherwise it tries to license all source sets including decompiled MC sources
-license {
-    header = file('codeformat/HEADER.txt')
-    skipExistingHeaders = true
-    tasks {
-        neoforge {
-            // Add all NeoForge sources
-            files.from rootProject.fileTree("src", {
-                include "**/*.java"
-            })
         }
     }
 }

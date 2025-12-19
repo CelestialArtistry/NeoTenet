@@ -28,20 +28,16 @@ dependencyResolutionManagement {
     }
 }
 
-if (rootProject.name.toLowerCase() == "neoforge") {
-    // Solve name clashes between projects/neoforge and the rootProject for Eclipse.
-    rootProject.name = "NeoForge-Root"
+if (rootProject.name.toLowerCase() == "neotaiyitist") {
+    // Solve name clashes between projects/neotaiyitist and the rootProject for Eclipse.
+    rootProject.name = "NeoTaiyitist-Root"
 }
 
     include ':base'
 project(':base').projectDir = file('projects/base')
-    include ':neoforge'
-project(':neoforge').projectDir = file('projects/neoforge')
+    include ':neotaiyitist'
+project(':neotaiyitist').projectDir = file('projects/neotaiyitist')
 
-include ':tests'
-project(":tests").projectDir = file("tests")
-
-include ':testframework'
 include ':coremods'
 // Ensure a unique artifact id within JIJ that does not conflict with net.neoforged:coremods, which is
 // another external dependency.
