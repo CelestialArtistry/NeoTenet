@@ -1,5 +1,22 @@
 --- a/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -14,6 +_,7 @@
+ import net.minecraft.world.item.alchemy.Potion;
+ import net.minecraft.world.item.alchemy.PotionBrewing;
+ import net.minecraft.world.item.alchemy.PotionContents;
++import org.bukkit.craftbukkit.inventory.view.CraftBrewingStandView;
+ 
+ public class BrewingStandMenu extends AbstractContainerMenu {
+     private static final int BOTTLE_SLOT_START = 0;
+@@ -29,6 +_,8 @@
+     private final Container brewingStand;
+     private final ContainerData brewingStandData;
+     private final Slot ingredientSlot;
++    private CraftBrewingStandView bukkitEntity = null;
++    private Inventory playerInventory;
+ 
+     public BrewingStandMenu(int p_39090_, Inventory p_39091_) {
+         this(p_39090_, p_39091_, new SimpleContainer(5), new SimpleContainerData(2));
 @@ -41,9 +_,9 @@
          this.brewingStand = p_39095_;
          this.brewingStandData = p_39096_;

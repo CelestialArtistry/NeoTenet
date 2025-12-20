@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/inventory/StonecutterMenu.java
++++ b/net/minecraft/world/inventory/StonecutterMenu.java
+@@ -17,6 +_,7 @@
+ import net.minecraft.world.item.crafting.StonecutterRecipe;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
++import org.bukkit.craftbukkit.inventory.view.CraftStonecutterView;
+ 
+ public class StonecutterMenu extends AbstractContainerMenu {
+     public static final int INPUT_SLOT = 0;
+@@ -44,6 +_,8 @@
+         }
+     };
+     final ResultContainer resultContainer = new ResultContainer();
++    private CraftStonecutterView bukkitEntity = null;
++    private Inventory playerInventory;
+ 
+     public StonecutterMenu(int p_40294_, Inventory p_40295_) {
+         this(p_40294_, p_40295_, ContainerLevelAccess.NULL);

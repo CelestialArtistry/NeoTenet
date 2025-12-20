@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/inventory/SmithingMenu.java
++++ b/net/minecraft/world/inventory/SmithingMenu.java
+@@ -14,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class SmithingMenu extends ItemCombinerMenu {
+     public static final int TEMPLATE_SLOT = 0;
+@@ -29,6 +_,7 @@
+     @Nullable
+     private RecipeHolder<SmithingRecipe> selectedRecipe;
+     private final List<RecipeHolder<SmithingRecipe>> recipes;
++    private CraftInventoryView bukkitEntity;
+ 
+     public SmithingMenu(int p_40245_, Inventory p_40246_) {
+         this(p_40245_, p_40246_, ContainerLevelAccess.NULL);

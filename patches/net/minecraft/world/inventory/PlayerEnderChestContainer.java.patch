@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/inventory/PlayerEnderChestContainer.java
++++ b/net/minecraft/world/inventory/PlayerEnderChestContainer.java
+@@ -12,6 +_,14 @@
+ public class PlayerEnderChestContainer extends SimpleContainer {
+     @Nullable
+     private EnderChestBlockEntity activeChest;
++    // CraftBukkit start
++    private Player owner;
++
++    public PlayerEnderChestContainer(Player owner) {
++        this();
++        this.owner = owner;
++        // CraftBukkit end
++    }
+ 
+     public PlayerEnderChestContainer() {
+         super(27);

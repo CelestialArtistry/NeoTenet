@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/inventory/HorseInventoryMenu.java
++++ b/net/minecraft/world/inventory/HorseInventoryMenu.java
+@@ -7,6 +_,7 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class HorseInventoryMenu extends AbstractContainerMenu {
+     private final Container horseContainer;
+@@ -14,6 +_,9 @@
+     private final AbstractHorse horse;
+     private static final int SLOT_BODY_ARMOR = 1;
+     private static final int SLOT_HORSE_INVENTORY_START = 2;
++    CraftInventoryView bukkitEntity;
++    // @formatter:on
++    Inventory playerInventory;
+ 
+     public HorseInventoryMenu(int p_39656_, Inventory p_39657_, Container p_39658_, final AbstractHorse p_39659_, int p_352384_) {
+         super(null, p_39656_);

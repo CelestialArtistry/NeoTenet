@@ -1,10 +1,20 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -38,6 +_,7 @@
+@@ -19,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class GrindstoneMenu extends AbstractContainerMenu {
+     public static final int MAX_NAME_LENGTH = 35;
+@@ -38,6 +_,9 @@
          }
      };
      public final ContainerLevelAccess access;
 +    private int xp = -1;
++    private CraftInventoryView bukkitEntity = null;
++    private org.bukkit.entity.Player player;
  
      public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
          this(p_39563_, p_39564_, ContainerLevelAccess.NULL);

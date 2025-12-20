@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/inventory/MerchantContainer.java
++++ b/net/minecraft/world/inventory/MerchantContainer.java
+@@ -9,6 +_,10 @@
+ import net.minecraft.world.item.trading.Merchant;
+ import net.minecraft.world.item.trading.MerchantOffer;
+ import net.minecraft.world.item.trading.MerchantOffers;
++import org.bukkit.entity.HumanEntity;
++
++import java.util.ArrayList;
++import java.util.List;
+ 
+ public class MerchantContainer implements Container {
+     private final Merchant merchant;
+@@ -17,6 +_,8 @@
+     private MerchantOffer activeOffer;
+     public int selectionHint;
+     private int futureXp;
++    private final List<HumanEntity> transactions = new ArrayList<>();
++    private int maxStack = MAX_STACK;
+ 
+     public MerchantContainer(Merchant p_40003_) {
+         this.merchant = p_40003_;

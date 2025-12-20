@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/inventory/CrafterMenu.java
++++ b/net/minecraft/world/inventory/CrafterMenu.java
+@@ -9,6 +_,7 @@
+ import net.minecraft.world.item.crafting.RecipeHolder;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.CrafterBlock;
++import org.bukkit.craftbukkit.inventory.view.CraftCrafterView;
+ 
+ public class CrafterMenu extends AbstractContainerMenu implements ContainerListener {
+     protected static final int SLOT_COUNT = 9;
+@@ -20,6 +_,7 @@
+     private final ContainerData containerData;
+     private final Player player;
+     private final CraftingContainer container;
++    private CraftCrafterView bukkitEntity;
+ 
+     public CrafterMenu(int p_307357_, Inventory p_307257_) {
+         super(MenuType.CRAFTER_3x3, p_307357_);

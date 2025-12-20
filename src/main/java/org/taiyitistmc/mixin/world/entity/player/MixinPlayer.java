@@ -308,9 +308,4 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
         startSleepInBed_force.set(force);
         return ((Player) (Object) this);
     }
-
-    @Inject(method = "eat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;eat(Lnet/minecraft/world/food/FoodProperties;)V"))
-    private void taiyitist$eatStack(Level level, ItemStack itemStack, FoodProperties foodProperties, CallbackInfoReturnable<ItemStack> cir) {
-        this.getFoodData().pushEatStack(itemStack);
-    }
 }

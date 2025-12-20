@@ -1,5 +1,22 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
+@@ -30,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.EnchantingTableBlock;
++import org.bukkit.craftbukkit.inventory.view.CraftEnchantmentView;
+ 
+ public class EnchantmentMenu extends AbstractContainerMenu {
+     static final ResourceLocation EMPTY_SLOT_LAPIS_LAZULI = ResourceLocation.withDefaultNamespace("item/empty_slot_lapis_lazuli");
+@@ -46,6 +_,8 @@
+     public final int[] costs = new int[3];
+     public final int[] enchantClue = new int[]{-1, -1, -1};
+     public final int[] levelClue = new int[]{-1, -1, -1};
++    private CraftEnchantmentView bukkitEntity = null;
++    private org.bukkit.entity.Player player;
+ 
+     public EnchantmentMenu(int p_39454_, Inventory p_39455_) {
+         this(p_39454_, p_39455_, ContainerLevelAccess.NULL);
 @@ -63,7 +_,7 @@
          this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) {
              @Override

@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/inventory/ShulkerBoxMenu.java
++++ b/net/minecraft/world/inventory/ShulkerBoxMenu.java
+@@ -5,10 +_,13 @@
+ import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class ShulkerBoxMenu extends AbstractContainerMenu {
+     private static final int CONTAINER_SIZE = 27;
+     private final Container container;
++    private CraftInventoryView bukkitEntity;
++    private Inventory playerInventory;
+ 
+     public ShulkerBoxMenu(int p_40188_, Inventory p_40189_) {
+         this(p_40188_, p_40189_, new SimpleContainer(27));
