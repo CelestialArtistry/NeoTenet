@@ -7,6 +7,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InstallationManager {
 
@@ -21,11 +23,6 @@ public class InstallationManager {
                 boolean success = runInstaller(installerPath);
                 if (success) {
                     moveAndRunServerScripts();
-                    Path installerLog = Paths.get("installer.jar.log");
-                    if (Files.exists(installerLog)) {
-                        Files.delete(installerLog);
-                        System.out.println("Deleted installer.jar.log from root directory");
-                    }
                 }
                 try {
                     Files.deleteIfExists(installerPath);
@@ -162,7 +159,24 @@ public class InstallationManager {
                     System.out.println("Moved run.sh to " + targetRunSh);
                 }
             } else {
-                System.out.println("Script files already exist in target directory, skipping move operation.");
+                System.out.println("Script files already exist in target directory, updating version numbers.");
+                Path sourceRunBat = Paths.get("run.bat");
+                Path sourceRunSh = Paths.get("run.sh");
+                if (Files.exists(sourceRunBat)) {
+                    Files.deleteIfExists(sourceRunBat);
+                    System.out.println("Deleted existing run.bat from root directory");
+                }
+                if (Files.exists(sourceRunSh)) {
+                    Files.deleteIfExists(sourceRunSh);
+                    System.out.println("Deleted existing run.sh from root directory");
+                }
+                updateScriptVersionNumbers(targetRunBat, targetRunSh);
+            }
+            
+            Path installerLog = Paths.get("installer.jar.log");
+            if (Files.exists(installerLog)) {
+                Files.delete(installerLog);
+                System.out.println("Deleted installer.jar.log from root directory");
             }
 
             String osName = System.getProperty("os.name").toLowerCase();
@@ -193,10 +207,56 @@ public class InstallationManager {
         }
     }
 
+    private static void updateScriptVersionNumbers(Path targetRunBat, Path targetRunSh) throws IOException {
+        String version = getImplementationVersion();
+        if (version == null) {
+            System.err.println("Could not determine implementation version for script update");
+            return;
+        }
+        
+        if (Files.exists(targetRunBat)) {
+            updateVersionInScript(targetRunBat, version);
+        }
+        
+        if (Files.exists(targetRunSh)) {
+            updateVersionInScript(targetRunSh, version);
+        }
+    }
+    
+    private static void updateVersionInScript(Path scriptPath, String newVersion) throws IOException {
+        List<String> lines = Files.readAllLines(scriptPath);
+        List<String> updatedLines = new ArrayList<>();
+        boolean updated = false;
+        String oldVersion = null;
+        
+        Pattern versionPattern = Pattern.compile("(/neoforge/)([\\d\\.\\-a-zA-Z]+)/");
+        
+        for (String line : lines) {
+            Matcher matcher = versionPattern.matcher(line);
+            if (matcher.find()) {
+                try {
+                    oldVersion = matcher.group(2);
+                } catch (IllegalStateException e) {
+                    oldVersion = "unknown";
+                }
+                String updatedLine = matcher.replaceAll("$1" + newVersion + "/");
+                updatedLines.add(updatedLine);
+                updated = true;
+            } else {
+                updatedLines.add(line);
+            }
+        }
+        
+        if (updated) {
+            Files.write(scriptPath, updatedLines);
+            System.out.println("Updated version in " + scriptPath.getFileName() + " from " + oldVersion + " to " + newVersion);
+        }
+    }
+
     private static void addNoGuiParameter(Path source, Path target, boolean isWindows) throws IOException {
         List<String> lines = Files.readAllLines(source);
         List<String> modifiedLines = new ArrayList<>();
-
+        
         for (String line : lines) {
             if (line.trim().startsWith("java ")) {
                 if (isWindows) {
@@ -211,6 +271,7 @@ public class InstallationManager {
             }
             modifiedLines.add(line);
         }
+        
         Files.write(target, modifiedLines);
     }
 
