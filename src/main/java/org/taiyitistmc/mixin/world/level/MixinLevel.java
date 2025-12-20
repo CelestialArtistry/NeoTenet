@@ -104,7 +104,7 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
     public Map<BlockPos, BlockEntity> capturedTileEntities;
 
     @Shadow
-    public ChunkGenerator generator;
+    public static ChunkGenerator generator;
 
     @Shadow
     @Final
