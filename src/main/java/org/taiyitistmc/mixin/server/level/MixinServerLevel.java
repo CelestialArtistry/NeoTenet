@@ -10,6 +10,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket;
+import net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket;
+import net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket;
+import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDelayPacket;
+import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDistancePacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
@@ -29,6 +34,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.border.BorderChangeListener;
+import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -39,6 +46,7 @@ import net.minecraft.world.level.levelgen.FlatLevelSource;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -47,10 +55,13 @@ import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.craftbukkit.block.CraftBlockStates;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.generator.CraftWorldInfo;
+import org.bukkit.craftbukkit.generator.CustomChunkGenerator;
 import org.bukkit.craftbukkit.generator.CustomWorldChunkManager;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.util.WorldUUID;
@@ -64,7 +75,9 @@ import org.bukkit.event.world.GenericGameEvent;
 import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.generator.BiomeProvider;
+import org.bukkit.generator.WorldInfo;
 import org.objectweb.asm.Opcodes;
+import org.spigotmc.SpigotWorldConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -75,6 +88,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.taiyitistmc.bukkit.DistValidate;
 import org.taiyitistmc.injection.server.level.InjectionServerLevel;
+import org.taiyitistmc.neoforge.BukkitRegistry;
+import org.taiyitistmc.neoforge.TaiyitistDerivedWorldInfo;
 
 import java.util.List;
 import java.util.UUID;
@@ -98,10 +113,6 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
 
     @Shadow
     public PrimaryLevelData K;
-
-    @Shadow
-    @Final
-    private MinecraftServer server;
 
     @Shadow
     protected abstract boolean sendParticles(ServerPlayer p_8637_, boolean p_8638_, double p_8639_, double p_8640_, double p_8641_, Packet<?> p_8642_);
@@ -129,6 +140,13 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
     @Shadow
     public abstract void addDuringTeleport(Entity p_143335_);
 
+    @Shadow
+    public ResourceKey<LevelStem> typeKey;
+
+    @Shadow
+    @Final
+    private MinecraftServer server;
+
     protected MixinServerLevel(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
         super(p_270739_, p_270683_, p_270200_, p_270240_, p_270692_, p_270904_, p_270470_, p_270248_, p_270466_);
     }
@@ -142,27 +160,103 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
         return convertable.dimensionType;
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At("RETURN"))
-    private void taiyitist$init(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List p_215008_, boolean p_215009_, RandomSequences p_288977_, CallbackInfo ci, @Local ChunkGenerator chunkgenerator) {
+    @Inject(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerLevel;tickTime:Z", opcode = Opcodes.PUTFIELD))
+    private void taiyitist$init(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List p_215008_, boolean p_215009_, RandomSequences p_288977_, CallbackInfo ci) {
         this.pvpMode = p_214999_.isPvpAllowed();
         convertable = p_215001_;
         uuid = WorldUUID.getUUID(convertable.levelDirectory.path().toFile());
-        // CraftBukkit end
-        // CraftBukkit start
-        //K.setWorld(((ServerLevel) (Object) this));
+        var typeKey = p_215001_.dimensionType;
+        if (typeKey != null) {
+            this.typeKey = typeKey;
+        } else {
+            var dimensions = p_214999_.registryAccess().registryOrThrow(Registries.LEVEL_STEM);
+            var key = dimensions.getResourceKey(p_215004_);
+            if (key.isPresent()) {
+                this.typeKey = key.get();
+            } else {
+                this.typeKey = ResourceKey.create(Registries.LEVEL_STEM, this.dimension().location());
+            }
+            if (p_215002_ instanceof DerivedLevelData data) {
+                data.setDimType(this.getTypeKey());
+            }
+        }
+    }
 
+    @Inject(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/LevelStem;generator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"))
+    private void taiyitist$setK(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List p_215008_, boolean p_215009_, RandomSequences p_288977_, CallbackInfo ci) {
+        if (p_215002_ instanceof PrimaryLevelData) {
+            this.K = (PrimaryLevelData) p_215002_;
+        } else {
+            this.K = TaiyitistDerivedWorldInfo.create(p_215002_);
+        }
+    }
+
+    @Inject(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;forceSynchronousWrites()Z"))
+    private void taiyitist$initK(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List p_215008_, boolean p_215009_, RandomSequences p_288977_, CallbackInfo ci, @Local ChunkGenerator chunkgenerator) {
+        if (environment == null) {
+            environment = BukkitRegistry.environment.get(getTypeKey());
+        }
         if (biomeProvider != null) {
-            BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
+            WorldInfo worldInfo = new CraftWorldInfo((ServerLevelData) getLevelData(),
+                    convertable, environment, this.dimensionType());
+            BiomeSource worldChunkManager = new CustomWorldChunkManager(worldInfo, biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
             if (chunkgenerator instanceof NoiseBasedChunkGenerator cga) {
                 chunkgenerator = new NoiseBasedChunkGenerator(worldChunkManager, cga.settings);
             } else if (chunkgenerator instanceof FlatLevelSource cpf) {
                 chunkgenerator = new FlatLevelSource(cpf.settings(), worldChunkManager);
             }
+        } else {
+            biomeProvider = getCraftServer().getBiomeProvider(p_215002_.getLevelName());
         }
 
         if (generator != null) {
-            chunkgenerator = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(((ServerLevel) (Object) this), chunkgenerator, generator);
+            chunkgenerator = new CustomChunkGenerator(((ServerLevel) (Object) this), chunkgenerator, generator);
+        } else {
+            generator = getCraftServer().getGenerator(p_215002_.getLevelName());
         }
+        this.spigotConfig = new SpigotWorldConfig(p_215002_.getLevelName()); // Spigot
+    }
+
+    @Inject(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At("RETURN"))
+    private void taiyitist$finalInitWorld(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List p_215008_, boolean p_215009_, RandomSequences p_288977_, CallbackInfo ci) {
+        this.world = new CraftWorld(((ServerLevel) (Object) this), generator, biomeProvider, environment);
+        this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
+        this.K.setWorld(((ServerLevel) (Object) this));
+        // From PlayerList.setPlayerFileData
+        getWorldBorder().addListener(new BorderChangeListener() {
+            @Override
+            public void onBorderSizeSet(WorldBorder worldborder, double d0) {
+                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderSizePacket(worldborder), worldborder.world);
+            }
+
+            @Override
+            public void onBorderSizeLerping(WorldBorder worldborder, double d0, double d1, long i) {
+                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderLerpSizePacket(worldborder), worldborder.world);
+            }
+
+            @Override
+            public void onBorderCenterSet(WorldBorder worldborder, double d0, double d1) {
+                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderCenterPacket(worldborder), worldborder.world);
+            }
+
+            @Override
+            public void onBorderSetWarningTime(WorldBorder worldborder, int i) {
+                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDelayPacket(worldborder), worldborder.world);
+            }
+
+            @Override
+            public void onBorderSetWarningBlocks(WorldBorder worldborder, int i) {
+                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDistancePacket(worldborder), worldborder.world);
+            }
+
+            @Override
+            public void onBorderSetDamagePerBlock(WorldBorder worldborder, double d0) {
+            }
+
+            @Override
+            public void onBorderSetDamageSafeZOne(WorldBorder worldborder, double d0) {
+            }
+        });
         // CraftBukkit end
     }
 

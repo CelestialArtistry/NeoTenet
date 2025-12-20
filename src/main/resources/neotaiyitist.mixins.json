@@ -90,6 +90,7 @@
     "world.level.MixinCollisionContext",
     "world.level.MixinEntityGetter",
     "world.level.MixinLevel",
+    "world.level.MixinWorldBorder",
     "world.level.block.MixinAbstractCandleBlock",
     "world.level.block.MixinBambooSaplingBlock",
     "world.level.block.MixinBaseCommandBlock",
@@ -162,7 +163,18 @@
     "world.level.block.MixinTurtleEggBlock",
     "world.level.block.MixinWaterlilyBlock",
     "world.level.block.MixinWeightedPressurePlateBlock",
-    "world.level.block.MixinWitherRoseBlock"
+    "world.level.block.MixinWitherRoseBlock",
+    "world.level.chunk.MixinChunkAccess",
+    "world.level.chunk.storage.MixinChunkSerializer",
+    "world.level.chunk.storage.MixinRegionFileStorage",
+    "world.level.saveddata.maps.MixinMapItemSavedData",
+    "world.level.saveddata.maps.MixinMapItemSavedData_HoldingPlayer",
+    "world.level.storage.MixinDerivedLevelData",
+    "world.level.storage.MixinLevelStorageAccess",
+    "world.level.storage.MixinLevelStorageSource",
+    "world.level.storage.MixinPlayerDataStorage",
+    "world.level.storage.MixinPrimaryLevelData",
+    "world.level.storage.loot.MixinLootDataType"
   ],
   "injectors": {
     "maxShiftBy": 2,
