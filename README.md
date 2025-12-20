@@ -14,6 +14,9 @@
 |---------|-------------|-----------|-------------------|----------------------| 
 | 1.21.1  | Active      | Poor      | Poor              | Poor                 |
 
+### Upstream Update Progress
+Current synced commit:
+- [**NeoForge 1.21.1**] - [ceff3d](https://github.com/neoforged/NeoForge/commit/ceff3d20430e6a6653a83adae68ca11464e6335b)
 
 ### Running?
 It could be compilable and running, but the compatibility with plugins is poor.
