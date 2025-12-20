@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.taiyitistmc'
+version = rootProject.version
+
+
+dependencies {
+    compileOnly "cpw.mods:bootstraplauncher:${project.bootstraplauncher_version}"
+}
+
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": version,
+                "Main-Class": "org.taiyitistmc.LauncherMain",
+        )
+    }
+    // TODO: 将 universal jar 打包进 launcher 内
+
+}
+
+// Wait for neoforge build
+tasks.named("build").get().dependsOn(project(":neotaiyitist").tasks.named("build").get())

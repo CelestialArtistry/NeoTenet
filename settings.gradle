@@ -33,9 +33,9 @@ if (rootProject.name.toLowerCase() == "neotaiyitist") {
     rootProject.name = "NeoTaiyitist-Root"
 }
 
-    include ':base'
+include ':base'
 project(':base').projectDir = file('projects/base')
-    include ':neotaiyitist'
+include ':neotaiyitist'
 project(':neotaiyitist').projectDir = file('projects/neotaiyitist')
 
 include ':coremods'
@@ -49,3 +49,5 @@ project(":coremods").name = "neoforge-coremods"
 gradle.settingsEvaluated {
     gradle.extensions.add("repositoryBaseUrls", dependencyResolutionManagement.repositories.findAll { it instanceof MavenArtifactRepository }.collect { it.url }.toArray(URI[]::new))
 }
+
+include 'launcher'
