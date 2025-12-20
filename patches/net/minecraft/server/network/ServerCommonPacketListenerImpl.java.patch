@@ -34,7 +34,7 @@
 +     * Holds the current connection type, based on the types of payloads that have been received so far.
 +     */
 +    protected net.neoforged.neoforge.network.connection.ConnectionType connectionType;
-+    protected ServerPlayer player;
++    public ServerPlayer player;
 +    protected org.bukkit.craftbukkit.CraftServer cserver;
 +    public boolean processedDisconnect;
 +

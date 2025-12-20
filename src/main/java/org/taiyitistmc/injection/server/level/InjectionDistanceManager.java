@@ -6,6 +6,14 @@ import net.minecraft.world.level.ChunkPos;
 
 public interface InjectionDistanceManager {
 
+    default boolean addTicketBukkit(long chunkPosIn, Ticket<?> ticketIn) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default boolean removeTicketBukkit(long chunkPosIn, Ticket<?> ticketIn) {
+        throw new IllegalStateException("Not implemented");
+    }
+
     default <T> boolean addRegionTicketAtDistance(TicketType<T> tickettype, ChunkPos chunkcoordintpair, int i, T t0) {
         throw new IllegalStateException("Not implemented");
     }

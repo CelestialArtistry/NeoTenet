@@ -19,6 +19,10 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public interface InjectionPlayerList {
 
+    default ServerPlayer taiyitist$canPlayerLogin(SocketAddress socketAddress, GameProfile gameProfile, ServerLoginPacketListenerImpl handler) {
+        throw new IllegalStateException("Not implemented");
+    }
+
     default CraftServer getCraftServer() {
         throw new IllegalStateException("Not implemented");
     }

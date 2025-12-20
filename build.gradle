@@ -24,9 +24,9 @@ allprojects {
 
     java.toolchain.languageVersion.set(JavaLanguageVersion.of(project.java_version))
     
-    // Suppress removal warnings during compilation
+    // Suppress removal and deprecation warnings during compilation
     tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:-removal"
+        options.compilerArgs << "-Xlint:-removal" << "-Xlint:-deprecation"
     }
 }
 

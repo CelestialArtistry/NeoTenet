@@ -65,6 +65,7 @@ import org.taiyitistmc.injection.server.InjectionMinecraftServer;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.locks.LockSupport;
 import java.util.logging.Level;
@@ -135,6 +136,9 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
 
     @Shadow
     private long delayedTasksMaxNextTickTimeNanos;
+
+    @Shadow
+    public Queue<Runnable> processQueue;
 
     public MixinMinecraftServer(String p_18765_) {
         super(p_18765_);
@@ -355,6 +359,13 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
     public final boolean hasStopped() {
         synchronized (stopLock) {
             return hasStopped;
+        }
+    }
+
+    @Override
+    public void bridge$drainQueuedTasks() {
+        while (!processQueue.isEmpty()) {
+            processQueue.remove().run();
         }
     }
 }

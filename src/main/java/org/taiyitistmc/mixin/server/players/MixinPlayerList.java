@@ -1,5 +1,6 @@
 package org.taiyitistmc.mixin.server.players;
 
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.LayeredRegistryAccess;
@@ -21,12 +22,18 @@ import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraft.server.players.GameProfileCache;
+import net.minecraft.server.players.IpBanList;
+import net.minecraft.server.players.IpBanListEntry;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.server.players.UserBanList;
+import net.minecraft.server.players.UserBanListEntry;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.ServerStatsCounter;
@@ -49,8 +56,11 @@ import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftLocation;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.spigotmc.SpigotConfig;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -67,6 +77,10 @@ import org.taiyitistmc.neoforge.BukkitRegistry;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.text.SimpleDateFormat;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -117,6 +131,33 @@ public abstract class MixinPlayerList implements InjectionPlayerList {
     @Shadow
     @Final
     private Map<UUID, ServerPlayer> playersByUUID;
+
+    @Shadow
+    public abstract UserBanList getBans();
+
+    @Shadow
+    @Final
+    private UserBanList bans;
+
+    @Shadow
+    public abstract boolean isWhiteListed(GameProfile p_11294_);
+
+    @Shadow
+    public abstract IpBanList getIpBans();
+
+    @Shadow
+    @Final
+    private IpBanList ipBans;
+
+    @Shadow
+    public int maxPlayers;
+
+    @Shadow
+    public abstract boolean canBypassPlayerLimit(GameProfile p_11298_);
+
+    @Shadow
+    @Final
+    private static SimpleDateFormat BAN_DATE_FORMAT;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void taiyitist$init(MinecraftServer p_203842_, LayeredRegistryAccess p_251844_, PlayerDataStorage p_203844_, int p_203845_, CallbackInfo ci) {
@@ -360,6 +401,56 @@ public abstract class MixinPlayerList implements InjectionPlayerList {
         for (Component component : components) {
             broadcastSystemMessage(component, false);
         }
+    }
+
+    @Override
+    public ServerPlayer taiyitist$canPlayerLogin(SocketAddress socketAddress, GameProfile gameProfile, ServerLoginPacketListenerImpl handler) {
+        UUID uuid = gameProfile.getId();
+        List<ServerPlayer> list = Lists.newArrayList();
+        for (ServerPlayer player : this.players) {
+            if (player.getUUID().equals(uuid)) {
+                list.add(player);
+            }
+        }
+        for (ServerPlayer player : list) {
+            this.save(player);
+            player.connection.disconnect(Component.translatable("multiplayer.disconnect.duplicate_login"));
+        }
+        ServerPlayer entity = new ServerPlayer(this.server, this.server.getLevel(Level.OVERWORLD), gameProfile, ClientInformation.createDefault());
+        ((ServerPlayer) entity).transferCookieConnection = (CraftPlayer.TransferCookieConnection) handler;
+        Player player = ((ServerPlayer) entity).getBukkitEntity();
+
+        String hostname = handler == null ? "" : handler.connection.hostname;
+        InetAddress realAddress = handler == null ? ((InetSocketAddress) socketAddress).getAddress() : ((InetSocketAddress) handler.connection.channel.remoteAddress()).getAddress();
+
+        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((InetSocketAddress) socketAddress).getAddress(), realAddress);
+        if (this.getBans().isBanned(gameProfile) && this.getBans().get(gameProfile) != null && !this.getBans().get(gameProfile).hasExpired()) {
+            UserBanListEntry entry = this.bans.get(gameProfile);
+            var message = Component.translatable("multiplayer.disconnect.banned.reason", entry.getReason());
+            if (entry.getExpires() != null) {
+                message.append(Component.translatable("multiplayer.disconnect.banned.expiration", BAN_DATE_FORMAT.format(entry.getExpires())));
+            }
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(message));
+        } else if (!this.isWhiteListed(gameProfile)) {
+            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, SpigotConfig.whitelistMessage);
+        } else if (this.getIpBans().isBanned(socketAddress) && this.getIpBans().get(socketAddress) != null && !this.getIpBans().get(socketAddress).hasExpired()) {
+            IpBanListEntry entry = this.ipBans.get(socketAddress);
+            var message = Component.translatable("multiplayer.disconnect.banned_ip.reason", entry.getReason());
+            if (entry.getExpires() != null) {
+                message.append(Component.translatable("multiplayer.disconnect.banned_ip.expiration", BAN_DATE_FORMAT.format(entry.getExpires())));
+            }
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(message));
+        } else if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameProfile)) {
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, SpigotConfig.serverFullMessage);
+        }
+        this.cserver.getPluginManager().callEvent(event);
+        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
+            if (handler != null) {
+                handler.disconnect(CraftChatMessage.fromStringOrNull(event.getKickMessage()));
+            }
+            return null;
+        }
+        return entity;
     }
 
     @Redirect(method = "tick", at = @At(value = "INVOKE",

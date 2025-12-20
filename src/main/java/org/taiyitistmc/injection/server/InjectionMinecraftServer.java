@@ -8,6 +8,10 @@ import net.minecraft.world.level.storage.WorldData;
 
 public interface InjectionMinecraftServer {
 
+    default void bridge$drainQueuedTasks() {
+        throw new IllegalStateException("Not implemented");
+    }
+
     default boolean isDebugging() {
         throw new IllegalStateException("Not implemented");
     }

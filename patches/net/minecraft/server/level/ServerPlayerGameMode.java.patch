@@ -1,5 +1,17 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -44,6 +_,11 @@
+     private BlockPos delayedDestroyPos = BlockPos.ZERO;
+     private int delayedTickStart;
+     private int lastSentState = -1;
++    public boolean interactResult = false;
++    public boolean firedInteract = false;
++    public BlockPos interactPosition;
++    public InteractionHand interactHand;
++    public ItemStack interactItemStack;
+ 
+     public ServerPlayerGameMode(ServerPlayer p_143472_) {
+         this.player = p_143472_;
 @@ -72,7 +_,10 @@
      protected void setGameModeForPlayer(GameType p_9274_, @Nullable GameType p_9275_) {
          this.previousGameModeForPlayer = p_9275_;

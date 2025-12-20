@@ -1,9 +1,10 @@
 --- a/net/minecraft/server/bossevents/CustomBossEvent.java
 +++ b/net/minecraft/server/bossevents/CustomBossEvent.java
-@@ -18,8 +_,9 @@
+@@ -18,12 +_,15 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.BossEvent;
++import org.bukkit.boss.KeyedBossBar;
 +import org.taiyitistmc.injection.server.bossevents.InjectionCustomBossEvent;
  
 -public class CustomBossEvent extends ServerBossEvent {
@@ -11,3 +12,8 @@
      private final ResourceLocation id;
      private final Set<UUID> players = Sets.newHashSet();
      private int value;
+     private int max = 100;
++    private KeyedBossBar bossBar;
+ 
+     public CustomBossEvent(ResourceLocation p_136261_, Component p_136262_) {
+         super(p_136262_, BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);

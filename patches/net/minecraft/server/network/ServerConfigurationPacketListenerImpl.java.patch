@@ -87,14 +87,11 @@
  
          try {
              PlayerList playerlist = this.server.getPlayerList();
-@@ -141,7 +_,10 @@
+@@ -141,7 +_,7 @@
              }
  
              ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation);
 -            playerlist.placeNewPlayer(this.connection, serverplayer, this.createCookie(this.clientInformation));
-+            serverplayer.updateOptions(this.clientInformation);
-+            this.player = serverplayer;
-+            this.player.transferCookieConnection = this;
 +            playerlist.placeNewPlayer(this.connection, serverplayer, this.createCookie(this.clientInformation, this.connectionType));
          } catch (Exception exception) {
              LOGGER.error("Couldn't place player in world", (Throwable)exception);
