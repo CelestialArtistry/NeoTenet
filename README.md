@@ -26,8 +26,8 @@ We do support using Spigot's net.minecraft.server classes. Classes and Fields wi
 so don't worried about the plugin files will be changed to unsafe
 
 ## Usage
-- Download installer
-- Just run the installer, install it just like neoforge server
+- Download launcher from github release
+- Just run the launcher, just like spigot jar
 
 ## Discord
 - https://discord.gg/stTgbjkJ
