@@ -14,7 +14,7 @@ public class NeoTaiyitistLauncher {
             System.exit(1);
         }
 
-        System.out.println("Starting NeoTaiyitist...");
+        InstallationManager.moveAndRunServerScripts();
     }
 
     public static String[] getCommandLineArgs() {

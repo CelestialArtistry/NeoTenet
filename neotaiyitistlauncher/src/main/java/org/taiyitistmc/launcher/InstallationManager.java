@@ -137,7 +137,7 @@ public class InstallationManager {
         }
     }
 
-    private static void moveAndRunServerScripts() {
+    public static void moveAndRunServerScripts() {
         try {
             Path targetDir = Paths.get("libraries/org/taiyitistmc/launcher/script");
             Files.createDirectories(targetDir);
