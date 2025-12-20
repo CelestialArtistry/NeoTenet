@@ -7,5 +7,4 @@ public interface InjectionCommandSource {
     default org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
         throw new RuntimeException("Not Implemented");
     }
-
 }

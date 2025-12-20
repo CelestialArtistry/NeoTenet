@@ -1,18 +1,32 @@
 package org.taiyitistmc.mixin.commands;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.tree.CommandNode;
+
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
+
+import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
+import net.minecraft.server.level.ServerPlayer;
+import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.taiyitistmc.bukkit.CommandNodeHooks;
 import org.taiyitistmc.injection.commands.InjectionCommands;
 
 @Mixin(Commands.class)
@@ -76,5 +90,46 @@ public abstract class MixinCommands implements InjectionCommands {
 
         String newCommand = joiner.join(args);
         this.performPrefixedCommand(sender, newCommand, newCommand);
+    }
+
+    /**
+     * @author wdog5
+     * @reason PlayerCommandSendEvent
+     */
+    @Overwrite
+    public void sendCommands(ServerPlayer player) {
+        Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newIdentityHashMap();
+        RootCommandNode vanillaRoot = new RootCommandNode();
+
+        RootCommandNode<CommandSourceStack> vanilla = player.getServer().vanillaCommandDispatcher.getDispatcher().getRoot();
+        map.put(vanilla, vanillaRoot);
+        this.fillUsableCommands(vanilla, vanillaRoot, player.createCommandSourceStack(), map);
+
+        RootCommandNode<SharedSuggestionProvider> rootCommandNode = new RootCommandNode();
+        map.put(this.dispatcher.getRoot(), rootCommandNode);
+        this.fillUsableCommands(this.dispatcher.getRoot(), rootCommandNode, player.createCommandSourceStack(), map);
+
+        Collection<String> bukkit = new LinkedHashSet<>();
+        for (CommandNode node : rootCommandNode.getChildren()) {
+            bukkit.add(node.getName());
+        }
+
+        PlayerCommandSendEvent event = new PlayerCommandSendEvent(player.getBukkitEntity(), new LinkedHashSet<>(bukkit));
+        event.getPlayer().getServer().getPluginManager().callEvent(event);
+
+        // Remove labels that were removed during the event
+        for (String orig : bukkit) {
+            if (!event.getCommands().contains(orig)) {
+                CommandNodeHooks.removeCommand(rootCommandNode, orig);
+            }
+        }
+        // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
+        net.neoforged.neoforge.server.command.CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), rootCommandNode, map, player.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
+        player.connection.send(new ClientboundCommandsPacket(rootCommandNode));
+    }
+
+    @Redirect(method = "fillUsableCommands", at = @At(value = "INVOKE", remap = false, target = "Lcom/mojang/brigadier/tree/CommandNode;canUse(Ljava/lang/Object;)Z"))
+    private <S> boolean taiyitist$canUse(CommandNode<S> commandNode, S source) {
+        return CommandNodeHooks.canUse(commandNode, source);
     }
 }

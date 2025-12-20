@@ -21,9 +21,6 @@ public class InstallationManager {
             Path installerPath = extractEmbeddedInstaller();
             if (installerPath != null) {
                 boolean success = runInstaller(installerPath);
-                if (success) {
-                    moveAndRunServerScripts();
-                }
                 try {
                     Files.deleteIfExists(installerPath);
                     Files.deleteIfExists(installerPath.getParent());
