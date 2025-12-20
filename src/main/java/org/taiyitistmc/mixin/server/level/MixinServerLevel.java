@@ -50,6 +50,7 @@ import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
@@ -164,7 +165,7 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
     private void taiyitist$init(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List p_215008_, boolean p_215009_, RandomSequences p_288977_, CallbackInfo ci) {
         this.pvpMode = p_214999_.isPvpAllowed();
         convertable = p_215001_;
-        uuid = WorldUUID.getUUID(convertable.levelDirectory.path().toFile());
+        this.uuid = WorldUUID.getUUID(p_215001_.getDimensionPath(this.dimension()).toFile());
         var typeKey = p_215001_.dimensionType;
         if (typeKey != null) {
             this.typeKey = typeKey;
@@ -197,9 +198,7 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
             environment = BukkitRegistry.environment.get(getTypeKey());
         }
         if (biomeProvider != null) {
-            WorldInfo worldInfo = new CraftWorldInfo((ServerLevelData) getLevelData(),
-                    convertable, environment, this.dimensionType());
-            BiomeSource worldChunkManager = new CustomWorldChunkManager(worldInfo, biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
+            BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
             if (chunkgenerator instanceof NoiseBasedChunkGenerator cga) {
                 chunkgenerator = new NoiseBasedChunkGenerator(worldChunkManager, cga.settings);
             } else if (chunkgenerator instanceof FlatLevelSource cpf) {
@@ -215,6 +214,11 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
             generator = getCraftServer().getGenerator(p_215002_.getLevelName());
         }
         this.spigotConfig = new SpigotWorldConfig(p_215002_.getLevelName()); // Spigot
+    }
+
+    @Redirect(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getWorldData()Lnet/minecraft/world/level/storage/WorldData;"))
+    private WorldData taiyitist$useRespective(MinecraftServer server) {
+        return K;
     }
 
     @Inject(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At("RETURN"))

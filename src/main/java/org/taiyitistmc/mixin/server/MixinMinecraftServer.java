@@ -52,9 +52,11 @@ import org.spigotmc.WatchdogThread;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.taiyitistmc.bukkit.BukkitSnapshotCaptures;
@@ -128,6 +130,12 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
     @Shadow
     public abstract boolean isSpawningAnimals();
 
+    @Shadow
+    private boolean mayHaveDelayedTasks;
+
+    @Shadow
+    private long delayedTasksMaxNextTickTimeNanos;
+
     public MixinMinecraftServer(String p_18765_) {
         super(p_18765_);
     }
@@ -185,7 +193,7 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
         } // CraftBukkit - SPIGOT-625 - give server at least a chance to send packets
     }
 
-    @Inject(method = "stopServer", at = @At("HEAD"))
+    @Inject(method = "stopServer", at = @At("HEAD"), cancellable = true)
     private void taiyitist$preventMultiple(CallbackInfo ci) {
         // CraftBukkit start - prevent double stopping on multiple threads
         synchronized(stopLock) {
@@ -229,6 +237,16 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
         this.server.scoreboardManager = new CraftScoreboardManager(((MinecraftServer) (Object) this), serverLevel.getScoreboard());
     }
     // CraftBukkit start
+
+    /**
+     * @author wdog5734
+     * @reason bukkit
+     */
+    @Overwrite
+    private boolean haveTime() {
+        // CraftBukkit start
+        return this.forceTicks || this.runningTask() || Util.getNanos() < (this.mayHaveDelayedTasks ? this.delayedTasksMaxNextTickTimeNanos : this.nextTickTimeNanos);
+    }
 
     @Override
     public void initWorld(ServerLevel serverlevel, ServerLevelData serverleveldata, WorldData saveData, WorldOptions worldoptions) {

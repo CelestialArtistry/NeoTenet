@@ -27,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CapturedBlockState;
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftSpawnCategory;
 import org.bukkit.entity.SpawnCategory;
@@ -109,6 +110,9 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
     @Shadow
     @Final
     private ResourceKey<Level> dimension;
+
+    @Shadow
+    public static BlockPos lastPhysicsProblem;
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/storage/WritableLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/core/Holder;Ljava/util/function/Supplier;ZZJI)V", at = @At("RETURN"), order = 1001)
     private void taiyitist$init(WritableLevelData writableLevelData, ResourceKey resourceKey, RegistryAccess registryAccess, Holder holder, Supplier supplier, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_, CallbackInfo ci) {
@@ -270,6 +274,28 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
             return;
         }
         // CraftBukkit end
+    }
+
+    @Inject(method = "markAndNotifyBlock", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;updateNeighbourShapes(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;II)V"))
+    private void arclight$callBlockPhysics(BlockPos pos, LevelChunk chunk, BlockState blockstate, BlockState state, int flags, int recursionLeft, CallbackInfo ci) {
+        try {
+            if (this.getWorld() != null) {
+                BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at((LevelAccessor) this, pos), CraftBlockData.fromData(state));
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    ci.cancel();
+                }
+            }
+        } catch (StackOverflowError e) {
+            lastPhysicsProblem = pos;
+        }
+    }
+
+    @Inject(method = "markAndNotifyBlock", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;onBlockStateChange(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)V"))
+    private void arclight$preventPoiUpdate(BlockPos p_46605_, LevelChunk levelchunk, BlockState blockstate, BlockState p_46606_, int p_46607_, int p_46608_, CallbackInfo ci) {
+        if (this.preventPoiUpdated) {
+            ci.cancel();
+        }
     }
 
     @Override

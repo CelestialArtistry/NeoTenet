@@ -26,12 +26,11 @@
  import net.minecraft.core.HolderGetter;
  import net.minecraft.core.LayeredRegistryAccess;
  import net.minecraft.core.Registry;
-@@ -165,9 +_,16 @@
+@@ -165,9 +_,15 @@
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
-+import org.bukkit.World;
 +import org.bukkit.craftbukkit.CraftRegistry;
 +import org.bukkit.craftbukkit.CraftServer;
 +import org.bukkit.event.world.WorldLoadEvent;
@@ -129,49 +128,75 @@
              ChunkPos chunkpos = new ChunkPos(serverchunkcache.randomState().sampler().findSpawnPosition());
              int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
              if (i < p_177897_.getMinBuildHeight()) {
-@@ -486,22 +_,19 @@
+@@ -484,42 +_,48 @@
+         serverleveldata.setGameType(GameType.SPECTATOR);
+     }
  
++    // CraftBukkit start
      public void prepareLevels(ChunkProgressListener p_129941_) {
-         ServerLevel serverlevel = this.overworld();
+-        ServerLevel serverlevel = this.overworld();
+-        LOGGER.info("Preparing start region for dimension {}", serverlevel.dimension().location());
+-        BlockPos blockpos = serverlevel.getSharedSpawnPos();
++        ServerLevel serverworld = this.overworld();
 +        this.forceTicks = true;
-         LOGGER.info("Preparing start region for dimension {}", serverlevel.dimension().location());
-         BlockPos blockpos = serverlevel.getSharedSpawnPos();
++        LOGGER.info("Preparing start region for dimension {}", serverworld.dimension().location());
++        BlockPos blockpos = serverworld.getSharedSpawnPos();
          p_129941_.updateSpawnPos(new ChunkPos(blockpos));
-         ServerChunkCache serverchunkcache = serverlevel.getChunkSource();
+-        ServerChunkCache serverchunkcache = serverlevel.getChunkSource();
++        ServerChunkCache serverchunkprovider = serverworld.getChunkSource();
          this.nextTickTimeNanos = Util.getNanos();
-         serverlevel.setDefaultSpawnPos(blockpos, serverlevel.getSharedSpawnAngle());
+-        serverlevel.setDefaultSpawnPos(blockpos, serverlevel.getSharedSpawnAngle());
 -        int i = this.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS);
-+        int i = serverlevel.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS);
++        serverworld.setDefaultSpawnPos(blockpos, serverworld.getSharedSpawnAngle());
++        int i = serverworld.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS); // CraftBukkit - per-world
          int j = i > 0 ? Mth.square(ChunkProgressListener.calculateDiameter(i)) : 0;
  
-         while (serverchunkcache.getTickingGenerated() < j) {
+-        while (serverchunkcache.getTickingGenerated() < j) {
 -            this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -            this.waitUntilNextTick();
++        while (serverchunkprovider.getTickingGenerated() < j) {
++            // CraftBukkit start
++            // this.nextTickTimeNanos = SystemUtils.getNanos() + MinecraftServer.PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 +            this.executeModerately();
          }
--
+ 
 -        this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -        this.waitUntilNextTick();
- 
-         for (ServerLevel serverlevel1 : this.levels.values()) {
-             ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
-@@ -513,13 +_,17 @@
-                     ChunkPos chunkpos = new ChunkPos(k);
-                     serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
+-
+-        for (ServerLevel serverlevel1 : this.levels.values()) {
+-            ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
+-            if (forcedchunkssaveddata != null) {
+-                LongIterator longiterator = forcedchunkssaveddata.getChunks().iterator();
+-
+-                while (longiterator.hasNext()) {
+-                    long k = longiterator.nextLong();
+-                    ChunkPos chunkpos = new ChunkPos(k);
+-                    serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
++        this.executeModerately();
++
++        for (ServerLevel serverWorld : this.levels.values()) {
++            if (serverWorld.getWorld().getKeepSpawnInMemory()) {
++                ForcedChunksSavedData forcedchunkssavedata = serverWorld.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
++                if (forcedchunkssavedata != null) {
++                    LongIterator longiterator = forcedchunkssavedata.getChunks().iterator();
++
++                    while (longiterator.hasNext()) {
++                        long k = longiterator.nextLong();
++                        ChunkPos chunkpos = new ChunkPos(k);
++                        serverWorld.getChunkSource().updateChunkForced(chunkpos, true);
++                    }
++                    net.neoforged.neoforge.common.world.chunk.ForcedChunkManager.reinstatePersistentChunks(serverWorld, forcedchunkssavedata);
                  }
-+                net.neoforged.neoforge.common.world.chunk.ForcedChunkManager.reinstatePersistentChunks(serverlevel1, forcedchunkssaveddata);
              }
-+            Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverlevel1.getWorld()));
++            Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverWorld.getWorld()));
          }
  
 -        this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -        this.waitUntilNextTick();
-+        // CraftBukkit start
 +        this.executeModerately();
          p_129941_.stop();
          this.updateMobSpawningFlags();
 +        this.forceTicks = false;
-+        // CraftBukkit end
      }
  
      public GameType getDefaultGameType() {

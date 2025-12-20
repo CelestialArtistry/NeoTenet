@@ -50,4 +50,4 @@ gradle.settingsEvaluated {
     gradle.extensions.add("repositoryBaseUrls", dependencyResolutionManagement.repositories.findAll { it instanceof MavenArtifactRepository }.collect { it.url }.toArray(URI[]::new))
 }
 
-include 'launcher'
+include 'neotaiyitistlauncher'
