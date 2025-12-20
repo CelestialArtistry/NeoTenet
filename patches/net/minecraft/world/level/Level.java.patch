@@ -93,7 +93,7 @@
 +    private final ArrayList<BlockEntity> freshBlockEntities = new ArrayList<>();
 +    private final ArrayList<BlockEntity> pendingFreshBlockEntities = new ArrayList<>();
 +    // CraftBukkit start Added the following
-+    private CraftWorld world;
++    public CraftWorld world;
 +    public boolean pvpMode;
 +    public static ChunkGenerator generator;
 +
