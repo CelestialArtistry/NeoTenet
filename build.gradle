@@ -23,6 +23,11 @@ allprojects {
     apply plugin: 'java'
 
     java.toolchain.languageVersion.set(JavaLanguageVersion.of(project.java_version))
+    
+    // Suppress removal warnings during compilation
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:-removal"
+    }
 }
 
 // Remove src/ sources from the root project. They are used in the neoforge subproject.
@@ -47,7 +52,7 @@ immaculate {
     workflows.register("patches") {
         files.from(rootProject.fileTree("patches"))
 
-        custom 'noImportChanges', { String fileContents ->
+        custom 'noImportChanges', { String fileContents -> 
             if (fileContents.contains('+import') || fileContents.contains('-import')) {
                 throw new GradleException("Import changes are not allowed in patches!")
             }

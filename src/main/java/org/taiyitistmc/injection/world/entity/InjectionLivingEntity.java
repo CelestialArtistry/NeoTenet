@@ -84,10 +84,6 @@ public interface InjectionLivingEntity extends InjectionEntity {
         throw new IllegalStateException("Not implemented");
     }
 
-    default boolean damageEntity0(final DamageSource damagesource, float f) { // void -> boolean, add final
-        throw new IllegalStateException("Not implemented");
-    }
-
     default void setArrowCount(int i, boolean flag) {
         throw new IllegalStateException("Not implemented");
     }

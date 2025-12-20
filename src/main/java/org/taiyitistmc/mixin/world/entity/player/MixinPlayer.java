@@ -239,12 +239,6 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
         }
     }
 
-    @Inject(method = "actuallyHurt", at = @At("HEAD"), cancellable = true)
-    private void taiyitist$damageEntityCustom(DamageSource damageSrc, float damageAmount, CallbackInfo ci) {
-        damageEntity0(damageSrc, damageAmount);
-        ci.cancel();
-    }
-
     @Inject(method = "stopSleepInBed", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;sleepCounter:I"))
     private void taiyitist$wakeup(boolean flag, boolean flag1, CallbackInfo ci) {
         BlockPos blockPos = this.getSleepingPos().orElse(null);

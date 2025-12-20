@@ -254,12 +254,6 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, In
         return !this.isRemoved() && this.entityData.get(DATA_HEALTH_ID) > 0.0F;
     }
 
-    @Inject(method = "actuallyHurt", cancellable = true, at = @At("HEAD"))
-    public void taiyitist$redirectDamageEntity(DamageSource damageSrc, float damageAmount, CallbackInfo ci) {
-        damageEntity0(damageSrc, damageAmount);
-        ci.cancel();
-    }
-
     @Override
     public void heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason) {
         pushHealReason(regainReason);
