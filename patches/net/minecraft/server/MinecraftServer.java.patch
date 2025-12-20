@@ -26,15 +26,18 @@
  import net.minecraft.core.HolderGetter;
  import net.minecraft.core.LayeredRegistryAccess;
  import net.minecraft.core.Registry;
-@@ -165,9 +_,13 @@
+@@ -165,9 +_,16 @@
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.CraftRegistry;
 +import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.event.world.WorldLoadEvent;
  import org.slf4j.Logger;
 +import org.taiyitistmc.injection.server.InjectionMinecraftServer;
++import org.taiyitistmc.neoforge.BukkitRegistry;
  
 -public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, ChunkIOErrorReporter, CommandSource, AutoCloseable {
 +public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, ChunkIOErrorReporter, CommandSource, AutoCloseable, InjectionMinecraftServer {
@@ -89,10 +92,31 @@
          if (!serverleveldata.isInitialized()) {
              try {
                  setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -421,6 +_,7 @@
+@@ -405,6 +_,19 @@
+             if (resourcekey != LevelStem.OVERWORLD) {
+                 ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
+                 DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
++                String name = resourcekey == LevelStem.NETHER ? "DIM1" : "DIM-1";
++                // NeoTaiyitist - added for levelstem
++                if (resourcekey == LevelStem.NETHER) {
++                    if (!this.server.getAllowNether()) {
++                        continue;
++                    }
++                } else if (resourcekey == LevelStem.END) {
++                    if (!this.server.getAllowEnd()) {
++                        continue;
++                    }
++                }
++                BukkitRegistry.registerEnvironments(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM));
++                Level.craftWorldData(BukkitRegistry.environment.get(resourcekey), this.server.getGenerator(name), this.server.getBiomeProvider(name));
+                 ServerLevel serverlevel1 = new ServerLevel(
+                     this,
+                     this.executor,
+@@ -421,6 +_,8 @@
                  );
                  worldborder.addListener(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.getWorldBorder()));
                  this.levels.put(resourcekey1, serverlevel1);
++                this.initWorld(serverlevel1, derivedleveldata, worldData, worldoptions); // CraftBukkit
 +                net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.level.LevelEvent.Load(levels.get(resourcekey)));
              }
          }
@@ -105,14 +129,61 @@
              ChunkPos chunkpos = new ChunkPos(serverchunkcache.randomState().sampler().findSpawnPosition());
              int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
              if (i < p_177897_.getMinBuildHeight()) {
-@@ -513,6 +_,7 @@
+@@ -486,22 +_,19 @@
+ 
+     public void prepareLevels(ChunkProgressListener p_129941_) {
+         ServerLevel serverlevel = this.overworld();
++        this.forceTicks = true;
+         LOGGER.info("Preparing start region for dimension {}", serverlevel.dimension().location());
+         BlockPos blockpos = serverlevel.getSharedSpawnPos();
+         p_129941_.updateSpawnPos(new ChunkPos(blockpos));
+         ServerChunkCache serverchunkcache = serverlevel.getChunkSource();
+         this.nextTickTimeNanos = Util.getNanos();
+         serverlevel.setDefaultSpawnPos(blockpos, serverlevel.getSharedSpawnAngle());
+-        int i = this.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS);
++        int i = serverlevel.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS);
+         int j = i > 0 ? Mth.square(ChunkProgressListener.calculateDiameter(i)) : 0;
+ 
+         while (serverchunkcache.getTickingGenerated() < j) {
+-            this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
+-            this.waitUntilNextTick();
++            this.executeModerately();
+         }
+-
+-        this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
+-        this.waitUntilNextTick();
+ 
+         for (ServerLevel serverlevel1 : this.levels.values()) {
+             ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
+@@ -513,13 +_,17 @@
                      ChunkPos chunkpos = new ChunkPos(k);
                      serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
                  }
 +                net.neoforged.neoforge.common.world.chunk.ForcedChunkManager.reinstatePersistentChunks(serverlevel1, forcedchunkssaveddata);
              }
++            Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverlevel1.getWorld()));
          }
  
+-        this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
+-        this.waitUntilNextTick();
++        // CraftBukkit start
++        this.executeModerately();
+         p_129941_.stop();
+         this.updateMobSpawningFlags();
++        this.forceTicks = false;
++        // CraftBukkit end
+     }
+ 
+     public GameType getDefaultGameType() {
+@@ -550,7 +_,7 @@
+ 
+         ServerLevel serverlevel2 = this.overworld();
+         ServerLevelData serverleveldata = this.worldData.overworldData();
+-        serverleveldata.setWorldBorder(serverlevel2.getWorldBorder().createSettings());
++        if (serverlevel2 != null) serverleveldata.setWorldBorder(serverlevel2.getWorldBorder().createSettings());
+         this.worldData.setCustomBossEvents(this.getCustomBossEvents().save(this.registryAccess()));
+         this.storageSource.saveDataTag(this.registryAccess(), this.worldData, this.getPlayerList().getSingleplayerData());
+         if (p_129887_) {
 @@ -620,6 +_,7 @@
          for (ServerLevel serverlevel2 : this.getAllLevels()) {
              if (serverlevel2 != null) {

@@ -1235,6 +1235,16 @@ public final class CraftServer implements Server {
         return true;
     }
 
+    // Taiyitist start - added for remove world
+    public void removeWorld(ServerLevel world) {
+        if (world == null) {
+            return;
+        }
+        String worldname = world.getWorld().getName().startsWith("DIM") ? world.getWorld().getName() :world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH);
+        this.worlds.remove(worldname);
+    }
+    // Taiyitist end
+
     public DedicatedServer getServer() {
         return this.console;
     }

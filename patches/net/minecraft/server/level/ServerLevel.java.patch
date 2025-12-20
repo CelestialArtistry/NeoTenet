@@ -21,7 +21,7 @@
      public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
      public static final IntProvider RAIN_DELAY = UniformInt.of(12000, 180000);
      public static final IntProvider RAIN_DURATION = UniformInt.of(12000, 24000);
-@@ -199,11 +_,39 @@
+@@ -199,11 +_,34 @@
      private final List<CustomSpawner> customSpawners;
      @Nullable
      private EndDragonFight dragonFight;
@@ -35,11 +35,6 @@
 +    public LevelStorageSource.LevelStorageAccess convertable;
 +    public UUID uuid;
 +    public PrimaryLevelData K;
-+
-+    @Override
-+    public ResourceKey<LevelStem> getTypeKey() {
-+        return convertable.dimensionType;
-+    }
 +
 +    public ServerLevel(
 +            MinecraftServer p_214999_,

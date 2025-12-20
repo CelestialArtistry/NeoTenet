@@ -35,8 +35,4 @@ public interface InjectionMinecraftServer {
     default void executeModerately() {
         throw new IllegalStateException("Not implemented");
     }
-
-    default double[] getTPS() {
-        throw new IllegalStateException("Not implemented");
-    }
 }

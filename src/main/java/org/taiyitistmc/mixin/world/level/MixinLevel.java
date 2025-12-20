@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.FullChunkStatus;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
@@ -103,6 +105,10 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
 
     @Shadow
     public ChunkGenerator generator;
+
+    @Shadow
+    @Final
+    private ResourceKey<Level> dimension;
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/storage/WritableLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/core/Holder;Ljava/util/function/Supplier;ZZJI)V", at = @At("RETURN"), order = 1001)
     private void taiyitist$init(WritableLevelData writableLevelData, ResourceKey resourceKey, RegistryAccess registryAccess, Holder holder, Supplier supplier, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_, CallbackInfo ci) {
@@ -264,5 +270,10 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
             return;
         }
         // CraftBukkit end
+    }
+
+    @Override
+    public ResourceKey<LevelStem> getTypeKey() {
+        return Registries.levelToLevelStem(dimension);
     }
 }
