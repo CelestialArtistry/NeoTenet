@@ -33,6 +33,7 @@ so don't worried about the plugin files will be changed to unsafe
 - [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - Plugin support.
 - [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - Plugin support.
 - [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - Plugin support.
+- [**TENET**](https://github.com/Rz-C/TENET) - Some code
 - [**Arclight**](https://github.com/IzzelAliz/Arclight.git) - Some code.
 
 ## Special Thanks To:
