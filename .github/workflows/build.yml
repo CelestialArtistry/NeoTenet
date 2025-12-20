@@ -33,7 +33,7 @@ jobs:
       - name: Setup Mc
         run: ./gradlew setup
       - name: Installer Jar
-        run: ./gradlew installerJar
+        run: ./gradlew launcherJar
 
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
@@ -42,5 +42,5 @@ jobs:
           makeLatest: true
           removeArtifacts: true
           tag: "1.21.1-release"
-          artifacts: ./projects/neotaiyitist/build/libs/*.jar
+          artifacts: ./neotaiyitistlauncher/build/libs/*.jar
           token: ${{ secrets.GITHUB_TOKEN }}
