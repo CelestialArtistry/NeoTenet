@@ -1,19 +1,18 @@
 --- a/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
-@@ -49,6 +_,12 @@
-     @Nullable
-     private SynchronizeRegistriesTask synchronizeRegistriesTask;
+@@ -32,10 +_,10 @@
+ import net.minecraft.server.network.config.JoinWorldTask;
+ import net.minecraft.server.network.config.ServerResourcePackConfigurationTask;
+ import net.minecraft.server.network.config.SynchronizeRegistriesTask;
+-import net.minecraft.server.packs.PackResources;
+ import net.minecraft.server.packs.repository.KnownPack;
+ import net.minecraft.server.players.PlayerList;
+ import net.minecraft.world.flag.FeatureFlags;
++import org.bukkit.craftbukkit.CraftServerLinks;
+ import org.slf4j.Logger;
  
-+    public ServerConfigurationPacketListenerImpl(MinecraftServer p_294645_, Connection p_295787_, CommonListenerCookie p_302003_, ServerPlayer serverPlayer) {
-+        super(p_294645_, p_295787_, p_302003_, serverPlayer);
-+        this.gameProfile = p_302003_.gameProfile();
-+        this.clientInformation = p_302003_.clientInformation();
-+    }
-+
-     public ServerConfigurationPacketListenerImpl(MinecraftServer p_294645_, Connection p_295787_, CommonListenerCookie p_302003_) {
-         super(p_294645_, p_295787_, p_302003_);
-         this.gameProfile = p_302003_.gameProfile();
-@@ -72,6 +_,15 @@
+ public class ServerConfigurationPacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerConfigurationPacketListener, TickablePacketListener {
+@@ -72,8 +_,23 @@
      }
  
      public void startConfiguration() {
@@ -28,7 +27,15 @@
 +    private void runConfiguration() {
          this.send(new ClientboundCustomPayloadPacket(new BrandPayload(this.server.getServerModName())));
          ServerLinks serverlinks = this.server.serverLinks();
++        // CraftBukkit start
++        CraftServerLinks wrapper = new CraftServerLinks(serverlinks);
++        org.bukkit.event.player.PlayerLinksSendEvent event = new org.bukkit.event.player.PlayerLinksSendEvent(player.getBukkitEntity(), wrapper);
++        player.getBukkitEntity().getServer().getPluginManager().callEvent(event);
++        serverlinks = wrapper.getServerLinks();
++        // CraftBukkit end
          if (!serverlinks.isEmpty()) {
+             this.send(new ClientboundServerLinksPacket(serverlinks.untrust()));
+         }
 @@ -81,6 +_,8 @@
          LayeredRegistryAccess<RegistryLayer> layeredregistryaccess = this.server.registries();
          List<KnownPack> list = this.server.getResourceManager().listPacks().flatMap(p_325637_ -> p_325637_.location().knownPackInfo().stream()).toList();
@@ -38,7 +45,7 @@
          this.synchronizeRegistriesTask = new SynchronizeRegistriesTask(list, layeredregistryaccess);
          this.configurationTasks.add(this.synchronizeRegistriesTask);
          this.addOptionalTasks();
-@@ -95,6 +_,33 @@
+@@ -95,6 +_,20 @@
  
      private void addOptionalTasks() {
          this.server.getServerResourcePack().ifPresent(p_296496_ -> this.configurationTasks.add(new ServerResourcePackConfigurationTask(p_296496_)));
@@ -56,19 +63,6 @@
 +        }
 +
 +        super.handleCustomPayload(p_294276_); // Neo: Call super to invoke modded payload handling.
-+    }
-+
-+    @Override
-+    public void handlePong(net.minecraft.network.protocol.common.ServerboundPongPacket p_295142_) {
-+        super.handlePong(p_295142_);
-+        // During startConfiguration() we send a ping with id 0, if we get a pong back, we initiate the connection.
-+        if (p_295142_.getId() == 0) {
-+            if (!this.connectionType.isNeoForge() && !net.neoforged.neoforge.network.registration.NetworkRegistry.initializeOtherConnection(this)) {
-+                return;
-+            }
-+
-+            this.runConfiguration();
-+        }
      }
  
      @Override
@@ -87,11 +81,20 @@
  
          try {
              PlayerList playerlist = this.server.getPlayerList();
-@@ -141,7 +_,7 @@
+@@ -134,14 +_,14 @@
+                 return;
              }
  
-             ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation);
+-            Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), this.gameProfile);
++            Component component = null; // CraftBukkit - login checks already completed
+             if (component != null) {
+                 this.disconnect(component);
+                 return;
+             }
+ 
+-            ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation);
 -            playerlist.placeNewPlayer(this.connection, serverplayer, this.createCookie(this.clientInformation));
++            ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation, this.player); // CraftBukkit
 +            playerlist.placeNewPlayer(this.connection, serverplayer, this.createCookie(this.clientInformation, this.connectionType));
          } catch (Exception exception) {
              LOGGER.error("Couldn't place player in world", (Throwable)exception);

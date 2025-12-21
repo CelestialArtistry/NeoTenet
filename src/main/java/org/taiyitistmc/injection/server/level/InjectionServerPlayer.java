@@ -1,5 +1,6 @@
 package org.taiyitistmc.injection.server.level;
 
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.taiyitistmc.injection.world.entity.player.InjectionPlayer;
 import com.mojang.datafixers.util.Either;
 import java.util.Optional;
@@ -95,6 +96,10 @@ public interface InjectionServerPlayer extends InjectionPlayer {
     }
 
     default void pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause cause) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default void pushRespawnCause(PlayerRespawnEvent.RespawnReason reason) {
         throw new IllegalStateException("Not implemented");
     }
 }

@@ -1,14 +1,12 @@
 package org.taiyitistmc.injection.server.players;
 
-import java.net.SocketAddress;
 import java.util.UUID;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -19,10 +17,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public interface InjectionPlayerList {
 
-    default ServerPlayer taiyitist$canPlayerLogin(SocketAddress socketAddress, GameProfile gameProfile, ServerLoginPacketListenerImpl handler) {
-        throw new IllegalStateException("Not implemented");
-    }
-
     default CraftServer getCraftServer() {
         throw new IllegalStateException("Not implemented");
     }
@@ -31,7 +25,7 @@ public interface InjectionPlayerList {
         throw new IllegalStateException("Not implemented");
     }
 
-    default ServerPlayer respawn(ServerPlayer entityplayer, ServerLevel worldserver, boolean flag, Location location, boolean avoidSuffocation, Entity.RemovalReason entity_removalreason, PlayerRespawnEvent.RespawnReason reason) {
+    default ServerPlayer respawn(ServerPlayer entityplayer, boolean flag, Entity.RemovalReason entity_removalreason, PlayerRespawnEvent.RespawnReason reason, Location location) {
         throw new IllegalStateException("Not implemented");
     }
 
@@ -39,7 +33,7 @@ public interface InjectionPlayerList {
         throw new IllegalStateException("Not implemented");
     }
 
-    default void broadcastAll(Packet<?> packet, Level world) {
+    default void broadcastAll(Packet<?> packet, ResourceKey<Level> world) {
         throw new IllegalStateException("Not implemented");
     }
 
@@ -52,10 +46,6 @@ public interface InjectionPlayerList {
     }
 
     default ServerStatsCounter getPlayerStats(UUID uuid, String displayName) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    default ServerPlayer respawn(ServerPlayer playerIn, boolean flag, Entity.RemovalReason removalReason, PlayerRespawnEvent.RespawnReason respawnReason, Location location) {
         throw new IllegalStateException("Not implemented");
     }
 }

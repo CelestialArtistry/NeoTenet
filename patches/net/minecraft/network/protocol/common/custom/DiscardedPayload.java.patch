@@ -26,3 +26,13 @@
      public static <T extends FriendlyByteBuf> StreamCodec<T, DiscardedPayload> codec(ResourceLocation p_320106_, int p_319929_) {
          return CustomPacketPayload.codec((p_320462_, p_319882_) -> {
          }, p_319935_ -> {
+@@ -21,5 +_,9 @@
+     @Override
+     public CustomPacketPayload.Type<DiscardedPayload> type() {
+         return new CustomPacketPayload.Type<>(this.id);
++    }
++
++    public ByteBuf data() {
++        return data;
+     }
+ }

@@ -27,8 +27,4 @@ public interface InjectionServerCommonPacketListenerImpl {
     default void sendPacket(Packet<?> packet) {
         throw new IllegalStateException("Not implemented");
     }
-
-    default void kickPlayer(Component reason) {
-        throw new IllegalStateException("Not implemented");
-    }
 }

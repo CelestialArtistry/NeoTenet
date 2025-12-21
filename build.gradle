@@ -26,7 +26,7 @@ allprojects {
     
     // Suppress removal and deprecation warnings during compilation
     tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:-removal" << "-Xlint:-deprecation"
+        options.compilerArgs << "-Xlint:-removal" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-varargs"
     }
 }
 

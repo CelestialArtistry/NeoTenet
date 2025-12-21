@@ -81,6 +81,7 @@ import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSpawnChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -317,6 +318,12 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
                 this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.THUNDER_LEVEL_CHANGE, 0.0f));
             }
         }
+    }
+
+
+    @Override
+    public void pushRespawnCause(PlayerRespawnEvent.RespawnReason reason) {
+        System.out.println("Test Fix");
     }
 
     @Override

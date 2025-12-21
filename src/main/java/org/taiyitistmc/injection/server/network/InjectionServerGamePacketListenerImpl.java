@@ -16,7 +16,7 @@ public interface InjectionServerGamePacketListenerImpl extends InjectionServerCo
         throw new IllegalStateException("Not implemented");
     }
 
-    default void teleport(double d0, double d1, double d2, float f, float f1, PlayerTeleportEvent.TeleportCause cause) {
+    default boolean teleport(double d0, double d1, double d2, float f, float f1, PlayerTeleportEvent.TeleportCause cause) {
         throw new IllegalStateException("Not implemented");
     }
 

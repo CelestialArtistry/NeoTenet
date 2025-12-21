@@ -1764,7 +1764,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
         GameRules.Value<?> handle = this.getHandle().getGameRules().getRule(CraftWorld.getGameRulesNMS().get(rule));
         handle.deserialize(value);
-        handle.onChanged(this.getHandle().getServer());// NeoTaiyitist -TODO fixme
+        handle.onChanged(this.getHandle());
         return true;
     }
 
@@ -1801,7 +1801,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
         GameRules.Value<?> handle = this.getHandle().getGameRules().getRule(CraftWorld.getGameRulesNMS().get(rule.getName()));
         handle.deserialize(newValue.toString());
-        handle.onChanged(this.getHandle().getServer());// NeoTaiyitist -TODO fixme
+        handle.onChanged(this.getHandle());
         return true;
     }
 
