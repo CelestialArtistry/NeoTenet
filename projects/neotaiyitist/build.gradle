@@ -138,6 +138,7 @@ dependencies {
     libraries "org.hamcrest:hamcrest:2.2"
     libraries "org.mockito:mockito-core:5.14.1"
     libraries "org.yaml:snakeyaml:2.2"
+    libraries "com.github.lalyos:jfiglet:0.0.9"
     libraries ("net.md-5:bungeecord-chat:1.21-R0.3") {
         transitive = false
     }
@@ -181,14 +182,15 @@ neoDev {
         configureEach {
             gameDirectory = layout.projectDir.dir("run/$name")
             systemProperty("terminal.ansi", "true")
+            jvmArguments.addAll '-Xms4G', '-Xmx6G'
         }
-    client {
+        client {
             client()
-    }
+        }
 
-    server {
+        server {
             server()
-    }
+        }
 
     gameTestServer {
             type = "gameTestServer"
@@ -205,6 +207,11 @@ neoDev {
 tasks.withType(JavaCompile.class).configureEach {
     // Increase memory used during compilation, to avoid OutOfMemoryErrors
     options.forkOptions.memoryMaximumSize = '2g'
+}
+
+// Keep Gradle connected to server process for console input
+tasks.matching { it.name == 'runServer' }.configureEach {
+    standardInput = System.in
 }
 
 tasks.withType(Javadoc.class).configureEach {
