@@ -100,7 +100,7 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void taiyitist$init(CallbackInfo ci) {
-        this.foodData.setEntityhuman((Player) (Object) this);
+        this.foodData.entityhuman = ((Player) (Object) this);
         this.enderChestInventory.setOwner(this.getBukkitEntity());
     }
 

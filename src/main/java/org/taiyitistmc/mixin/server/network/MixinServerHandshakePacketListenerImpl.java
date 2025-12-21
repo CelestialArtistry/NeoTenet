@@ -1,9 +1,9 @@
 package org.taiyitistmc.mixin.server.network;
 
-import com.google.gson.Gson;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
@@ -24,18 +24,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerHandshakePacketListenerImpl.class)
 public abstract class MixinServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
 
-    // CraftBukkit start - add fields
-    private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
-    // CraftBukkit end
-    private static final Gson gson = new Gson();
-    private static final java.util.regex.Pattern HOST_PATTERN = java.util.regex.Pattern.compile("[0-9a-f\\.:]{0,45}");
-    private static int throttleCounter = 0;
     @Shadow
     @Final
     private Connection connection;
     @Shadow
     @Final
     private MinecraftServer server;
+
+    @Shadow
+    private static int throttleCounter;
+
+    @Shadow
+    @Final
+    private static HashMap<InetAddress, Long> throttleTracker;
 
     @Inject(method = "handleIntention", at = @At("HEAD"))
     private void taiyitist$setHostName(ClientIntentionPacket packet, CallbackInfo ci) {

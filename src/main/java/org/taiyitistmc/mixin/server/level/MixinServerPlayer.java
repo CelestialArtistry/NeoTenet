@@ -127,7 +127,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     public long timeOffset = 0;
     public WeatherType weather = null;
     public boolean relativeTime = true;
-    public String locale = null; // CraftBukkit - add, lowercase // Paper - default to null
+    public String locale = "en_us"; // CraftBukkit - add, lowercase
     public CraftPlayer.TransferCookieConnection transferCookieConnection;
     @Shadow
     private ResourceKey<Level> respawnDimension;
@@ -483,7 +483,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         this.setRemainingFireTicks(0);
         this.resetFallDistance();
         this.foodData = new FoodData();
-        this.foodData.setEntityhuman((ServerPlayer) (Object) this);
+        this.foodData.entityhuman = ((ServerPlayer) (Object) this);
         this.experienceLevel = this.newLevel;
         this.totalExperience = this.newTotalExp;
         this.experienceProgress = 0.0f;

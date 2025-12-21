@@ -139,7 +139,6 @@
     "world.entity.npc.MixinWanderingTraderSpawner",
     "world.entity.player.MixinInventory",
     "world.entity.player.MixinPlayer",
-    "world.food.MixinFoodData",
     "world.inventory.MixinAbstractFurnaceMenu",
     "world.inventory.MixinAnvilMenu",
     "world.inventory.MixinBeaconMenu",
