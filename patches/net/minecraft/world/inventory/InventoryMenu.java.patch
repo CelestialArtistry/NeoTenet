@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/inventory/InventoryMenu.java
++++ b/net/minecraft/world/inventory/InventoryMenu.java
+@@ -12,6 +_,7 @@
+ import net.minecraft.world.item.crafting.CraftingInput;
+ import net.minecraft.world.item.crafting.CraftingRecipe;
+ import net.minecraft.world.item.crafting.RecipeHolder;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class InventoryMenu extends RecipeBookMenu<CraftingInput, CraftingRecipe> {
+     public static final int CONTAINER_ID = 0;
+@@ -48,6 +_,7 @@
+     private final ResultContainer resultSlots = new ResultContainer();
+     public final boolean active;
+     private final Player owner;
++    public CraftInventoryView bukkitEntity;
+ 
+     public InventoryMenu(Inventory p_39706_, boolean p_39707_, final Player p_39708_) {
+         super(null, 0);
