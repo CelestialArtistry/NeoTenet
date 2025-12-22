@@ -64,4 +64,4 @@ By contributing to NeoTenet, you agree to the following terms:
 - You grant CelestialArtistry a license to use your code contributed to the primary codebase (everything **not** under patches) in NeoTenet, under the LGPLv2.1 license.
 - You assign copyright ownership of your contributions to the patches codebase (everything under patches) to CelestialArtistry, where it will be licensed under the LGPLv2.1 license.
 
-This is intended as a **legally binding copyright assignment** to the CelestialArtistry project for contributions under the patches codebase. However, you retain your copyright for all other contributions.
+This is intended as a **legally binding copyright assignment** to the NeoTenet project for contributions under the patches codebase. However, you retain your copyright for all other contributions.
