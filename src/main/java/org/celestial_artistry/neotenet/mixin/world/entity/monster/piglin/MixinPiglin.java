@@ -1,4 +1,4 @@
-package org.celestial_artistry.neotenet.mixin.world.entity.moster.piglin;
+package org.celestial_artistry.neotenet.mixin.world.entity.monster.piglin;
 
 import java.util.HashSet;
 import java.util.Set;

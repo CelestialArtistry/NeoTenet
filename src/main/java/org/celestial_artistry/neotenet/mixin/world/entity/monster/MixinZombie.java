@@ -1,4 +1,4 @@
-package org.celestial_artistry.neotenet.mixin.world.entity.moster;
+package org.celestial_artistry.neotenet.mixin.world.entity.monster;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

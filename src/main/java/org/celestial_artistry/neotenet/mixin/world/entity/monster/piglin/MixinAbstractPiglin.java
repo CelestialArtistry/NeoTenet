@@ -1,4 +1,4 @@
-package org.celestial_artistry.neotenet.mixin.world.entity.moster.piglin;
+package org.celestial_artistry.neotenet.mixin.world.entity.monster.piglin;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
