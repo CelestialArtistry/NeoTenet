@@ -1,4 +1,4 @@
-package org.celestial_artistry.neotenet.mixin.damagesource;
+package org.celestial_artistry.neotenet.mixin.world.damagesource;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
