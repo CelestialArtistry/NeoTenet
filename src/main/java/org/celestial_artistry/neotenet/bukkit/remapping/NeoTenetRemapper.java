@@ -61,6 +61,7 @@ public class NeoTenetRemapper {
 
     public NeoTenetRemapper() throws Exception {
         this.toNmsMapping = new JarMapping();
+        this.toNmsMapping.packages.put("org/bukkit/craftbukkit/v1_21_R1/", "org/bukkit/craftbukkit/");
         this.toBukkitMapping = new JarMapping();
         this.fromMojMapping = new JarMapping();
         this.inheritanceMap = new InheritanceMap();
