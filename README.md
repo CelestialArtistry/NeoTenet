@@ -1,54 +1,88 @@
 <div align="center">
-<img src="logo.png" alt="logo">
-  <h1>NeoTaiyitist 1.21.1</h1>
+  <img height="150px" src="https://github.com/CelestialArtistry/.github/raw/main/img/logo.jpg" alt="Logo">
+  <h1>NeoTenet 1.21.1</h1>
 
-### The Bukkit/Spigot API implementation for NeoForge
-[![](https://img.shields.io/github/stars/TaiyitstMC/Taiyitst.svg?label=Stars&logo=github)](https://github.com/TaiyitstMC/Taiyitst/stargazers)
-[![](https://img.shields.io/badge/JDK-21.0.3-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-21-lts#zulu)
-[![](https://img.shields.io/badge/Gradle-8.13-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.13/release-notes.html)
-[![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/mohistmc)
+  ### Bukkit/Spigot API Implementation for NeoForge
 
+  [![](https://img.shields.io/github/stars/TaiyitstMC/Taiyitst.svg?label=Stars&logo=github)](https://github.com/TaiyitstMC/Taiyitst/stargazers)
+  [![](https://img.shields.io/badge/JDK-21.0.3-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-21-lts#zulu)
+  [![](https://img.shields.io/badge/Gradle-8.13-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.13/release-notes.html)
+  [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/mohistmc)
 </div>
 
-| Version | Support     | Stability | Mod compatibility | Plugin compatibility |
-|---------|-------------|-----------|-------------------|----------------------| 
-| 1.21.1  | Active      | Poor      | Poor              | Poor                 |
+---
 
-### Upstream Update Progress
+## 🎯 Overview
+
+NeoTenet is a cutting-edge implementation of the Bukkit/Spigot API for NeoForge, designed to bridge the gap between modded and plugin-based Minecraft servers. It enables server administrators to run both NeoForge mods and Bukkit plugins simultaneously on Minecraft 1.21.1.
+
+| Version | Support | Stability | Mod Compatibility | Plugin Compatibility |
+|:-------:|:-------:|:---------:|:-----------------:|:--------------------:|
+| 1.21.1  | Active  | Poor      | Poor              | Poor                 |
+
+> ⚠️ **Disclaimer**: This project is still in early development. Expect bugs and compatibility issues.
+
+## 🔄 Upstream Update Progress
+
 Current synced commit:
 - [**NeoForge 1.21.1**] - [ceff3d](https://github.com/neoforged/NeoForge/commit/ceff3d20430e6a6653a83adae68ca11464e6335b)
 
-### Build
-First run `./gradlew setup`
-Then run `./gradlew launcherJar`
-Take the jar file in `neotaiyitistlauncher/build/libs`
+## 🛠️ Build Instructions
 
-### Running?
-It could be compilable and running, but the compatibility with plugins is poor.
+Follow these steps to build NeoTenet from source:
 
-### NMS Support
-We do support using Spigot's net.minecraft.server classes. Classes and Fields will automatically remap to their intermediary counterparts in runtime, but it will not change plugins at all,
-so don't worried about the plugin files will be changed to unsafe
+```bash
+# Step 1: Setup the project
+./gradlew setup
 
-## Usage
-- Download launcher from github release
-- Just run the launcher, just like spigot jar
+# Step 2: Build the launcher JAR
+./gradlew launcherJar
 
-## Discord
-- https://discord.gg/stTgbjkJ
+# Step 3: Find your built JAR
+# Location: neotenetlauncher/build/libs
+```
 
-## Upstream Projects
-- [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - Plugin support.
-- [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - Plugin support.
-- [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - Plugin support.
-- [**TENET**](https://github.com/Rz-C/TENET) - Some code
-- [**Arclight**](https://github.com/IzzelAliz/Arclight.git) - Some code.
+## ▶️ Running
 
-## Special Thanks To:
-![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
+NeoTenet is compilable and runnable, but plugin compatibility is currently limited. We're actively working to improve this.
 
-[YourKit](http://www.yourkit.com/), makers of the outstanding java profiler, support open source projects of all kinds with their full-featured [Java](https://www.yourkit.com/java/profiler/index.jsp) and [.NET](https://www.yourkit.com/.net/profiler/index.jsp) application profilers. We thank them for granting Mohist an OSS license so that we can make our software the best it can be.
+## 🧩 NMS Support
 
-[<img src="https://user-images.githubusercontent.com/21148213/121807008-8ffc6700-cc52-11eb-96a7-2f6f260f8fda.png" alt="" width="100">](https://www.jetbrains.com)
+NeoTenet features full support for Spigot's net.minecraft.server (NMS) classes:
 
-[JetBrains](https://www.jetbrains.com/), creators of the IntelliJ IDEA, supports Paper with one of their [Open Source Licenses](https://www.jetbrains.com/opensource/). IntelliJ IDEA is the recommended IDE for working with Paper, and most of the Paper team uses it.
+- Classes and fields automatically remap to their intermediary counterparts at runtime
+- Plugins remain unaffected by the remapping process
+- No need to worry about plugin files being altered or made unsafe
+
+## 📦 Usage
+
+Getting started with NeoTenet is simple:
+
+1. Download the launcher from [GitHub releases](https://github.com/TaiyitstMC/Taiyitst/releases)
+2. Run the launcher just like you would with a standard Spigot JAR file:
+   ```bash
+   java -jar neotenet-launcher.jar
+   ```
+
+## 💬 Community
+
+Join our growing community to get support, share ideas, and contribute to the project:
+
+[Discord Server](https://discord.gg/stTgbjkJ) • [GitHub Issues](https://github.com/TaiyitstMC/Taiyitst/issues)
+
+## 🔗 Upstream Projects
+
+NeoTenet builds upon the excellent work of these open-source projects:
+
+- [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - Plugin support foundation
+- [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - Plugin support implementation
+- [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - Plugin support enhancements
+- [**TENET**](https://github.com/Rz-C/TENET) - Core architectural concepts
+- [**Arclight**](https://github.com/IzzelAliz/Arclight.git) - Technical inspiration
+
+## 🙏 Special Thanks
+
+We extend our heartfelt gratitude to our contributors and supporters:
+
+- [Rz-C](https://github.com/Rz-C) - nicknamed as T Shi Huang, the Project sponsor and contributor
+Without their generous support, this project would not be possible.
