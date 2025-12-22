@@ -305,7 +305,7 @@ public final class CraftServer implements Server {
     private CraftIconCache icon;
     private boolean overrideAllCommandBlockCommands = false;
     public boolean ignoreVanillaPermissions = false;
-    private final List<CraftPlayer> playerView;
+    private List<CraftPlayer> playerView;
     public int reloadCount;
     public Set<String> activeCompatibilities = Collections.emptySet();
 
@@ -596,6 +596,14 @@ public final class CraftServer implements Server {
 
     @Override
     public List<CraftPlayer> getOnlinePlayers() {
+        // NeoTenet start - refresh online players
+        this.playerView = Collections.unmodifiableList(Lists.transform(playerList.players, new Function<ServerPlayer, CraftPlayer>() {
+            @Override
+            public CraftPlayer apply(ServerPlayer player) {
+                return player.getBukkitEntity();
+            }
+        }));
+        // NeoTenet end
         return this.playerView;
     }
 
