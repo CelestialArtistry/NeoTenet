@@ -1,5 +1,6 @@
 package org.celestial_artistry.neotenet.mixin;
 
+import io.izzel.arclight.mixin.MixinTools;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -11,6 +12,7 @@ import java.util.Set;
 public class NeoTenetMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
+        MixinTools.setup();
         try {
             NeoTenet.run();
         } catch (Exception ex) {

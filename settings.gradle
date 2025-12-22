@@ -24,6 +24,10 @@ dependencyResolutionManagement {
             name = 'SpigotMC'
             url = uri("https://hub.spigotmc.org/nexus/content/groups/public/")
         }
+        maven {
+            name = 'izzel'
+            url = 'https://maven.izzel.io/releases'
+        }
         mavenCentral()
     }
 }
