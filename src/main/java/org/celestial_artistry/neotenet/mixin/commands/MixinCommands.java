@@ -4,11 +4,14 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.context.ContextChain;
 import com.mojang.brigadier.tree.CommandNode;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.commands.CommandSourceStack;
@@ -26,6 +29,12 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.celestial_artistry.neotenet.injection.commands.InjectionCommandNode;
 import org.celestial_artistry.neotenet.injection.commands.InjectionCommands;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
 
 @Mixin(Commands.class)
 public abstract class MixinCommands implements InjectionCommands {
@@ -42,16 +51,52 @@ public abstract class MixinCommands implements InjectionCommands {
     public abstract void performCommand(ParseResults<CommandSourceStack> parseResults, String string);
 
     @Shadow
-    public abstract void performPrefixedCommand(CommandSourceStack commandSourceStack, String string);
+    @Nullable
+    private static ContextChain<CommandSourceStack> finishParsing(ParseResults<CommandSourceStack> p_307220_, String p_307311_, CommandSourceStack p_307676_) {
+        return null;
+    }
+
+    @Shadow
+    private static AtomicReference<String> taiyitist$lable;
+    @Unique
+    private static final AtomicReference<String> finishParsing$label = new AtomicReference<>();
+    @Shadow
+    private AtomicBoolean performCommand$throwCommandError;
 
     @Override
-    public void performPrefixedCommand(CommandSourceStack commandSourceStack, String s, String label) {
-        this.performPrefixedCommand(commandSourceStack, s);
+    public void performCommandCB(ParseResults<CommandSourceStack> parseresults, String s, String label, boolean throwCommandError) {
+        taiyitist$lable.set(label);
+        performCommand$throwCommandError.set(false);
+        this.performCommand(parseresults, s);
     }
 
     @Override
-    public void performCommand(ParseResults<CommandSourceStack> parseResults, String s, String label) {
-        this.performCommand(parseResults, s);
+    public void performCommandCB(ParseResults<CommandSourceStack> pParseResults, String pCommand, String label) { // CraftBukkit
+        taiyitist$lable.set(label);
+        performCommand$throwCommandError.set(false);
+        this.performCommand(pParseResults, pCommand);
+    }
+
+    @Nullable
+    private static ContextChain<CommandSourceStack> finishParsing(ParseResults<CommandSourceStack> p_307220_, String p_307311_, CommandSourceStack p_307676_, String label) { // CraftBukkit
+        taiyitist$lable.set(label);
+        return finishParsing(p_307220_, p_307311_, p_307676_);
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
+        this.performPrefixedCommand(p_230958_, p_230959_, p_230959_);
+    }
+
+    @Override
+    public void performPrefixedCommand(CommandSourceStack commandSourceStack, String s, String label) {
+        s = s.startsWith("/") ? s.substring(1) : s;
+        this.performCommandCB(this.dispatcher.parse(s, commandSourceStack), s, label);
+        // CraftBukkit end
     }
 
     @Override
@@ -88,6 +133,16 @@ public abstract class MixinCommands implements InjectionCommands {
 
         String newCommand = joiner.join(args);
         this.performPrefixedCommand(sender, newCommand, newCommand);
+    }
+
+    @Inject(method = "performCommand", at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;finishParsing(Lcom/mojang/brigadier/ParseResults;Ljava/lang/String;Lnet/minecraft/commands/CommandSourceStack;)Lcom/mojang/brigadier/context/ContextChain;"))
+    private void neotenet$setLabel(ParseResults<CommandSourceStack> p_242844_, String p_242841_, CallbackInfo ci) {
+        var label = taiyitist$lable.get();
+        finishParsing$label.set(label);
+    }
+
+    @Inject(method = "performCommand", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Component;literal(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;"))
+    private void neotenet$markLabel(ParseResults<CommandSourceStack> p_242844_, String p_242841_, CallbackInfo ci) {
     }
 
     /**

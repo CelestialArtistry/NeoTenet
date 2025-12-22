@@ -9,6 +9,8 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
@@ -155,8 +157,10 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.boss.CraftBossBar;
 import org.bukkit.craftbukkit.boss.CraftKeyedBossbar;
 import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
+import org.bukkit.craftbukkit.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.command.CraftCommandMap;
 import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftEntityFactory;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
@@ -913,9 +917,11 @@ public final class CraftServer implements Server {
     public boolean dispatchCommand(CommandSender sender, String commandLine) {
         Preconditions.checkArgument(sender != null, "sender cannot be null");
         Preconditions.checkArgument(commandLine != null, "commandLine cannot be null");
-        org.spigotmc.AsyncCatcher.catchOp("command dispatch"); // Spigot
+        org.spigotmc.AsyncCatcher.catchOp("Command Dispatched Async: " + commandLine); // Spigot // Paper - Include command in error message
 
-        if (this.commandMap.dispatch(sender, commandLine)) {
+        commandLine = commandLine(sender, commandLine);
+        if (commandLine == null) return false;
+        if (commandMap.dispatch(sender, commandLine)) {
             return true;
         }
 
@@ -925,7 +931,54 @@ public final class CraftServer implements Server {
         }
         // Spigot end
 
+        return this.dispatchCommand(VanillaCommandWrapper.getListener(sender), commandLine);
+    }
+
+    public boolean dispatchCommand(CommandSourceStack sourceStack, String commandLine) {
+        net.minecraft.commands.Commands commands = this.getHandle().getServer().getCommands();
+        CommandDispatcher<CommandSourceStack> dispatcher = commands.getDispatcher();
+        ParseResults<CommandSourceStack> results = dispatcher.parse(commandLine, sourceStack);
+
+        String[] args = org.apache.commons.lang3.StringUtils.split(commandLine, ' '); // Paper - fix adjacent spaces (from console/plugins) causing empty array elements
+        Command target = this.commandMap.getCommand(args[0].toLowerCase(java.util.Locale.ENGLISH));
+
+        try {
+            commands.performCommandCB(results, commandLine, commandLine, true);
+        } catch (CommandException ex) {
+            throw ex;
+        } catch (Throwable ex) {
+            String msg = "Unhandled exception executing '" + commandLine + "' in " + target;
+            throw new CommandException(msg, ex);
+        }
+
         return false;
+    }
+
+    public String commandLine(CommandSender sender, String commandLine) {
+        CommandSourceStack commandSource;
+        if (sender instanceof CraftEntity) {
+            commandSource = ((CraftEntity) sender).getHandle().createCommandSourceStack();
+        } else if (sender == Bukkit.getConsoleSender()) {
+            commandSource = MinecraftServer.getServer().createCommandSourceStack();
+        } else if (sender instanceof CraftBlockCommandSender) {
+            commandSource = ((CraftBlockCommandSender) sender).getWrapper();
+        } else {
+            return commandLine;
+        }
+        StringReader stringreader = new StringReader("/" + commandLine);
+        if (stringreader.canRead() && stringreader.peek() == '/') {
+            stringreader.skip();
+        }
+        ParseResults<CommandSourceStack> parse = MinecraftServer.getServer().getCommands().getDispatcher().parse(stringreader, commandSource);
+        net.neoforged.neoforge.event.CommandEvent event = new net.neoforged.neoforge.event.CommandEvent(parse);
+        if (net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(event).isCanceled()) {
+            return null;
+        } else if (event.getException() != null) {
+            return null;
+        } else {
+            String s = event.getParseResults().getReader().getString();
+            return s.startsWith("/") ? s.substring(1) : s;
+        }
     }
 
     @Override

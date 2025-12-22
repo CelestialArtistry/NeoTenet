@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -8,23 +_,25 @@
+@@ -8,23 +_,26 @@
  import com.mojang.brigadier.builder.ArgumentBuilder;
  import com.mojang.brigadier.builder.LiteralArgumentBuilder;
  import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -17,6 +17,7 @@
 +import java.util.Objects;
  import java.util.Optional;
  import java.util.Set;
++import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Consumer;
  import java.util.function.Predicate;
@@ -64,7 +65,7 @@
              TestCommand.register(this.dispatcher);
              RaidCommand.register(this.dispatcher, p_230944_);
              DebugPathCommand.register(this.dispatcher);
-@@ -248,7 +_,12 @@
+@@ -248,10 +_,19 @@
          if (p_230943_.includeIntegrated) {
              PublishCommand.register(this.dispatcher);
          }
@@ -77,6 +78,13 @@
          this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
      }
  
++    private final AtomicBoolean performCommand$throwCommandError = new AtomicBoolean(false);
++    private static AtomicReference<String> taiyitist$lable =
++            new AtomicReference<>("/");
++
+     public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
+         CommandContextBuilder<S> commandcontextbuilder = p_242928_.getContext();
+         CommandContextBuilder<S> commandcontextbuilder1 = commandcontextbuilder.withSource(p_242890_.apply(commandcontextbuilder.getSource()));
 @@ -265,6 +_,16 @@
  
      public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
@@ -94,22 +102,14 @@
          commandsourcestack.getServer().getProfiler().push(() -> "/" + p_242841_);
          ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
  
-@@ -306,6 +_,15 @@
-         }
-     }
- 
-+    private static AtomicReference<String> taiyitist$lable =
-+            new AtomicReference<>("/");
-+
-+    @Nullable
-+    private static ContextChain<CommandSourceStack> finishParsing(ParseResults<CommandSourceStack> p_307220_, String p_307311_, CommandSourceStack p_307676_, String label) { // CraftBukkit
-+        taiyitist$lable.set(label);
-+        return finishParsing(p_307220_, p_307311_, p_307676_);
-+    }
-+
-     @Nullable
-     private static ContextChain<CommandSourceStack> finishParsing(ParseResults<CommandSourceStack> p_307220_, String p_307311_, CommandSourceStack p_307676_) {
-         try {
+@@ -278,6 +_,7 @@
+                 );
+             }
+         } catch (Exception exception) {
++            if (performCommand$throwCommandError.getAndSet(false)) throw exception;
+             MutableComponent mutablecomponent = Component.literal(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
+             if (LOGGER.isDebugEnabled()) {
+                 LOGGER.error("Command exception: /{}", p_242841_, exception);
 @@ -318,7 +_,7 @@
                  int i = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                  MutableComponent mutablecomponent = Component.empty()
