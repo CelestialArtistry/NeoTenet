@@ -1,5 +1,48 @@
 --- a/net/minecraft/util/SpawnUtil.java
 +++ b/net/minecraft/util/SpawnUtil.java
+@@ -15,6 +_,42 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ 
+ public class SpawnUtil {
++
++    public static <T extends Mob> Optional<T> trySpawnMob(
++            EntityType<T> p_216404_,
++            MobSpawnType p_216405_,
++            ServerLevel p_216406_,
++            BlockPos p_216407_,
++            int p_216408_,
++            int p_216409_,
++            int p_216410_,
++            SpawnUtil.Strategy p_216411_,
++            org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason
++    ) {
++        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_216407_.mutable();
++
++        for (int i = 0; i < p_216408_; i++) {
++            int j = Mth.randomBetweenInclusive(p_216406_.random, -p_216409_, p_216409_);
++            int k = Mth.randomBetweenInclusive(p_216406_.random, -p_216409_, p_216409_);
++            blockpos$mutableblockpos.setWithOffset(p_216407_, j, p_216410_, k);
++            if (p_216406_.getWorldBorder().isWithinBounds(blockpos$mutableblockpos)
++                    && moveToPossibleSpawnPosition(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
++                T t = (T)p_216404_.create(p_216406_, null, blockpos$mutableblockpos, p_216405_, false, false);
++                if (t != null) {
++                    if (net.neoforged.neoforge.event.EventHooks.checkSpawnPosition(t, p_216406_, p_216405_)) {
++                        p_216406_.addFreshEntityWithPassengers(t, null);
++                        return Optional.of(t);
++                    }
++
++                    t.discard(null);
++                }
++            }
++        }
++
++        return Optional.empty();
++    }
++
++
+     public static <T extends Mob> Optional<T> trySpawnMob(
+         EntityType<T> p_216404_,
+         MobSpawnType p_216405_,
 @@ -35,7 +_,7 @@
                  && moveToPossibleSpawnPosition(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
                  T t = (T)p_216404_.create(p_216406_, null, blockpos$mutableblockpos, p_216405_, false, false);
