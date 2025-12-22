@@ -41,7 +41,7 @@ public class MixinMapItemSavedData {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/Optional;orElseThrow(Ljava/util/function/Supplier;)Ljava/lang/Object;"))
-    private static Object taiyitist$customDimension(Optional<ResourceKey<Level>> optional, Supplier<?> exceptionSupplier, CompoundTag nbt) {
+    private static Object neotenet$customDimension(Optional<ResourceKey<Level>> optional, Supplier<?> exceptionSupplier, CompoundTag nbt) {
         return optional.orElseGet(() -> {
             long least = nbt.getLong("UUIDLeast");
             long most = nbt.getLong("UUIDMost");
@@ -57,13 +57,13 @@ public class MixinMapItemSavedData {
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void taiyitist$init(int i, int j, byte b, boolean bl, boolean bl2, boolean bl3, ResourceKey resourceKey, CallbackInfo ci) {
+    public void neotenet$init(int i, int j, byte b, boolean bl, boolean bl2, boolean bl3, ResourceKey resourceKey, CallbackInfo ci) {
         this.mapView = new CraftMapView((MapItemSavedData) (Object) this);
         this.server = (CraftServer) Bukkit.getServer();
     }
 
     @Inject(method = "save", at = @At("HEAD"))
-    public void taiyitist$storeDimension(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfoReturnable<CompoundTag> cir) {
+    public void neotenet$storeDimension(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfoReturnable<CompoundTag> cir) {
         if (this.uniqueId == null) {
             for (org.bukkit.World world : this.server.getWorlds()) {
                 CraftWorld cWorld = (CraftWorld) world;

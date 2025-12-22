@@ -25,22 +25,22 @@ public abstract class MixinSnowGolem extends AbstractGolem {
 
 
     @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSources;onFire()Lnet/minecraft/world/damagesource/DamageSource;"))
-    private DamageSource taiyitist$useMelting(DamageSources instance) {
+    private DamageSource neotenet$useMelting(DamageSources instance) {
         return instance.melting();
     }
 
     @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-    private boolean taiyitist$blockForm(Level world, BlockPos pos, BlockState state) {
+    private boolean neotenet$blockForm(Level world, BlockPos pos, BlockState state) {
         return CraftEventFactory.handleBlockFormEvent(world, pos, state, (SnowGolem) (Object) this);
     }
 
     @Inject(method = "shear", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/SnowGolem;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"))
-    private void taiyitist$forceDropOn(SoundSource pCategory, CallbackInfo ci) {
+    private void neotenet$forceDropOn(SoundSource pCategory, CallbackInfo ci) {
         this.forceDrops = true;
     }
 
     @Inject(method = "shear", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/SnowGolem;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"))
-    private void taiyitist$forceDropOff(SoundSource pCategory, CallbackInfo ci) {
+    private void neotenet$forceDropOff(SoundSource pCategory, CallbackInfo ci) {
         this.forceDrops = false;
     }
 }

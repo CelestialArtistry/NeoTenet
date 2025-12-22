@@ -59,7 +59,7 @@ public abstract class MixinAnvilMenu extends ItemCombinerMenu {
 
     @Redirect(method = "onTake", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/inventory/ContainerLevelAccess;execute(Ljava/util/function/BiConsumer;)V"))
-    private void taiyitist$anvilEvent(ContainerLevelAccess instance, BiConsumer<Level, BlockPos> levelPosConsumer) {
+    private void neotenet$anvilEvent(ContainerLevelAccess instance, BiConsumer<Level, BlockPos> levelPosConsumer) {
         this.access.execute((level, blockPos) -> {
             BlockState blockState = level.getBlockState(blockPos);
             if (!player.getAbilities().instabuild && blockState.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) {
@@ -79,62 +79,62 @@ public abstract class MixinAnvilMenu extends ItemCombinerMenu {
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V", ordinal = 1))
-    private void taiyitist$resetAnvilCost1(DataSlot instance, int i) {
+    private void neotenet$resetAnvilCost1(DataSlot instance, int i) {
         this.cost.set(DEFAULT_DENIED_COST);
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V", ordinal = 2))
-    private void taiyitist$resetAnvilCost2(DataSlot instance, int i) {
+    private void neotenet$resetAnvilCost2(DataSlot instance, int i) {
         this.cost.set(DEFAULT_DENIED_COST);
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V", ordinal = 3))
-    private void taiyitist$resetAnvilCost3(DataSlot instance, int i) {
+    private void neotenet$resetAnvilCost3(DataSlot instance, int i) {
         this.cost.set(DEFAULT_DENIED_COST);
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V", ordinal = 4))
-    private void taiyitist$resetAnvilCost4(DataSlot instance, int i) {
+    private void neotenet$resetAnvilCost4(DataSlot instance, int i) {
         this.cost.set(DEFAULT_DENIED_COST);
     }
 
     @Redirect(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V"))
-    private void taiyitist$reset(DataSlot instance, int i) {
+    private void neotenet$reset(DataSlot instance, int i) {
         this.cost.set(DEFAULT_DENIED_COST);
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 0))
-    private void taiyitist$addAnvilCause0(ResultContainer instance, int slot, ItemStack stack) {
+    private void neotenet$addAnvilCause0(ResultContainer instance, int slot, ItemStack stack) {
         CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 1))
-    private void taiyitist$addAnvilCause1(ResultContainer instance, int slot, ItemStack stack) {
+    private void neotenet$addAnvilCause1(ResultContainer instance, int slot, ItemStack stack) {
         CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 2))
-    private void taiyitist$addAnvilCause2(ResultContainer instance, int slot, ItemStack stack) {
+    private void neotenet$addAnvilCause2(ResultContainer instance, int slot, ItemStack stack) {
         CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 3))
-    private void taiyitist$addAnvilCause3(ResultContainer instance, int slot, ItemStack stack) {
+    private void neotenet$addAnvilCause3(ResultContainer instance, int slot, ItemStack stack) {
         CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 4))
-    private void taiyitist$addAnvilCause4(ResultContainer instance, int slot, ItemStack stack) {
+    private void neotenet$addAnvilCause4(ResultContainer instance, int slot, ItemStack stack) {
         CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), stack); // CraftBukkit
     }
 
     @Inject(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AnvilMenu;broadcastChanges()V", shift = At.Shift.BEFORE))
-    private void taiyitist$addMessage(CallbackInfo ci) {
+    private void neotenet$addMessage(CallbackInfo ci) {
         sendAllDataToRemote(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
     }
 
     @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40))
-    private int taiyitist$maxRepairCost(int constant) {
+    private int neotenet$maxRepairCost(int constant) {
         return maximumRepairCost;
     }
 

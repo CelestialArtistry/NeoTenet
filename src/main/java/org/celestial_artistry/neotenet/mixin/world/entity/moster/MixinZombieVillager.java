@@ -18,13 +18,13 @@ public abstract class MixinZombieVillager extends Zombie {
     }
 
     @Inject(method = "startConverting", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/ZombieVillager;removeEffect(Lnet/minecraft/core/Holder;)Z"))
-    private void taiyitist$convert1(UUID conversionStarterIn, int conversionTimeIn, CallbackInfo ci) {
+    private void neotenet$convert1(UUID conversionStarterIn, int conversionTimeIn, CallbackInfo ci) {
         this.persist = true;
         pushEffectCause(EntityPotionEffectEvent.Cause.CONVERSION);
     }
 
     @Inject(method = "startConverting", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/ZombieVillager;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    private void taiyitist$convert2(UUID conversionStarterIn, int conversionTimeIn, CallbackInfo ci) {
+    private void neotenet$convert2(UUID conversionStarterIn, int conversionTimeIn, CallbackInfo ci) {
         pushEffectCause(EntityPotionEffectEvent.Cause.CONVERSION);
     }
 }

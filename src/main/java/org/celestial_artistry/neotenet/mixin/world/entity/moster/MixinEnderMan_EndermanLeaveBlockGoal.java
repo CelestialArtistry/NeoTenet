@@ -24,7 +24,7 @@ public class MixinEnderMan_EndermanLeaveBlockGoal {
 
     @Inject(method = "tick", cancellable = true,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private void taiyitist$entityChangeBlock(CallbackInfo ci, @Local(ordinal = 0) BlockPos blockPos, @Local(ordinal = 2) BlockState blockState2) {
+    private void neotenet$entityChangeBlock(CallbackInfo ci, @Local(ordinal = 0) BlockPos blockPos, @Local(ordinal = 2) BlockState blockState2) {
         if (!CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockPos, blockState2)) {
             ci.cancel();
         }

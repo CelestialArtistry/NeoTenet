@@ -19,7 +19,7 @@ public class MixinWorldBorder {
     private List<BorderChangeListener> listeners;
 
     @Inject(method = "addListener", at = @At("HEAD"), cancellable = true)
-    private void taiyitist$checkContain(BorderChangeListener p_61930_, CallbackInfo ci) {
+    private void neotenet$checkContain(BorderChangeListener p_61930_, CallbackInfo ci) {
         if (listeners.contains(p_61930_)) ci.cancel(); // CraftBukkit
     }
 

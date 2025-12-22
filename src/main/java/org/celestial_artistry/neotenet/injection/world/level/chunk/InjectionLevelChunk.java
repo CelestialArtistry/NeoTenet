@@ -10,7 +10,7 @@ public interface InjectionLevelChunk {
         throw new IllegalStateException("Not implemented");
     }
 
-    default ServerLevel taiyitist$r() {
+    default ServerLevel neotenet$r() {
         throw new IllegalStateException("Not implemented");
     }
 

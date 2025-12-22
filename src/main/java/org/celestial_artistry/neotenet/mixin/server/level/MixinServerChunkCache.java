@@ -61,7 +61,7 @@ public abstract class MixinServerChunkCache implements InjectionServerChunkCache
     }
 
     @ModifyVariable(method = "getChunkFutureMainThread", index = 4, at = @At("HEAD"), argsOnly = true)
-    private boolean taiyitist$skipIfUnloading(boolean flag, int chunkX, int chunkZ) {
+    private boolean neotenet$skipIfUnloading(boolean flag, int chunkX, int chunkZ) {
         boolean currentlyUnloading = false;
         if (flag) {
             ChunkHolder chunkholder = this.getVisibleChunkIfPresent(ChunkPos.asLong(chunkX, chunkZ));
@@ -77,12 +77,12 @@ public abstract class MixinServerChunkCache implements InjectionServerChunkCache
     }
 
     @Redirect(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/GameRules;getBoolean(Lnet/minecraft/world/level/GameRules$Key;)Z"))
-    private boolean taiyitist$noPlayer(GameRules gameRules, GameRules.Key<GameRules.BooleanValue> key) {
+    private boolean neotenet$noPlayer(GameRules gameRules, GameRules.Key<GameRules.BooleanValue> key) {
         return gameRules.getBoolean(key) && !this.level.players().isEmpty();
     }
 
     @Redirect(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/LevelData;getGameTime()J"))
-    private long taiyitist$ticksPer(LevelData worldInfo) {
+    private long neotenet$ticksPer(LevelData worldInfo) {
         long gameTime = worldInfo.getGameTime();
         long ticksPer = this.level.ticksPerSpawnCategory.getLong(SpawnCategory.ANIMAL);
         return (ticksPer != 0L && gameTime % ticksPer == 0) ? 0 : 1;
@@ -109,7 +109,7 @@ public abstract class MixinServerChunkCache implements InjectionServerChunkCache
     }
 
     @Redirect(method = "chunkAbsent", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ChunkHolder;getTicketLevel()I"), require = 0)
-    public int taiyitist$useOldTicketLevel(ChunkHolder chunkHolder) {
+    public int neotenet$useOldTicketLevel(ChunkHolder chunkHolder) {
         return chunkHolder.oldTicketLevel;
     }
 }

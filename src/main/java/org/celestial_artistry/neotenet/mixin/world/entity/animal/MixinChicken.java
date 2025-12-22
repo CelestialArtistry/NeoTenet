@@ -17,12 +17,12 @@ public abstract class MixinChicken extends Animal {
     }
 
     @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Chicken;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/entity/item/ItemEntity;"))
-    private void taiyitist$forceDropOn(CallbackInfo ci) {
+    private void neotenet$forceDropOn(CallbackInfo ci) {
         this.forceDrops = true;
     }
 
     @Inject(method = "aiStep", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/Chicken;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/entity/item/ItemEntity;"))
-    private void taiyitist$$forceDropOff(CallbackInfo ci) {
+    private void neotenet$$forceDropOff(CallbackInfo ci) {
         this.forceDrops = false;
     }
 }

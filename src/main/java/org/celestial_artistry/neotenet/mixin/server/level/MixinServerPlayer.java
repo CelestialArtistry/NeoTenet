@@ -129,14 +129,14 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     private Entity camera;
     @Shadow
     private int containerCounter;
-    private boolean taiyitist$initialized = false;
+    private boolean neotenet$initialized = false;
     private float pluginRainPosition;
     private float pluginRainPositionPrevious;
-    private transient PlayerSpawnChangeEvent.Cause taiyitist$spawnChangeCause;
-    private final AtomicReference<HorseInventoryMenu> taiyitist$horseMenu = new AtomicReference<>();
-    private final AtomicReference<PlayerTeleportEvent.TeleportCause> taiyitist$changeDimensionCause = new AtomicReference<>(PlayerTeleportEvent.TeleportCause.UNKNOWN);
+    private transient PlayerSpawnChangeEvent.Cause neotenet$spawnChangeCause;
+    private final AtomicReference<HorseInventoryMenu> neotenet$horseMenu = new AtomicReference<>();
+    private final AtomicReference<PlayerTeleportEvent.TeleportCause> neotenet$changeDimensionCause = new AtomicReference<>(PlayerTeleportEvent.TeleportCause.UNKNOWN);
     // CraftBukkit end
-    private transient BlockStateListPopulator taiyitist$populator;
+    private transient BlockStateListPopulator neotenet$populator;
     public MixinServerPlayer(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
         super(level, blockPos, f, gameProfile);
     }
@@ -185,15 +185,15 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     public abstract void setRespawnPosition(ResourceKey<Level> resourceKey, @Nullable BlockPos blockPos, float f, boolean bl, boolean bl2);
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void taiyitist$init(CallbackInfo ci) {
+    public void neotenet$init(CallbackInfo ci) {
         this.displayName = getScoreboardName();
         this.bukkitPickUpLoot = true;
         this.maxHealthCache = this.getMaxHealth();
-        this.taiyitist$initialized = true;
+        this.neotenet$initialized = true;
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
-    private void taiyitist$readExtra(CompoundTag compound, CallbackInfo ci) {
+    private void neotenet$readExtra(CompoundTag compound, CallbackInfo ci) {
         this.getBukkitEntity().readExtraData(compound);
         String spawnWorld = compound.getString("SpawnWorld");
         CraftWorld oldWorld = (CraftWorld) Bukkit.getWorld(spawnWorld);
@@ -203,7 +203,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Redirect(method = "addAdditionalSaveData", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hasExactlyOnePlayerPassenger()Z"))
-    private boolean taiyitist$nonPersistVehicle(Entity entity) {
+    private boolean neotenet$nonPersistVehicle(Entity entity) {
         Entity entity1 = this.getVehicle();
         boolean persistVehicle = true;
         if (entity1 != null) {
@@ -219,24 +219,24 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
-    private void taiyitist$writeExtra(CompoundTag compound, CallbackInfo ci) {
+    private void neotenet$writeExtra(CompoundTag compound, CallbackInfo ci) {
         this.getBukkitEntity().setExtraData(compound);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
-    private void taiyitist$joining(CallbackInfo ci) {
+    private void neotenet$joining(CallbackInfo ci) {
         if (this.joining) {
             this.joining = false;
         }
     }
 
     @Redirect(method = "doTick", at = @At(value = "NEW", args = "class=net/minecraft/network/protocol/game/ClientboundSetHealthPacket"))
-    private ClientboundSetHealthPacket taiyitist$useScaledHealth(float healthIn, int foodLevelIn, float saturationLevelIn) {
+    private ClientboundSetHealthPacket neotenet$useScaledHealth(float healthIn, int foodLevelIn, float saturationLevelIn) {
         return new ClientboundSetHealthPacket(this.getBukkitEntity().getScaledHealth(), foodLevelIn, saturationLevelIn);
     }
 
     @Inject(method = "doTick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerPlayer;tickCount:I"))
-    private void taiyitist$updateHealthAndExp(CallbackInfo ci) {
+    private void neotenet$updateHealthAndExp(CallbackInfo ci) {
         if (this.maxHealthCache != this.getMaxHealth()) {
             this.getBukkitEntity().updateScaledHealth();
         }
@@ -253,17 +253,17 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Redirect(method = "awardKillScore", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/Scoreboard;forAllObjectives(Lnet/minecraft/world/scores/criteria/ObjectiveCriteria;Lnet/minecraft/world/scores/ScoreHolder;Ljava/util/function/Consumer;)V"))
-    private void taiyitist$useCustomScoreboard(Scoreboard instance, ObjectiveCriteria criteria, ScoreHolder scoreboardName, Consumer<ScoreAccess> points) {
+    private void neotenet$useCustomScoreboard(Scoreboard instance, ObjectiveCriteria criteria, ScoreHolder scoreboardName, Consumer<ScoreAccess> points) {
         this.level().getCraftServer().getScoreboardManager().forAllObjectives(criteria, scoreboardName, points);
     }
 
     @Redirect(method = "handleTeamKill", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/Scoreboard;forAllObjectives(Lnet/minecraft/world/scores/criteria/ObjectiveCriteria;Lnet/minecraft/world/scores/ScoreHolder;Ljava/util/function/Consumer;)V"))
-    private void taiyitist$teamKill(Scoreboard instance, ObjectiveCriteria criteria, ScoreHolder scoreboardName, Consumer<ScoreAccess> points) {
+    private void neotenet$teamKill(Scoreboard instance, ObjectiveCriteria criteria, ScoreHolder scoreboardName, Consumer<ScoreAccess> points) {
         this.level().getCraftServer().getScoreboardManager().forAllObjectives(criteria, scoreboardName, points);
     }
 
     @Inject(method = "isPvpAllowed", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$pvpMode(CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$pvpMode(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue((this.level().pvpMode));
     }
 
@@ -341,19 +341,19 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
 
     @Override
     public void pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause cause) {
-        this.taiyitist$spawnChangeCause = cause;
+        this.neotenet$spawnChangeCause = cause;
     }
 
     @Override
     public void setRespawnPosition(ResourceKey<Level> level, @Nullable BlockPos pos, float pitch, boolean flag, boolean flag1, PlayerSpawnChangeEvent.Cause cause) {
-        taiyitist$spawnChangeCause = cause;
+        neotenet$spawnChangeCause = cause;
         this.setRespawnPosition(level, pos, pitch, flag, flag1);
     }
 
     @Inject(method = "setRespawnPosition", at = @At("HEAD"))
-    private void taiyitist$spawnChangeEvent(ResourceKey<Level> resourceKey, BlockPos blockPos, float f, boolean bl, boolean bl2, CallbackInfo ci) {
-        var cause = taiyitist$spawnChangeCause == null ? PlayerSpawnChangeEvent.Cause.UNKNOWN : taiyitist$spawnChangeCause;
-        taiyitist$spawnChangeCause = null;
+    private void neotenet$spawnChangeEvent(ResourceKey<Level> resourceKey, BlockPos blockPos, float f, boolean bl, boolean bl2, CallbackInfo ci) {
+        var cause = neotenet$spawnChangeCause == null ? PlayerSpawnChangeEvent.Cause.UNKNOWN : neotenet$spawnChangeCause;
+        neotenet$spawnChangeCause = null;
         ServerLevel newWorld = this.server.getLevel(blockPos == null ? Level.OVERWORLD : resourceKey);
         Location newSpawn = (blockPos != null) ? CraftLocation.toBukkit(blockPos, newWorld.getWorld(), f, 0) : null;
 
@@ -499,37 +499,37 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/server/level/ServerPlayer;causeFoodExhaustion(F)V"))
-    private void taiyitist$exhauseCause1(double x, double y, double z, CallbackInfo ci) {
+    private void neotenet$exhauseCause1(double x, double y, double z, CallbackInfo ci) {
         pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.SWIM);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/server/level/ServerPlayer;causeFoodExhaustion(F)V"))
-    private void taiyitist$exhauseCause2(double x, double y, double z, CallbackInfo ci) {
+    private void neotenet$exhauseCause2(double x, double y, double z, CallbackInfo ci) {
         pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 2, target = "Lnet/minecraft/server/level/ServerPlayer;causeFoodExhaustion(F)V"))
-    private void taiyitist$exhauseCause3(double x, double y, double z, CallbackInfo ci) {
+    private void neotenet$exhauseCause3(double x, double y, double z, CallbackInfo ci) {
         pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 3, target = "Lnet/minecraft/server/level/ServerPlayer;causeFoodExhaustion(F)V"))
-    private void taiyitist$exhauseCause4(double x, double y, double z, CallbackInfo ci) {
+    private void neotenet$exhauseCause4(double x, double y, double z, CallbackInfo ci) {
         pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.SPRINT);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 4, target = "Lnet/minecraft/server/level/ServerPlayer;causeFoodExhaustion(F)V"))
-    private void taiyitist$exhauseCause5(double x, double y, double z, CallbackInfo ci) {
+    private void neotenet$exhauseCause5(double x, double y, double z, CallbackInfo ci) {
         pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.CROUCH);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 5, target = "Lnet/minecraft/server/level/ServerPlayer;causeFoodExhaustion(F)V"))
-    private void taiyitist$exhauseCause6(double x, double y, double z, CallbackInfo ci) {
+    private void neotenet$exhauseCause6(double x, double y, double z, CallbackInfo ci) {
         pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.WALK);
     }
 
     @Inject(method = "setPlayerInput", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setShiftKeyDown(Z)V"))
-    private void taiyitist$toggleSneak(float strafe, float forward, boolean jumping, boolean sneaking, CallbackInfo ci) {
+    private void neotenet$toggleSneak(float strafe, float forward, boolean jumping, boolean sneaking, CallbackInfo ci) {
         if (sneaking != this.isShiftKeyDown()) {
             PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getBukkitEntity(), sneaking);
             Bukkit.getPluginManager().callEvent(event);
@@ -541,33 +541,33 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Redirect(method = "restoreFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/stats/ServerRecipeBook;copyOverData(Lnet/minecraft/stats/RecipeBook;)V"))
-    private void taiyitist$copyOverData(ServerRecipeBook instance, RecipeBook recipeBook) {
+    private void neotenet$copyOverData(ServerRecipeBook instance, RecipeBook recipeBook) {
     }
 
     @Redirect(method = "awardStat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/Scoreboard;forAllObjectives(Lnet/minecraft/world/scores/criteria/ObjectiveCriteria;Lnet/minecraft/world/scores/ScoreHolder;Ljava/util/function/Consumer;)V"))
-    private void taiyitist$addStats(Scoreboard instance, ObjectiveCriteria criteria, ScoreHolder scoreHolder, Consumer<ScoreAccess> points) {
+    private void neotenet$addStats(Scoreboard instance, ObjectiveCriteria criteria, ScoreHolder scoreHolder, Consumer<ScoreAccess> points) {
         this.level().getCraftServer().getScoreboardManager().forAllObjectives(criteria, scoreHolder, points);
     }
 
     @Redirect(method = "resetStat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/Scoreboard;forAllObjectives(Lnet/minecraft/world/scores/criteria/ObjectiveCriteria;Lnet/minecraft/world/scores/ScoreHolder;Ljava/util/function/Consumer;)V"))
-    private void taiyitist$takeStats(Scoreboard instance, ObjectiveCriteria objectiveCriteria, ScoreHolder scoreHolder, Consumer<ScoreAccess> consumer) {
+    private void neotenet$takeStats(Scoreboard instance, ObjectiveCriteria objectiveCriteria, ScoreHolder scoreHolder, Consumer<ScoreAccess> consumer) {
         this.level().getCraftServer().getScoreboardManager().forAllObjectives(objectiveCriteria, scoreHolder, consumer);
     }
 
     @Redirect(method = "updateScoreForCriteria", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/Scoreboard;forAllObjectives(Lnet/minecraft/world/scores/criteria/ObjectiveCriteria;Lnet/minecraft/world/scores/ScoreHolder;Ljava/util/function/Consumer;)V"))
-    private void taiyitist$updateStats(Scoreboard instance, ObjectiveCriteria objectiveCriteria, ScoreHolder scoreHolder, Consumer<ScoreAccess> consumer) {
+    private void neotenet$updateStats(Scoreboard instance, ObjectiveCriteria objectiveCriteria, ScoreHolder scoreHolder, Consumer<ScoreAccess> consumer) {
         // CraftBukkit - Use our scores instead
         this.level().getCraftServer().getScoreboardManager().forAllObjectives(objectiveCriteria, scoreHolder,
                 consumer);
     }
 
     @Inject(method = "resetSentInfo", at = @At("HEAD"))
-    private void taiyitist$setExpUpdate(CallbackInfo ci) {
+    private void neotenet$setExpUpdate(CallbackInfo ci) {
         this.lastSentExp = -1;
     }
 
     @Inject(method = "updateOptions", at = @At("HEAD"))
-    private void taiyitist$settingChange(ClientInformation packetIn, CallbackInfo ci) {
+    private void neotenet$settingChange(ClientInformation packetIn, CallbackInfo ci) {
         if (this.getMainArm() != packetIn.mainHand()) {
             PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent(this.getBukkitEntity(), (this.getMainArm() == HumanoidArm.LEFT) ? MainHand.LEFT : MainHand.RIGHT);
             Bukkit.getPluginManager().callEvent(event);
@@ -583,7 +583,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     @Inject(method = "setCamera",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/server/level/ServerPlayer;teleportTo(Lnet/minecraft/server/level/ServerLevel;DDDLjava/util/Set;FF)Z"))
-    private void taiyitist$pushSpectiveTpReason(Entity entity, CallbackInfo ci) {
+    private void neotenet$pushSpectiveTpReason(Entity entity, CallbackInfo ci) {
         this.connection.pushTeleportCause(PlayerTeleportEvent.TeleportCause.SPECTATE);
     }
 
@@ -609,31 +609,31 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Inject(method = "openHorseInventory", at = @At("HEAD"), cancellable = true)
-    private void taiyitist$menuEvent(AbstractHorse abstractHorse, Container container, CallbackInfo ci) {
+    private void neotenet$menuEvent(AbstractHorse abstractHorse, Container container, CallbackInfo ci) {
         // CraftBukkit start - Inventory open hook
         this.nextContainerCounterInt();
-        AbstractContainerMenu taiyitist$container = new HorseInventoryMenu(this.containerCounter, this.getInventory(), container, abstractHorse, abstractHorse.getInventoryColumns());
-        taiyitist$horseMenu.set((HorseInventoryMenu) taiyitist$container);
-        taiyitist$container.setTitle(abstractHorse.getDisplayName());
-        taiyitist$container = CraftEventFactory.callInventoryOpenEvent(((ServerPlayer) (Object) this), taiyitist$container);
-        if (taiyitist$container == null) {
+        AbstractContainerMenu neotenet$container = new HorseInventoryMenu(this.containerCounter, this.getInventory(), container, abstractHorse, abstractHorse.getInventoryColumns());
+        neotenet$horseMenu.set((HorseInventoryMenu) neotenet$container);
+        neotenet$container.setTitle(abstractHorse.getDisplayName());
+        neotenet$container = CraftEventFactory.callInventoryOpenEvent(((ServerPlayer) (Object) this), neotenet$container);
+        if (neotenet$container == null) {
             container.stopOpen(this);
             ci.cancel();
         }
     }
 
     @Redirect(method = "openHorseInventory", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;nextContainerCounter()V"))
-    private void taiyitist$cancelNext(ServerPlayer instance) {
+    private void neotenet$cancelNext(ServerPlayer instance) {
     }
 
     @Redirect(method = "openHorseInventory", at = @At(value = "NEW", args = "class=net/minecraft/world/inventory/HorseInventoryMenu"))
-    private HorseInventoryMenu taiyitist$resetHorseMenu(int i, Inventory inventory, Container container, AbstractHorse abstractHorse, int j) {
-        return taiyitist$horseMenu.get();
+    private HorseInventoryMenu neotenet$resetHorseMenu(int i, Inventory inventory, Container container, AbstractHorse abstractHorse, int j) {
+        return neotenet$horseMenu.get();
     }
 
     @Redirect(method = "die", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/scores/Scoreboard;forAllObjectives(Lnet/minecraft/world/scores/criteria/ObjectiveCriteria;Lnet/minecraft/world/scores/ScoreHolder;Ljava/util/function/Consumer;)V"))
-    private void taiyitist$useBukkitScore(Scoreboard instance, ObjectiveCriteria objectiveCriteria, ScoreHolder scoreHolder, Consumer<ScoreAccess> consumer) {
+    private void neotenet$useBukkitScore(Scoreboard instance, ObjectiveCriteria objectiveCriteria, ScoreHolder scoreHolder, Consumer<ScoreAccess> consumer) {
         this.setCamera(((ServerPlayer) (Object) this)); // Remove spectated target
         // CraftBukkit end
         // CraftBukkit - Get our scores instead
@@ -641,7 +641,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V"), cancellable = true)
-    private void taiyitist$fireDeathEvent(DamageSource damageSource, CallbackInfo ci, @Local Component defaultMessage, @Local boolean flag, @Share("taiyitist$ichatbasecomponent") LocalRef<Component> taiyitist$ichatbasecomponent) {
+    private void neotenet$fireDeathEvent(DamageSource damageSource, CallbackInfo ci, @Local Component defaultMessage, @Local boolean flag, @Share("neotenet$ichatbasecomponent") LocalRef<Component> neotenet$ichatbasecomponent) {
         // CraftBukkit start - fire PlayerDeathEvent
         if (this.isRemoved()) {
             ci.cancel();
@@ -682,26 +682,26 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
             } else {
                 ichatbasecomponent = org.bukkit.craftbukkit.util.CraftChatMessage.fromStringOrNull(deathMessage);
             }
-            taiyitist$ichatbasecomponent.set(ichatbasecomponent);
+            neotenet$ichatbasecomponent.set(ichatbasecomponent);
         }
 
     }
 
     @Override
     public Entity changeDimension(ServerLevel worldserver, PlayerTeleportEvent.TeleportCause cause) {
-        taiyitist$changeDimensionCause.set(cause);
+        neotenet$changeDimensionCause.set(cause);
         DimensionTransition dimensionTransition = this.portalProcess.getPortalDestination(worldserver, this);
         return changeDimension(dimensionTransition);
     }
 
     @Inject(method = "teleportTo(Lnet/minecraft/server/level/ServerLevel;DDDLjava/util/Set;FF)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFFLjava/util/Set;)V"))
-    private void taiyitist$forwardReason(ServerLevel level, double x, double y, double z, Set<RelativeMovement> relativeMovements, float yRot, float xRot, CallbackInfoReturnable<Boolean> cir) {
-        this.connection.pushTeleportCause(taiyitist$changeDimensionCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN));
+    private void neotenet$forwardReason(ServerLevel level, double x, double y, double z, Set<RelativeMovement> relativeMovements, float yRot, float xRot, CallbackInfoReturnable<Boolean> cir) {
+        this.connection.pushTeleportCause(neotenet$changeDimensionCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN));
     }
 
     @Inject(method = "teleportTo(Lnet/minecraft/server/level/ServerLevel;DDDFF)V", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/level/ServerPlayer;stopRiding()V"))
-    private void taiyitist$handleBy(ServerLevel world, double d0, double d1, double d2, float f, float f1, CallbackInfo ci) {
-        this.getBukkitEntity().teleport(new Location(world.getWorld(), d0, d1, d2, f, f1), taiyitist$changeDimensionCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN));
+    private void neotenet$handleBy(ServerLevel world, double d0, double d1, double d2, float f, float f1, CallbackInfo ci) {
+        this.getBukkitEntity().teleport(new Location(world.getWorld(), d0, d1, d2, f, f1), neotenet$changeDimensionCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN));
         ci.cancel();
     }
 
@@ -720,12 +720,12 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     @Inject(method = "stopSleepInBed",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"))
-    private void taiyitist$tpCauseExitBed(boolean wakeImmediately, boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
+    private void neotenet$tpCauseExitBed(boolean wakeImmediately, boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
         this.connection.pushTeleportCause(PlayerTeleportEvent.TeleportCause.EXIT_BED);
     }
 
     @Inject(method = "stopSleepInBed", at = @At("HEAD"), cancellable = true)
-    private void taiyitist$exitBedEvent(boolean flag, boolean flag1, CallbackInfo ci) {
+    private void neotenet$exitBedEvent(boolean flag, boolean flag1, CallbackInfo ci) {
         if (!this.isSleeping()) ci.cancel(); // CraftBukkit - Can't leave bed if not in one!
         // CraftBukkit start - fire PlayerBedLeaveEvent
         CraftPlayer player = this.getBukkitEntity();
@@ -748,7 +748,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
 
     @Override
     public void pushChangeDimensionCause(PlayerTeleportEvent.TeleportCause cause) {
-        taiyitist$changeDimensionCause.set(cause);
+        neotenet$changeDimensionCause.set(cause);
     }
 
     /**

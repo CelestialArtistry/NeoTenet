@@ -24,7 +24,7 @@ public abstract class MixinWolf extends TamableAnimal {
     }
 
     @Redirect(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Wolf;setOrderedToSit(Z)V"))
-    private void taiyitist$handledBy(Wolf wolfEntity, boolean fire) {
+    private void neotenet$handledBy(Wolf wolfEntity, boolean fire) {
     }
 
     // CraftBukkit - add overriden version
@@ -44,12 +44,12 @@ public abstract class MixinWolf extends TamableAnimal {
     // CraftBukkit end
 
     @Inject(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Wolf;heal(F)V"))
-    private void taiyitist$healReason(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    private void neotenet$healReason(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         pushHealReason(EntityRegainHealthEvent.RegainReason.EATING);
     }
 
     @Inject(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Wolf;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"))
-    private void taiyitist$attackReason(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    private void neotenet$attackReason(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
     }
 }

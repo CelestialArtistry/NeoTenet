@@ -51,7 +51,7 @@ public abstract class MixinCartographyTableMenu extends AbstractContainerMenu {
     }
 
     @Inject(method = "stillValid", at = @At("HEAD"))
-    private void taiyitist$addCheckValid(net.minecraft.world.entity.player.Player player, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$addCheckValid(net.minecraft.world.entity.player.Player player, CallbackInfoReturnable<Boolean> cir) {
         if (!this.checkReachable) {
             cir.cancel();
         }
@@ -59,7 +59,7 @@ public abstract class MixinCartographyTableMenu extends AbstractContainerMenu {
 
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V",
             at = @At("TAIL"))
-    private void taiyitist$setPlayer(int i, Inventory inventory, ContainerLevelAccess containerLevelAccess, CallbackInfo ci) {
+    private void neotenet$setPlayer(int i, Inventory inventory, ContainerLevelAccess containerLevelAccess, CallbackInfo ci) {
         player = (Player) inventory.player.getBukkitEntity(); // CraftBukkit
     }
 

@@ -170,13 +170,13 @@
      private void verifyLoginAndFinishConnectionSetup(GameProfile p_294502_) {
          PlayerList playerlist = this.server.getPlayerList();
 +        // CraftBukkit start - fire PlayerLoginEvent
-+        this.server.getPlayerList().taiyitist$putHandler(this);
++        this.server.getPlayerList().neotenet$putHandler(this);
          Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), p_294502_);
          if (component != null) {
              this.disconnect(component);
          } else {
 +            if (player == null) {
-+                player = playerlist.taiyitist$canPlayerLogin$entity.get();
++                player = playerlist.neotenet$canPlayerLogin$entity.get();
 +            }
 +            if (this.player.getBukkitEntity().isAwaitingCookies()) {
 +                this.state = ServerLoginPacketListenerImpl.State.WAITING_FOR_COOKIES;

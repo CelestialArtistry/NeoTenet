@@ -36,13 +36,13 @@ public abstract class MixinDispenserMenu extends AbstractContainerMenu {
     // CraftBukkit end
 
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;)V", at = @At("RETURN"))
-    private void taiyitist$init(int i, Inventory inventory, Container container, CallbackInfo ci) {
+    private void neotenet$init(int i, Inventory inventory, Container container, CallbackInfo ci) {
         // CraftBukkit start - Save player
         this.player = inventory;
     }
 
     @Inject(method = "stillValid", at = @At("HEAD"))
-    private void taiyitist$checkValid(Player player, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$checkValid(Player player, CallbackInfoReturnable<Boolean> cir) {
         if (!this.checkReachable) {
             cir.cancel();
         }

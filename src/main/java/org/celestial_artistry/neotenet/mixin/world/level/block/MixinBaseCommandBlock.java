@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class MixinBaseCommandBlock {
 
     @Redirect(method = "performCommand", at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;performPrefixedCommand(Lnet/minecraft/commands/CommandSourceStack;Ljava/lang/String;)V"))
-    private void taiyitist$serverCommand(Commands commands, CommandSourceStack sender, String command) {
+    private void neotenet$serverCommand(Commands commands, CommandSourceStack sender, String command) {
         Joiner joiner = Joiner.on(" ");
         if (command.startsWith("/")) {
             command = command.substring(1);

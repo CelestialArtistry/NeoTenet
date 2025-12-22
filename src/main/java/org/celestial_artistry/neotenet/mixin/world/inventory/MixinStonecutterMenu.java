@@ -35,7 +35,7 @@ public abstract class MixinStonecutterMenu extends AbstractContainerMenu {
     }
 
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
-    public void taiyitist$init(int windowIdIn, Inventory playerInventoryIn, ContainerLevelAccess worldPosCallableIn, CallbackInfo ci) {
+    public void neotenet$init(int windowIdIn, Inventory playerInventoryIn, ContainerLevelAccess worldPosCallableIn, CallbackInfo ci) {
         this.playerInventory = playerInventoryIn;
     }
 

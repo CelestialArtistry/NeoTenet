@@ -11,7 +11,7 @@ import org.celestial_artistry.neotenet.injection.commands.InjectionCommandSource
 @Mixin(CommandSource.class)
 public interface MixinCommandSource extends InjectionCommandSource {
 
-     default CommandSender taiyitist$getBukkitSender(CommandSourceStack wrapper) {
+     default CommandSender neotenet$getBukkitSender(CommandSourceStack wrapper) {
         return new ServerCommandSender() {
             private final boolean isOp = wrapper.hasPermission(wrapper.getServer().getOperatorUserPermissionLevel());
 
@@ -44,6 +44,6 @@ public interface MixinCommandSource extends InjectionCommandSource {
 
     @Override
     default CommandSender getBukkitSender(CommandSourceStack wrapper) {
-        return taiyitist$getBukkitSender(wrapper);
+        return neotenet$getBukkitSender(wrapper);
     }
 }

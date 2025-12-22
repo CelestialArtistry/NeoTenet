@@ -31,8 +31,8 @@ import org.celestial_artistry.neotenet.injection.world.entity.animal.InjectionAn
 public abstract class MixinAnimal extends AgeableMob implements InjectionAnimal {
 
     @Shadow public int inLove;
-    private transient int taiyitist$loveTime;
-    private final AtomicInteger taiyitist$exp = new AtomicInteger(this.getRandom().nextInt(7) + 1);
+    private transient int neotenet$loveTime;
+    private final AtomicInteger neotenet$exp = new AtomicInteger(this.getRandom().nextInt(7) + 1);
     protected MixinAnimal(EntityType<? extends AgeableMob> entityType, Level level) {
         super(entityType, level);
     }
@@ -51,18 +51,18 @@ public abstract class MixinAnimal extends AgeableMob implements InjectionAnimal 
     public abstract void finalizeSpawnChildFromBreeding(ServerLevel serverLevel, Animal animal, @org.jetbrains.annotations.Nullable AgeableMob ageableMob);
 
     @Inject(method = "setInLove(Lnet/minecraft/world/entity/player/Player;)V", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$enterLove(Player player, CallbackInfo ci) {
+    private void neotenet$enterLove(Player player, CallbackInfo ci) {
         EntityEnterLoveModeEvent event = CraftEventFactory.callEntityEnterLoveModeEvent(player, (Animal) (Object) this, 600);
         if (event.isCancelled()) {
             ci.cancel();
         } else {
-            taiyitist$loveTime = event.getTicksInLove();
+            neotenet$loveTime = event.getTicksInLove();
         }
     }
 
     @Inject(method = "setInLove(Lnet/minecraft/world/entity/player/Player;)V", at = @At(value = "FIELD", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/Animal;inLove:I"))
-    private void taiyitist$inLove(Player player, CallbackInfo ci) {
-        this.inLove = taiyitist$loveTime;
+    private void neotenet$inLove(Player player, CallbackInfo ci) {
+        this.inLove = neotenet$loveTime;
         if (player != null) {
             this.breedItem = player.getInventory().getSelected();
         }
@@ -74,13 +74,13 @@ public abstract class MixinAnimal extends AgeableMob implements InjectionAnimal 
     }
 
     @Inject(method = "spawnChildFromBreeding", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
-    private void taiyitist$reason(ServerLevel level, Animal p_27565_, CallbackInfo ci) {
+    private void neotenet$reason(ServerLevel level, Animal p_27565_, CallbackInfo ci) {
         level.pushAddEntityReason(CreatureSpawnEvent.SpawnReason.BREEDING);
     }
 
     @Redirect(method = "spawnChildFromBreeding", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/animal/Animal;finalizeSpawnChildFromBreeding(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/animal/Animal;Lnet/minecraft/world/entity/AgeableMob;)V"))
-    private void taiyitist$resetSpawnChild(Animal instance, ServerLevel serverLevel, Animal animal, AgeableMob ageableMob) {
+    private void neotenet$resetSpawnChild(Animal instance, ServerLevel serverLevel, Animal animal, AgeableMob ageableMob) {
         // CraftBukkit start - call EntityBreedEvent
         ServerPlayer breeder = Optional.ofNullable(this.getLoveCause()).or(() -> {
             return Optional.ofNullable(animal.getLoveCause());
@@ -97,15 +97,15 @@ public abstract class MixinAnimal extends AgeableMob implements InjectionAnimal 
     }
 
     public void finalizeSpawnChildFromBreeding(ServerLevel worldserver, Animal entityanimal, @Nullable AgeableMob entityageable, int experience) {
-        taiyitist$exp.set(experience);
+        neotenet$exp.set(experience);
         this.finalizeSpawnChildFromBreeding(worldserver, entityanimal, entityageable);
     }
 
     @Redirect(method = "finalizeSpawnChildFromBreeding", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean taiyitist$finalizeSpawn(ServerLevel instance, Entity entity) {
-        if (taiyitist$exp.get() > 0) {
-            return instance.addFreshEntity(new ExperienceOrb(instance, this.getX(), this.getY(), this.getZ(), taiyitist$exp.get()));
+    private boolean neotenet$finalizeSpawn(ServerLevel instance, Entity entity) {
+        if (neotenet$exp.get() > 0) {
+            return instance.addFreshEntity(new ExperienceOrb(instance, this.getX(), this.getY(), this.getZ(), neotenet$exp.get()));
         }
         return false;
     }

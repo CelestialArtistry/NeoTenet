@@ -93,7 +93,7 @@ public abstract class MixinServerEntity implements InjectionServerEntity {
     @Shadow protected abstract void broadcastAndSend(Packet<?> packet);
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void taiyitist$init(ServerLevel serverWorld, Entity entity, int updateFrequency, boolean sendVelocityUpdates, Consumer<Packet<?>> packetConsumer, CallbackInfo ci) {
+    private void neotenet$init(ServerLevel serverWorld, Entity entity, int updateFrequency, boolean sendVelocityUpdates, Consumer<Packet<?>> packetConsumer, CallbackInfo ci) {
         trackedPlayers = new HashSet<>();
         lastTick = MinecraftServer.currentTick - 1;
         lastUpdate = lastPosUpdate = lastMapUpdate = -1;
@@ -243,14 +243,14 @@ public abstract class MixinServerEntity implements InjectionServerEntity {
     }
 
     @Inject(method = "sendPairingData", cancellable = true, require = 0, at = @At("HEAD"))
-    private void taiyitist$returnIfRemoved(CallbackInfo ci) {
+    private void neotenet$returnIfRemoved(CallbackInfo ci) {
         if (this.entity.isRemoved()) {
             ci.cancel();
         }
     }
 
     @Redirect(method = "sendPairingData", require = 0, at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
-    private boolean taiyitist$injectScaledHealth(Collection<AttributeInstance> instance, ServerPlayer player) {
+    private boolean neotenet$injectScaledHealth(Collection<AttributeInstance> instance, ServerPlayer player) {
         if (this.entity.getId() == player.getId()) {
             ((ServerPlayer) this.entity).getBukkitEntity().injectScaledMaxHealth(instance, false);
         }
@@ -258,7 +258,7 @@ public abstract class MixinServerEntity implements InjectionServerEntity {
     }
 
     @Inject(method = "sendDirtyEntityData", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/server/level/ServerEntity;broadcastAndSend(Lnet/minecraft/network/protocol/Packet;)V"))
-    private void taiyitist$sendScaledHealth(CallbackInfo ci, @Local Set<AttributeInstance> set) {
+    private void neotenet$sendScaledHealth(CallbackInfo ci, @Local Set<AttributeInstance> set) {
         if (this.entity instanceof ServerPlayer player) {
             player.getBukkitEntity().injectScaledMaxHealth(set, false);
         }

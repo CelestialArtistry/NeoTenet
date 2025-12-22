@@ -19,7 +19,7 @@ public class MixinServerFunctionManager {
     MinecraftServer server;
 
     @Inject(method = "getDispatcher", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$useVanillaDispatcher(CallbackInfoReturnable<CommandDispatcher<CommandSourceStack>> cir) {
+    private void neotenet$useVanillaDispatcher(CallbackInfoReturnable<CommandDispatcher<CommandSourceStack>> cir) {
         cir.setReturnValue(this.server.vanillaCommandDispatcher.getDispatcher());
     }
 }

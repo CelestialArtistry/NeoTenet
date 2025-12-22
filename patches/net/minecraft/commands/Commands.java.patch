@@ -37,9 +37,11 @@
  import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.server.MinecraftServer;
-@@ -137,8 +_,9 @@
+@@ -136,9 +_,11 @@
+ import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
  import net.minecraft.world.level.GameRules;
++import org.celestial_artistry.neotenet.bukkit.BukkitDispatcher;
  import org.slf4j.Logger;
 +import org.celestial_artistry.neotenet.injection.commands.InjectionCommands;
  
@@ -48,14 +50,15 @@
      private static final ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT = new ThreadLocal<>();
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final int LEVEL_ALL = 0;
-@@ -149,6 +_,7 @@
-     private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
+@@ -146,7 +_,7 @@
+     public static final int LEVEL_GAMEMASTERS = 2;
+     public static final int LEVEL_ADMINS = 3;
+     public static final int LEVEL_OWNERS = 4;
+-    private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
++    private CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
  
      public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
-+        this(); // CraftBukkit
          AdvancementCommands.register(this.dispatcher);
-         AttributeCommand.register(this.dispatcher, p_230944_);
-         ExecuteCommand.register(this.dispatcher, p_230944_);
 @@ -214,7 +_,7 @@
              JfrCommand.register(this.dispatcher);
          }
@@ -65,26 +68,28 @@
              TestCommand.register(this.dispatcher);
              RaidCommand.register(this.dispatcher, p_230944_);
              DebugPathCommand.register(this.dispatcher);
-@@ -248,10 +_,19 @@
+@@ -248,9 +_,18 @@
          if (p_230943_.includeIntegrated) {
              PublishCommand.register(this.dispatcher);
          }
+-
+-        this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
+-    }
 +        net.neoforged.neoforge.event.EventHooks.onCommandRegister(this.dispatcher, p_230943_, p_230944_);
-+        // CraftBukkit start
++        this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
 +    }
- 
-+    public Commands() {
-+        // CraftBukkkit end
-         this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
-     }
- 
-+    private final AtomicBoolean performCommand$throwCommandError = new AtomicBoolean(false);
-+    private static AtomicReference<String> taiyitist$lable =
-+            new AtomicReference<>("/");
 +
++    public Commands() {
++        this.dispatcher = new BukkitDispatcher(this);
++        this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
++    }
++
++    private final AtomicBoolean performCommand$throwCommandError = new AtomicBoolean(false);
++    private static AtomicReference<String> neotenet$lable =
++            new AtomicReference<>("/");
+ 
      public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
          CommandContextBuilder<S> commandcontextbuilder = p_242928_.getContext();
-         CommandContextBuilder<S> commandcontextbuilder1 = commandcontextbuilder.withSource(p_242890_.apply(commandcontextbuilder.getSource()));
 @@ -265,6 +_,16 @@
  
      public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
@@ -115,7 +120,7 @@
                  MutableComponent mutablecomponent = Component.empty()
                      .withStyle(ChatFormatting.GRAY)
 -                    .withStyle(p_82134_ -> p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_307311_)));
-+                    .withStyle(p_82134_ -> p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, !Objects.equals(taiyitist$lable.get(), "/") ? taiyitist$lable.get() : taiyitist$lable.get() + p_307311_)));
++                    .withStyle(p_82134_ -> p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, !Objects.equals(neotenet$lable.get(), "/") ? neotenet$lable.get() : neotenet$lable.get() + p_307311_)));
                  if (i > 10) {
                      mutablecomponent.append(CommonComponents.ELLIPSIS);
                  }

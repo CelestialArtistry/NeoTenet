@@ -17,7 +17,7 @@ public class MixinCrashReport {
     private SystemReport systemReport;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void taiyitist$addedCrashReport(String p_127509_, Throwable p_127510_, CallbackInfo ci) {
+    private void neotenet$addedCrashReport(String p_127509_, Throwable p_127510_, CallbackInfo ci) {
         this.systemReport.setDetail("CraftBukkit Information", new org.bukkit.craftbukkit.CraftCrashReport()); // CraftBukkit
     }
 }

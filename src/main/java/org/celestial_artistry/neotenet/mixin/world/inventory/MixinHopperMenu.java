@@ -33,12 +33,12 @@ public abstract class MixinHopperMenu extends AbstractContainerMenu {
     }
 
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;)V", at = @At("RETURN"))
-    public void taiyitist$init(int id, Inventory playerInventory, Container inventory, CallbackInfo ci) {
+    public void neotenet$init(int id, Inventory playerInventory, Container inventory, CallbackInfo ci) {
         this.playerInventory = playerInventory;
     }
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void taiyitist$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    public void neotenet$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
         if (!this.checkReachable) cir.setReturnValue(true);
     }
 

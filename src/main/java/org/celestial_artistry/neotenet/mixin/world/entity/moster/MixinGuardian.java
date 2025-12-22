@@ -12,7 +12,7 @@ public class MixinGuardian {
     public Guardian.GuardianAttackGoal guardianAttackGoal;
 
     @ModifyArg(method = "registerGoals", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/goal/GoalSelector;addGoal(ILnet/minecraft/world/entity/ai/goal/Goal;)V"))
-    private Goal taiyitist$saveGoal(Goal goal) {
+    private Goal neotenet$saveGoal(Goal goal) {
         if (goal instanceof Guardian.GuardianAttackGoal guardianGoal) {
             this.guardianAttackGoal = guardianGoal;
         }

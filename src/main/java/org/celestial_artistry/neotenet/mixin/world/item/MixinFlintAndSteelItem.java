@@ -23,7 +23,7 @@ public class MixinFlintAndSteelItem {
     @Inject(method = "useOn", cancellable = true, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V")
     )
-    public void taiyitist$blockIgnite(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir,
+    public void neotenet$blockIgnite(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir,
                                       @Local Player player, @Local Level level, @Local(ordinal = 0) BlockPos blockPos) {
         // CraftBukkit start - Store the clicked block
         if (CraftEventFactory.callBlockIgniteEvent(level, blockPos, BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, player).isCancelled()) {

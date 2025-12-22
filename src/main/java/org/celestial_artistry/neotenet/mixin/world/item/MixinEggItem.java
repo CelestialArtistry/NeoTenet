@@ -21,13 +21,13 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class MixinEggItem {
 
     @Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean taiyitist$cancelAddEntity(Level instance, Entity entity) {
+    private boolean neotenet$cancelAddEntity(Level instance, Entity entity) {
         return false;
     }
 
     @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z",
             shift = At.Shift.AFTER), cancellable = true)
-    private void taiyitist$handleEggEntity(Level level, Player player, InteractionHand usedHand,
+    private void neotenet$handleEggEntity(Level level, Player player, InteractionHand usedHand,
                                            CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir,
                                            @Local ItemStack itemStack, @Local ThrownEgg thrownEgg) {
         // CraftBukkit start

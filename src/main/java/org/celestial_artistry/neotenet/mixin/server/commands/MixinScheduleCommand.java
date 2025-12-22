@@ -20,17 +20,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ScheduleCommand.class)
 public class MixinScheduleCommand {
 
-    private static final AtomicReference<CommandSourceStack> taiyitist$source = new AtomicReference<>();
+    private static final AtomicReference<CommandSourceStack> neotenet$source = new AtomicReference<>();
 
     @Inject(method = "schedule", at = @At("HEAD"))
-    private static void taiyitist$getSource(CommandSourceStack commandSourceStack, Pair<ResourceLocation, Either<CommandFunction<CommandSourceStack>, Collection<CommandFunction<CommandSourceStack>>>> pair, int i, boolean bl, CallbackInfoReturnable<Integer> cir) {
-        taiyitist$source.set(commandSourceStack);
+    private static void neotenet$getSource(CommandSourceStack commandSourceStack, Pair<ResourceLocation, Either<CommandFunction<CommandSourceStack>, Collection<CommandFunction<CommandSourceStack>>>> pair, int i, boolean bl, CallbackInfoReturnable<Integer> cir) {
+        neotenet$source.set(commandSourceStack);
     }
 
     @Redirect(method = "schedule",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/level/storage/ServerLevelData;getScheduledEvents()Lnet/minecraft/world/level/timers/TimerQueue;"))
-    private static TimerQueue<MinecraftServer> taiyitist$resetTimer(ServerLevelData instance) {
-        return taiyitist$source.get().getLevel().K.overworldData().getScheduledEvents(); // CraftBukkit - SPIGOT-6667: Use world specific function timer;
+    private static TimerQueue<MinecraftServer> neotenet$resetTimer(ServerLevelData instance) {
+        return neotenet$source.get().getLevel().K.overworldData().getScheduledEvents(); // CraftBukkit - SPIGOT-6667: Use world specific function timer;
     }
 }

@@ -24,13 +24,13 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class MixinEnderEyeItem {
 
     @Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean taiyitist$cancelEntityAdd(Level instance, Entity entity) {
+    private boolean neotenet$cancelEntityAdd(Level instance, Entity entity) {
         return false;
     }
 
     @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z",
             shift = At.Shift.AFTER), cancellable = true)
-    private void taiyitist$handleAddEntity(Level level, Player player, InteractionHand usedHand,
+    private void neotenet$handleAddEntity(Level level, Player player, InteractionHand usedHand,
                                            CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir,
                                            @Local ItemStack itemStack,
                                            @Local EyeOfEnder eyeOfEnder) {

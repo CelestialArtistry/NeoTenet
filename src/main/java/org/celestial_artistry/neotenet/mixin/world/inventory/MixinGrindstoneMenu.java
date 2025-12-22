@@ -39,17 +39,17 @@ public abstract class MixinGrindstoneMenu extends AbstractContainerMenu {
     }
 
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
-    public void taiyitist$init(int i, Inventory inventory, ContainerLevelAccess containerLevelAccess, CallbackInfo ci) {
+    public void neotenet$init(int i, Inventory inventory, ContainerLevelAccess containerLevelAccess, CallbackInfo ci) {
         this.player = (Player) inventory.player.getBukkitEntity();
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
-    private void taiyitist$prepareEvent(Container instance, int i, ItemStack stack) {
+    private void neotenet$prepareEvent(Container instance, int i, ItemStack stack) {
         CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), stack);
     }
 
     @Inject(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/GrindstoneMenu;broadcastChanges()V"))
-    private void taiyitist$sync(CallbackInfo ci) {
+    private void neotenet$sync(CallbackInfo ci) {
         sendAllDataToRemote();
     }
 

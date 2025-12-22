@@ -35,7 +35,7 @@ public abstract class MixinBoatItem extends Item {
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/item/BoatItem;getBoat(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/HitResult;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/entity/vehicle/Boat;",
                     shift = At.Shift.BEFORE), cancellable = true)
-    private void taiyitist$boatEvent(Level level, Player player, InteractionHand usedHand,
+    private void neotenet$boatEvent(Level level, Player player, InteractionHand usedHand,
                                      CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir,
                                      @Local ItemStack itemStack, @Local HitResult hitResult) {
         // CraftBukkit start - Boat placement
@@ -51,7 +51,7 @@ public abstract class MixinBoatItem extends Item {
     @Redirect(method = "use",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean taiyitist$cancelAddEntity(Level instance, Entity entity) {
+    private boolean neotenet$cancelAddEntity(Level instance, Entity entity) {
         return false;
     }
 
@@ -60,7 +60,7 @@ public abstract class MixinBoatItem extends Item {
                     target = "Lnet/minecraft/world/level/Level;gameEvent(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/core/Holder;Lnet/minecraft/world/phys/Vec3;)V",
                     shift = At.Shift.BEFORE),
             locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    private void taiyitist$handleBoatEntityAdd(Level level, Player player, InteractionHand usedHand,
+    private void neotenet$handleBoatEntityAdd(Level level, Player player, InteractionHand usedHand,
                                             CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir,
                                             ItemStack itemStack, HitResult hitResult, Vec3 vec3, double d,
                                             List<Entity> list, Boat boat) {

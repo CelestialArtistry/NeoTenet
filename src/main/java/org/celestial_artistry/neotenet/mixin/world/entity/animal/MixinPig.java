@@ -24,7 +24,7 @@ public abstract class MixinPig extends Animal {
 
     @Inject(method = "thunderHit", cancellable = true,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private void taiyitist$pigZap(ServerLevel world, LightningBolt lightningBolt, CallbackInfo ci, @Local ZombifiedPiglin piglin) {
+    private void neotenet$pigZap(ServerLevel world, LightningBolt lightningBolt, CallbackInfo ci, @Local ZombifiedPiglin piglin) {
         if (CraftEventFactory.callPigZapEvent((Pig) (Object) this, lightningBolt, piglin).isCancelled()) {
             ci.cancel();
         } else {

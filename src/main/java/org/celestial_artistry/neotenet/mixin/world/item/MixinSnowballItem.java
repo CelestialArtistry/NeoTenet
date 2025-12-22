@@ -25,14 +25,14 @@ public class MixinSnowballItem extends Item {
     }
 
     @Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean taiyitist$cancelAddEntity(Level instance, Entity entity) {
+    private boolean neotenet$cancelAddEntity(Level instance, Entity entity) {
         return false;
     }
 
     @Inject(method = "use", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z")
     )
-    private void taiyitist$addEntity(Level level, Player player, InteractionHand usedHand,
+    private void neotenet$addEntity(Level level, Player player, InteractionHand usedHand,
                                   CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir,
                                   @Local Snowball snowball) {
         // CraftBukkit start

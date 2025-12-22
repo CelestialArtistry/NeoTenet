@@ -29,41 +29,41 @@ public abstract class MixinAbstractHorse extends Animal {
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void taiyitist$init(EntityType<? extends AbstractHorse> type, Level worldIn, CallbackInfo ci) {
+    private void neotenet$init(EntityType<? extends AbstractHorse> type, Level worldIn, CallbackInfo ci) {
         this.maxDomestication = 100;
     }
 
     @Redirect(method = "createInventory", at = @At(value = "NEW", args = "class=net/minecraft/world/SimpleContainer"))
-    private SimpleContainer taiyitist$createInv(int slots) {
+    private SimpleContainer neotenet$createInv(int slots) {
         SimpleContainer inventory = new SimpleContainer(slots);
         inventory.setOwner((InventoryHolder) this.getBukkitEntity());
         return inventory;
     }
 
     @Inject(method = "handleEating", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"))
-    private void taiyitist$healByEating(Player player, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$healByEating(Player player, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         pushHealReason(EntityRegainHealthEvent.RegainReason.EATING);
     }
 
     @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"))
-    private void taiyitist$healByRegen(CallbackInfo ci) {
+    private void neotenet$healByRegen(CallbackInfo ci) {
         pushHealReason(EntityRegainHealthEvent.RegainReason.REGEN);
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
-    private void taiyitist$writeTemper(CompoundTag compound, CallbackInfo ci) {
+    private void neotenet$writeTemper(CompoundTag compound, CallbackInfo ci) {
         compound.putInt("Bukkit.MaxDomestication", this.maxDomestication);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
-    private void taiyitist$readTemper(CompoundTag compound, CallbackInfo ci) {
+    private void neotenet$readTemper(CompoundTag compound, CallbackInfo ci) {
         if (compound.contains("Bukkit.MaxDomestication")) {
             this.maxDomestication = compound.getInt("Bukkit.MaxDomestication");
         }
     }
 
     @Inject(method = "handleStartJump", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$horseJump(int i, CallbackInfo ci) {
+    private void neotenet$horseJump(int i, CallbackInfo ci) {
         float power;
         if (i >= 90) {
             power = 1.0F;

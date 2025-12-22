@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinTripWireHookBlock {
 
     @Inject(method = "calculateState", cancellable = true, at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/level/block/TripWireHookBlock;emitState(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;ZZZZ)V"))
-    private static void taiyitist$blockRedstone(Level worldIn, BlockPos pos, BlockState hookState, boolean attaching, boolean shouldNotifyNeighbours, int searchRange, BlockState state, CallbackInfo ci) {
+    private static void neotenet$blockRedstone(Level worldIn, BlockPos pos, BlockState hookState, boolean attaching, boolean shouldNotifyNeighbours, int searchRange, BlockState state, CallbackInfo ci) {
         // CraftBukkit start
         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(CraftBlock.at(worldIn, pos), 15, 0);
         worldIn.getCraftServer().getPluginManager().callEvent(eventRedstone);

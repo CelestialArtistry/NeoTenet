@@ -28,7 +28,7 @@ public abstract class MixinMerchantOffer implements InjectionMerchantOffer {
     }
 
     @Inject(method = "getCostA", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$fix(CallbackInfoReturnable<ItemStack> cir) {
+    private void neotenet$fix(CallbackInfoReturnable<ItemStack> cir) {
         if (this.baseCostA.count() <= 0) {
             cir.setReturnValue(ItemStack.EMPTY);
         }
@@ -36,7 +36,7 @@ public abstract class MixinMerchantOffer implements InjectionMerchantOffer {
 
     @Redirect(method = "take", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V"))
-    private void taiyitist$shrink(ItemStack instance, int decrement) {
+    private void neotenet$shrink(ItemStack instance, int decrement) {
         // CraftBukkit start
         if (!this.getCostA().isEmpty()) {
             instance.shrink(this.getCostA().getCount());

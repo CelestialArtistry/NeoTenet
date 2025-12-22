@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class MixinEvoker_EvokerSummonSpellGoal {
 
     @Inject(method = "performSpellCasting", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
-    private void taiyitist$reason(CallbackInfo ci, @Local ServerLevel level) {
+    private void neotenet$reason(CallbackInfo ci, @Local ServerLevel level) {
         level.pushAddEntityReason(CreatureSpawnEvent.SpawnReason.SPELL);
     }
 }

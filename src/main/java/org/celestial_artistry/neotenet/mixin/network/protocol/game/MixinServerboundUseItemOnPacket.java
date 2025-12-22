@@ -15,7 +15,7 @@ public class MixinServerboundUseItemOnPacket {
     public long timestamp;
 
     @Inject(method = "<init>(Lnet/minecraft/network/FriendlyByteBuf;)V", at = @At("RETURN"))
-    private void taiyitist$read(FriendlyByteBuf buf, CallbackInfo ci) {
+    private void neotenet$read(FriendlyByteBuf buf, CallbackInfo ci) {
         this.timestamp = System.currentTimeMillis();
     }
 }

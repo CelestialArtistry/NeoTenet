@@ -69,7 +69,7 @@ public abstract class MixinArmorStand extends LivingEntity {
     }
 
     @Inject(method = "swapItem", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;hasInfiniteMaterials()Z"))
-    public void taiyitist$manipulateEvent(net.minecraft.world.entity.player.Player playerEntity, EquipmentSlot slotType, ItemStack itemStack, InteractionHand hand, CallbackInfoReturnable<Boolean> cir) {
+    public void neotenet$manipulateEvent(net.minecraft.world.entity.player.Player playerEntity, EquipmentSlot slotType, ItemStack itemStack, InteractionHand hand, CallbackInfoReturnable<Boolean> cir) {
         ItemStack itemStack1 = this.getItemBySlot(slotType);
 
         org.bukkit.inventory.ItemStack armorStandItem = CraftItemStack.asCraftMirror(itemStack1);
@@ -89,67 +89,67 @@ public abstract class MixinArmorStand extends LivingEntity {
     }
 
     @Inject(method = "hurt", cancellable = true, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/entity/decoration/ArmorStand;kill()V"))
-    public void taiyitist$damageDropOut(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    public void neotenet$damageDropOut(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (CraftEventFactory.handleNonLivingEntityDamageEvent((ArmorStand) (Object) this, source, amount)) {
             cir.setReturnValue(false);
         } else {
-            taiyitist$callEntityDeath();
+            neotenet$callEntityDeath();
         }
     }
 
     @Inject(method = "hurt", cancellable = true, at = @At(value = "FIELD", target = "Lnet/minecraft/tags/DamageTypeTags;IS_EXPLOSION:Lnet/minecraft/tags/TagKey;"))
-    public void taiyitist$damageNormal(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    public void neotenet$damageNormal(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (CraftEventFactory.handleNonLivingEntityDamageEvent((ArmorStand) (Object) this, source, amount, true, this.invisible)) {
             cir.setReturnValue(false);
         }
     }
 
     @Redirect(method = "hurt", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/decoration/ArmorStand;invisible:Z"))
-    private boolean taiyitist$softenCondition(ArmorStand entity) {
+    private boolean neotenet$softenCondition(ArmorStand entity) {
         return false;
     }
 
     @Inject(method = "hurt", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/entity/decoration/ArmorStand;kill()V"))
-    private void taiyitist$damageDeath1(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        taiyitist$callEntityDeath();
+    private void neotenet$damageDeath1(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        neotenet$callEntityDeath();
     }
 
     @Inject(method = "hurt", at = @At(value = "INVOKE", ordinal = 2, target = "Lnet/minecraft/world/entity/decoration/ArmorStand;kill()V"))
-    private void taiyitist$damageDeath2(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        taiyitist$callEntityDeath();
+    private void neotenet$damageDeath2(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        neotenet$callEntityDeath();
     }
 
     @Inject(method = "causeDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/ArmorStand;kill()V"))
-    private void taiyitist$deathEvent2(ServerLevel serverLevel, DamageSource damageSource, float f, CallbackInfo ci) {
-        taiyitist$callEntityDeath();
+    private void neotenet$deathEvent2(ServerLevel serverLevel, DamageSource damageSource, float f, CallbackInfo ci) {
+        neotenet$callEntityDeath();
     }
 
     @Redirect(method = "brokenByAnything", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/ArmorStand;dropAllDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;)V"))
-    private void taiyitist$dropLater(ArmorStand instance, ServerLevel serverLevel, DamageSource damageSource) {
+    private void neotenet$dropLater(ArmorStand instance, ServerLevel serverLevel, DamageSource damageSource) {
     }
 
     @Redirect(method = "brokenByAnything", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;popResource(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V"))
-    private void taiyitist$captureDropsDeath(Level worldIn, BlockPos pos, ItemStack stack) {
-        taiyitist$addDrops(worldIn, stack);
+    private void neotenet$captureDropsDeath(Level worldIn, BlockPos pos, ItemStack stack) {
+        neotenet$addDrops(worldIn, stack);
     }
 
     @Inject(method = "brokenByAnything", at = @At("RETURN"))
-    private void taiyitist$spawnLast(ServerLevel serverLevel, DamageSource damageSource, CallbackInfo ci) {
+    private void neotenet$spawnLast(ServerLevel serverLevel, DamageSource damageSource, CallbackInfo ci) {
         this.dropAllDeathLoot(serverLevel, damageSource);
     }
 
     @Inject(method = "kill", at = @At("HEAD"))
-    private void taiyitist$deathEvent(CallbackInfo ci) {
-        taiyitist$callEntityDeath();
+    private void neotenet$deathEvent(CallbackInfo ci) {
+        neotenet$callEntityDeath();
     }
 
-    private void taiyitist$addDrops(Level worldIn, ItemStack stack) {
+    private void neotenet$addDrops(Level worldIn, ItemStack stack) {
         if (!worldIn.isClientSide && !stack.isEmpty() && worldIn.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) { // Banner - prevents item dupe
             this.drops.add(CraftItemStack.asBukkitCopy(stack));
         }
     }
 
-    private void taiyitist$callEntityDeath() {
+    private void neotenet$callEntityDeath() {
         CraftEventFactory.callEntityDeathEvent((ArmorStand) (Object) this, this.damageSources().genericKill(), this.drops);// CraftBukkit - call event
     }
 

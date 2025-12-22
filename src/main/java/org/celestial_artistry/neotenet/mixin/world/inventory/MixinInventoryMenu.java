@@ -41,7 +41,7 @@ public abstract class MixinInventoryMenu extends RecipeBookMenu<CraftingInput, C
     }
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void taiyitist$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    public void neotenet$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
         if (!checkReachable) cir.setReturnValue(true);
     }
 

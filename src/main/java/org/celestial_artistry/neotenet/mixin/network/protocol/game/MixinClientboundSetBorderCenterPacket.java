@@ -19,7 +19,7 @@ public class MixinClientboundSetBorderCenterPacket {
     // @formatter:on
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/border/WorldBorder;)V", at = @At("RETURN"))
-    private void taiyitist$nether(WorldBorder border, CallbackInfo ci) {
+    private void neotenet$nether(WorldBorder border, CallbackInfo ci) {
         this.newCenterX = border.getCenterX() * (border.world != null ? border.world.dimensionType().coordinateScale() : 1.0);
         this.newCenterZ = border.getCenterZ() * (border.world != null ? border.world.dimensionType().coordinateScale() : 1.0);
     }

@@ -19,32 +19,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Ocelot.class)
 public abstract class MixinOcelot extends Animal {
 
-    private final AtomicReference<Player> taiyitist$player = new AtomicReference<>();
+    private final AtomicReference<Player> neotenet$player = new AtomicReference<>();
 
     protected MixinOcelot(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
     }
 
     @Inject(method = "mobInteract", at = @At(("HEAD")))
-    private void taiyitist$setPlayer(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-        taiyitist$player.set(player);
+    private void neotenet$setPlayer(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        neotenet$player.set(player);
     }
 
     @WrapWithCondition(method = "mobInteract", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/animal/Ocelot;setTrusting(Z)V"))
-    private boolean taiyitist$callTameEvent0(Ocelot ocelot, boolean value) {
-        return !CraftEventFactory.callEntityTameEvent(((Ocelot) (Object) this), taiyitist$player.get()).isCancelled();
+    private boolean neotenet$callTameEvent0(Ocelot ocelot, boolean value) {
+        return !CraftEventFactory.callEntityTameEvent(((Ocelot) (Object) this), neotenet$player.get()).isCancelled();
     }
 
     @WrapWithCondition(method = "mobInteract", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/animal/Ocelot;spawnTrustingParticles(Z)V", ordinal = 0))
-    private boolean taiyitist$callTameEvent1(Ocelot ocelot, boolean value) {
-        return !CraftEventFactory.callEntityTameEvent(((Ocelot) (Object) this), taiyitist$player.get()).isCancelled();
+    private boolean neotenet$callTameEvent1(Ocelot ocelot, boolean value) {
+        return !CraftEventFactory.callEntityTameEvent(((Ocelot) (Object) this), neotenet$player.get()).isCancelled();
     }
 
     @WrapWithCondition(method = "mobInteract", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/Level;broadcastEntityEvent(Lnet/minecraft/world/entity/Entity;B)V", ordinal = 0))
-    private boolean taiyitist$callTameEvent2(Level level, Entity entity, byte state) {
-        return !CraftEventFactory.callEntityTameEvent(((Ocelot) (Object) this), taiyitist$player.get()).isCancelled();
+    private boolean neotenet$callTameEvent2(Level level, Entity entity, byte state) {
+        return !CraftEventFactory.callEntityTameEvent(((Ocelot) (Object) this), neotenet$player.get()).isCancelled();
     }
 }

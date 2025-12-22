@@ -37,7 +37,7 @@ public abstract class MixinCommandSourceStack implements InjectionCommandSourceS
     public abstract ServerLevel getLevel();
 
     @Inject(method = "hasPermission", cancellable = true, at = @At("HEAD"))
-    public void taiyitist$checkPermission(int level, CallbackInfoReturnable<Boolean> cir) {
+    public void neotenet$checkPermission(int level, CallbackInfoReturnable<Boolean> cir) {
         CommandNode currentCommand = this.currentCommand;
         if (currentCommand != null) {
             cir.setReturnValue(hasPermission(level, VanillaCommandWrapper.getPermission(currentCommand)));
@@ -45,7 +45,7 @@ public abstract class MixinCommandSourceStack implements InjectionCommandSourceS
     }
 
     @Redirect(method = "broadcastToAdmins", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;isOp(Lcom/mojang/authlib/GameProfile;)Z"))
-    private boolean taiyitist$feedbackPermission(PlayerList instance, GameProfile profile) {
+    private boolean neotenet$feedbackPermission(PlayerList instance, GameProfile profile) {
         return instance.getPlayer(profile.getId()).getBukkitEntity().hasPermission("minecraft.admin.command_feedback");
     }
 

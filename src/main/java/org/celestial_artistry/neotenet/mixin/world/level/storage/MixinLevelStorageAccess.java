@@ -21,7 +21,7 @@ public abstract class MixinLevelStorageAccess {
     public ResourceKey<LevelStem> dimensionType;
 
     @Inject(method = "getDimensionPath", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$useActualType(ResourceKey<Level> dimensionKey, CallbackInfoReturnable<Path> cir) {
+    private void neotenet$useActualType(ResourceKey<Level> dimensionKey, CallbackInfoReturnable<Path> cir) {
         if (dimensionType == LevelStem.OVERWORLD) {
             cir.setReturnValue(this.levelDirectory.path());
         } else if (dimensionType == LevelStem.NETHER) {

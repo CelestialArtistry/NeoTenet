@@ -85,7 +85,7 @@ public class ClassLoaderAdapter implements PluginTransformer {
             list.add(new InsnNode(Opcodes.ARETURN));
             getRemapper.instructions = list;
         }
-        FieldNode remapConfig = new FieldNode(Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC, "taiyitist$remapConfig", Type.getDescriptor(NeoTenetRemapConfig.class), null, null);
+        FieldNode remapConfig = new FieldNode(Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC, "neotenet$remapConfig", Type.getDescriptor(NeoTenetRemapConfig.class), null, null);
         MethodNode getConfig = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, "getRemapConfig", Type.getMethodDescriptor(Type.getType(NeoTenetRemapConfig.class)), null, null);
         {
             final var config = Type.getInternalName(NeoTenetRemapConfig.class);

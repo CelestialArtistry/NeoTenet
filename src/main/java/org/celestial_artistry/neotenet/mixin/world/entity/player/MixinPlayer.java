@@ -56,7 +56,7 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
     protected FoodData foodData;
     @Shadow
     protected PlayerEnderChestContainer enderChestInventory;
-    protected AtomicReference<Boolean> taiyitist$forceSleep = new AtomicReference<>();
+    protected AtomicReference<Boolean> neotenet$forceSleep = new AtomicReference<>();
     protected AtomicBoolean startSleepInBed_force = new AtomicBoolean(false);
     @Shadow
     @Final
@@ -66,7 +66,7 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
     @Shadow
     @Final
     private Inventory inventory;
-    private EntityExhaustionEvent.ExhaustionReason taiyitist$exhaustReason;
+    private EntityExhaustionEvent.ExhaustionReason neotenet$exhaustReason;
 
     protected MixinPlayer(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
@@ -97,24 +97,24 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
     public abstract FoodData getFoodData();
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void taiyitist$init(CallbackInfo ci) {
+    private void neotenet$init(CallbackInfo ci) {
         this.foodData.entityhuman = ((Player) (Object) this);
         this.enderChestInventory.setOwner(this.getBukkitEntity());
     }
 
     @Inject(method = "turtleHelmetTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    private void taiyitist$turtleHelmet(CallbackInfo ci) {
+    private void neotenet$turtleHelmet(CallbackInfo ci) {
         pushEffectCause(EntityPotionEffectEvent.Cause.TURTLE_HELMET);
     }
 
     @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;heal(F)V"))
-    private void taiyitist$healByRegen(CallbackInfo ci) {
+    private void neotenet$healByRegen(CallbackInfo ci) {
         pushHealReason(EntityRegainHealthEvent.RegainReason.REGEN);
     }
 
     @Inject(method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;",
             cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "RETURN", ordinal = 1))
-    private void taiyitist$playerDropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem, CallbackInfoReturnable<ItemEntity> cir, double d0, ItemEntity itemEntity) {
+    private void neotenet$playerDropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem, CallbackInfoReturnable<ItemEntity> cir, double d0, ItemEntity itemEntity) {
         org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
         org.bukkit.entity.Item drop = (org.bukkit.entity.Item) itemEntity.getBukkitEntity();
 
@@ -206,9 +206,9 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
     }
 
     @Redirect(method = "causeFoodExhaustion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;addExhaustion(F)V"))
-    private void taiyitist$exhaustEvent(FoodData foodData, float amount) {
-        EntityExhaustionEvent.ExhaustionReason reason = taiyitist$exhaustReason == null ? EntityExhaustionEvent.ExhaustionReason.UNKNOWN : taiyitist$exhaustReason;
-        taiyitist$exhaustReason = null;
+    private void neotenet$exhaustEvent(FoodData foodData, float amount) {
+        EntityExhaustionEvent.ExhaustionReason reason = neotenet$exhaustReason == null ? EntityExhaustionEvent.ExhaustionReason.UNKNOWN : neotenet$exhaustReason;
+        neotenet$exhaustReason = null;
         EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent((Player) (Object) this, reason, amount);
         if (!event.isCancelled()) {
             this.foodData.addExhaustion(event.getExhaustion());
@@ -229,16 +229,16 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
 
     @Override
     public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos blockposition, boolean force) {
-        taiyitist$forceSleep.set(force);
+        neotenet$forceSleep.set(force);
         try {
             return this.startSleepInBed(blockposition);
         } finally {
-            this.taiyitist$forceSleep.set(false);
+            this.neotenet$forceSleep.set(false);
         }
     }
 
     @Inject(method = "stopSleepInBed", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;sleepCounter:I"))
-    private void taiyitist$wakeup(boolean flag, boolean flag1, CallbackInfo ci) {
+    private void neotenet$wakeup(boolean flag, boolean flag1, CallbackInfo ci) {
         BlockPos blockPos = this.getSleepingPos().orElse(null);
         if (this.getBukkitEntity() instanceof org.bukkit.entity.Player player) {
             org.bukkit.block.Block bed;
@@ -253,7 +253,7 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
     }
 
     @ModifyArg(method = "jumpFromGround", index = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private float taiyitist$exhaustInfo(float f) {
+    private float neotenet$exhaustInfo(float f) {
         SpigotWorldConfig config = level().spigotConfig;
         if (config != null) {
             if (this.isSprinting()) {
@@ -268,14 +268,14 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
     }
 
     @Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setSharedFlag(IZ)V"))
-    private void taiyitist$toggleGlide(Player playerEntity, int flag, boolean set) {
+    private void neotenet$toggleGlide(Player playerEntity, int flag, boolean set) {
         if (playerEntity.getSharedFlag(flag) != set && !CraftEventFactory.callToggleGlideEvent((Player) (Object) this, set).isCancelled()) {
             playerEntity.setSharedFlag(flag, set);
         }
     }
 
     @Inject(method = "startFallFlying", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$startGlidingEvent(CallbackInfo ci) {
+    private void neotenet$startGlidingEvent(CallbackInfo ci) {
         if (CraftEventFactory.callToggleGlideEvent((Player) (Object) this, true).isCancelled()) {
             this.setSharedFlag(7, true);
             this.setSharedFlag(7, false);
@@ -284,7 +284,7 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
     }
 
     @Inject(method = "stopFallFlying", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$stopGlidingEvent(CallbackInfo ci) {
+    private void neotenet$stopGlidingEvent(CallbackInfo ci) {
         if (CraftEventFactory.callToggleGlideEvent((Player) (Object) this, false).isCancelled()) {
             ci.cancel();
         }

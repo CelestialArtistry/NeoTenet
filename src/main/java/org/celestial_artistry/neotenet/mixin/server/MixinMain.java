@@ -37,7 +37,7 @@ public abstract class MixinMain {
             remap = false,
             locals = LocalCapture.CAPTURE_FAILSOFT
     )
-    private static void taiyitist$initMain(String[] p_129699_, CallbackInfo ci, OptionParser optionparser, OptionSpec optionspec, OptionSpec optionspec1, OptionSpec optionspec2, OptionSpec optionspec3, OptionSpec optionspec4, OptionSpec optionspec5, OptionSpec optionspec6, OptionSpec optionspec7, OptionSpec optionspec8, OptionSpec optionspec9, OptionSpec optionspec10, OptionSpec optionspec11, OptionSpec optionspec12, OptionSpec optionspec13, OptionSpec optionspec14) {
+    private static void neotenet$initMain(String[] p_129699_, CallbackInfo ci, OptionParser optionparser, OptionSpec optionspec, OptionSpec optionspec1, OptionSpec optionspec2, OptionSpec optionspec3, OptionSpec optionspec4, OptionSpec optionspec5, OptionSpec optionspec6, OptionSpec optionspec7, OptionSpec optionspec8, OptionSpec optionspec9, OptionSpec optionspec10, OptionSpec optionspec11, OptionSpec optionspec12, OptionSpec optionspec13, OptionSpec optionspec14) {
         optionparser.acceptsAll(Arrays.asList("b", "bukkit-settings"), "File for bukkit settings")
                 .withRequiredArg()
                 .ofType(File.class)
@@ -78,7 +78,7 @@ public abstract class MixinMain {
             remap = false,
             locals = LocalCapture.CAPTURE_FAILSOFT
     )
-    private static void taiyitist$addYmlInfo(String[] p_129699_, CallbackInfo ci, OptionParser optionparser, OptionSpec optionspec, OptionSpec optionspec1, OptionSpec optionspec2, OptionSpec optionspec3, OptionSpec optionspec4, OptionSpec optionspec5, OptionSpec optionspec6, OptionSpec optionspec7, OptionSpec optionspec8, OptionSpec optionspec9, OptionSpec optionspec10, OptionSpec optionspec11, OptionSpec optionspec12, OptionSpec optionspec13, OptionSpec optionspec14, OptionSpec optionspec15, OptionSpec spawnPosOpt, boolean gametestEnabled, OptionSet optionset, Path path2, Eula eula, Path path, Path path1, DedicatedServerSettings dedicatedserversettings) throws IOException {
+    private static void neotenet$addYmlInfo(String[] p_129699_, CallbackInfo ci, OptionParser optionparser, OptionSpec optionspec, OptionSpec optionspec1, OptionSpec optionspec2, OptionSpec optionspec3, OptionSpec optionspec4, OptionSpec optionspec5, OptionSpec optionspec6, OptionSpec optionspec7, OptionSpec optionspec8, OptionSpec optionspec9, OptionSpec optionspec10, OptionSpec optionspec11, OptionSpec optionspec12, OptionSpec optionspec13, OptionSpec optionspec14, OptionSpec optionspec15, OptionSpec spawnPosOpt, boolean gametestEnabled, OptionSet optionset, Path path2, Eula eula, Path path, Path path1, DedicatedServerSettings dedicatedserversettings) throws IOException {
         // CraftBukkit start - SPIGOT-5761: Create bukkit.yml and commands.yml if not present
         File configFile = (File) optionset.valueOf("bukkit-settings");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
@@ -95,7 +95,7 @@ public abstract class MixinMain {
     }
 
     @Inject(method = "main", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/ServerPacksSource;createPackRepository(Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;)Lnet/minecraft/server/packs/repository/PackRepository;"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private static void taiyitist$createBukkitDatapack(String[] p_129699_, CallbackInfo ci, OptionParser optionparser, OptionSpec optionspec, OptionSpec optionspec1, OptionSpec optionspec2, OptionSpec optionspec3, OptionSpec optionspec4, OptionSpec optionspec5, OptionSpec optionspec6, OptionSpec optionspec7, OptionSpec optionspec8, OptionSpec optionspec9, OptionSpec optionspec10, OptionSpec optionspec11, OptionSpec optionspec12, OptionSpec optionspec13, OptionSpec optionspec14, OptionSpec optionspec15, OptionSpec spawnPosOpt, boolean gametestEnabled, OptionSet optionset, Path path2, Eula eula, Path path, Path path1, DedicatedServerSettings dedicatedserversettings, File file1, Services services, String s, LevelStorageSource levelstoragesource, LevelStorageAccess levelstoragesource$levelstorageaccess, Dynamic dynamic, Dynamic dynamic1, boolean flag) {
+    private static void neotenet$createBukkitDatapack(String[] p_129699_, CallbackInfo ci, OptionParser optionparser, OptionSpec optionspec, OptionSpec optionspec1, OptionSpec optionspec2, OptionSpec optionspec3, OptionSpec optionspec4, OptionSpec optionspec5, OptionSpec optionspec6, OptionSpec optionspec7, OptionSpec optionspec8, OptionSpec optionspec9, OptionSpec optionspec10, OptionSpec optionspec11, OptionSpec optionspec12, OptionSpec optionspec13, OptionSpec optionspec14, OptionSpec optionspec15, OptionSpec spawnPosOpt, boolean gametestEnabled, OptionSet optionset, Path path2, Eula eula, Path path, Path path1, DedicatedServerSettings dedicatedserversettings, File file1, Services services, String s, LevelStorageSource levelstoragesource, LevelStorageAccess levelstoragesource$levelstorageaccess, Dynamic dynamic, Dynamic dynamic1, boolean flag) {
         // CraftBukkit start
         File bukkitDataPackFolder = new File(levelstoragesource.getLevelPath(LevelResource.DATAPACK_DIR.toString()).toFile(), "bukkit");
         if (!bukkitDataPackFolder.exists()) {

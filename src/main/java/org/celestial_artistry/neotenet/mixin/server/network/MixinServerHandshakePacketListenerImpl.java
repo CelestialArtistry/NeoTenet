@@ -39,12 +39,12 @@ public abstract class MixinServerHandshakePacketListenerImpl implements ServerHa
     private static HashMap<InetAddress, Long> throttleTracker;
 
     @Inject(method = "handleIntention", at = @At("HEAD"))
-    private void taiyitist$setHostName(ClientIntentionPacket packet, CallbackInfo ci) {
+    private void neotenet$setHostName(ClientIntentionPacket packet, CallbackInfo ci) {
         this.connection.hostname = packet.hostName() + ":" + packet.port(); // CraftBukkit  - set hostname
     }
 
     @Inject(method = "beginLogin", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/Connection;setupOutboundProtocol(Lnet/minecraft/network/ProtocolInfo;)V"))
-    private void taiyitist$throttler(ClientIntentionPacket packet, boolean bl, CallbackInfo ci) {
+    private void neotenet$throttler(ClientIntentionPacket packet, boolean bl, CallbackInfo ci) {
         try {
             long currentTime = System.currentTimeMillis();
             long connectionThrottle = Bukkit.getServer().getConnectionThrottle();

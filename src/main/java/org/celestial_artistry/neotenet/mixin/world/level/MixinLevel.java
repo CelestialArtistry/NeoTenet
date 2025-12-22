@@ -113,7 +113,7 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
     public static BlockPos lastPhysicsProblem;
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/storage/WritableLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/core/Holder;Ljava/util/function/Supplier;ZZJI)V", at = @At("RETURN"), order = 1001)
-    private void taiyitist$init(WritableLevelData writableLevelData, ResourceKey resourceKey, RegistryAccess registryAccess, Holder holder, Supplier supplier, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_, CallbackInfo ci) {
+    private void neotenet$init(WritableLevelData writableLevelData, ResourceKey resourceKey, RegistryAccess registryAccess, Holder holder, Supplier supplier, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_, CallbackInfo ci) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             this.spigotConfig = new SpigotWorldConfig((MinecraftServer.getServer().storageSource.getDimensionPath(resourceKey).getFileName().toFile().getName()));
             getWorldBorder().world = serverLevel;
@@ -139,7 +139,7 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
 
     @Inject(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isOutsideBuildHeight(Lnet/minecraft/core/BlockPos;)Z"), cancellable = true)
-    private void taiyitist$captureTree(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$captureTree(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_, CallbackInfoReturnable<Boolean> cir) {
         // CraftBukkit start - tree generation
         if (this.captureTreeGeneration) {
             CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
@@ -155,7 +155,7 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
     }
 
     @Redirect(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;setBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Lnet/minecraft/world/level/block/state/BlockState;"))
-    private BlockState taiyitist$captureBlockStates(LevelChunk instance, BlockPos blockentity, BlockState block, boolean flag1, @Local(argsOnly = true) BlockPos p_46605_, @Local(ordinal = 0, argsOnly = true) int p_46607_, @Local(ordinal = 0) boolean captured) {
+    private BlockState neotenet$captureBlockStates(LevelChunk instance, BlockPos blockentity, BlockState block, boolean flag1, @Local(argsOnly = true) BlockPos p_46605_, @Local(ordinal = 0, argsOnly = true) int p_46607_, @Local(ordinal = 0) boolean captured) {
         // CraftBukkit start - capture blockstates
         if (this.captureBlockStates && !this.capturedBlockStates.containsKey(p_46605_)) {
             CapturedBlockState blockstate = CapturedBlockState.getBlockState(((Level) (Object) this), p_46605_, p_46607_);
@@ -167,7 +167,7 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
     }
 
     @WrapWithCondition(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;markAndNotifyBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;II)V"))
-    private boolean taiyitist$addBukkitCheck(Level instance, BlockPos blockPos, LevelChunk p_46605_, BlockState levelchunk, BlockState blockstate, int p_46606_, int p_46607_) {
+    private boolean neotenet$addBukkitCheck(Level instance, BlockPos blockPos, LevelChunk p_46605_, BlockState levelchunk, BlockState blockstate, int p_46606_, int p_46607_) {
         return !this.captureBlockStates;
     }
 
@@ -222,7 +222,7 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
     // CraftBukkit end
 
     @Inject(method = "getBlockState", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isOutsideBuildHeight(Lnet/minecraft/core/BlockPos;)Z"), cancellable = true)
-    private void taiyitist$checkCaptures(BlockPos p_46732_, CallbackInfoReturnable<BlockState> cir) {
+    private void neotenet$checkCaptures(BlockPos p_46732_, CallbackInfoReturnable<BlockState> cir) {
         // CraftBukkit start - tree generation
         if (captureTreeGeneration) {
             CapturedBlockState previous = capturedBlockStates.get(p_46732_);
@@ -233,14 +233,14 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
         // CraftBukkit end
     }
 
-    private AtomicBoolean taiyitist$validate = new AtomicBoolean(true);
+    private AtomicBoolean neotenet$validate = new AtomicBoolean(true);
 
     @Inject(method = "getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;", at = @At("HEAD"))
-    private void taiyitist$markValidate(BlockPos p_46716_, CallbackInfoReturnable<BlockEntity> cir) {
-        taiyitist$validate.set(true);
+    private void neotenet$markValidate(BlockPos p_46716_, CallbackInfoReturnable<BlockEntity> cir) {
+        neotenet$validate.set(true);
     }
     @Inject(method = "getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isOutsideBuildHeight(Lnet/minecraft/core/BlockPos;)Z"), cancellable = true)
-    private void taiyitist$getBlockEntity(BlockPos p_46716_, CallbackInfoReturnable<BlockEntity> cir) {
+    private void neotenet$getBlockEntity(BlockPos p_46716_, CallbackInfoReturnable<BlockEntity> cir) {
         if (capturedTileEntities.containsKey(p_46716_)) {
             cir.setReturnValue(capturedTileEntities.get(p_46716_));
         }
@@ -264,7 +264,7 @@ public abstract class MixinLevel implements LevelAccessor, AutoCloseable, ILevel
     }
 
     @Inject(method = "setBlockEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getChunkAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/chunk/LevelChunk;"), cancellable = true)
-    private void taiyitist$addCheckCap(BlockEntity p_151524_, CallbackInfo ci, @Local BlockPos blockpos) {
+    private void neotenet$addCheckCap(BlockEntity p_151524_, CallbackInfo ci, @Local BlockPos blockpos) {
         // CraftBukkit start
         if (captureBlockStates) {
             capturedTileEntities.put(blockpos.immutable(), p_151524_);

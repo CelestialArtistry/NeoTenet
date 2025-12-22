@@ -19,7 +19,7 @@ public class MixinListPlayersCommand {
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/network/chat/ComponentUtils;formatList(Ljava/util/Collection;Ljava/util/function/Function;)Lnet/minecraft/network/chat/Component;",
                     shift = At.Shift.BEFORE))
-    private static void taiyitist$format(CommandSourceStack source, Function<ServerPlayer, Component> nameExtractor, CallbackInfoReturnable<Integer> cir, @Local List<ServerPlayer> list) {
+    private static void neotenet$format(CommandSourceStack source, Function<ServerPlayer, Component> nameExtractor, CallbackInfoReturnable<Integer> cir, @Local List<ServerPlayer> list) {
         // CraftBukkit start
         if (source.getBukkitSender() instanceof org.bukkit.entity.Player sender) {
             list = list.stream().filter((ep) -> sender.canSee(ep.getBukkitEntity())).collect(java.util.stream.Collectors.toList());

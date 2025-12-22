@@ -28,7 +28,7 @@ public class MixinDerivedLevelData implements InjectionDerivedLevelData {
     }
 
     @Redirect(method = "getLevelName", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/WorldData;getLevelName()Ljava/lang/String;"))
-    private String taiyitist$resetLevelName(WorldData instance) {
+    private String neotenet$resetLevelName(WorldData instance) {
         if (typeKey == null || typeKey == LevelStem.OVERWORLD) {
             return this.wrapped.getLevelName();
         } else {

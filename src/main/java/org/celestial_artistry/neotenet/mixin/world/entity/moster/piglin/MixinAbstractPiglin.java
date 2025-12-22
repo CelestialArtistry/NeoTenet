@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinAbstractPiglin {
 
     @Inject(method = "finishConversion", at = @At("HEAD"))
-    private void taiyitist$pushPiglinCause(ServerLevel serverLevel, CallbackInfo ci) {
+    private void neotenet$pushPiglinCause(ServerLevel serverLevel, CallbackInfo ci) {
         serverLevel.pushAddEntityReason(CreatureSpawnEvent.SpawnReason.PIGLIN_ZOMBIFIED);
     }
 }

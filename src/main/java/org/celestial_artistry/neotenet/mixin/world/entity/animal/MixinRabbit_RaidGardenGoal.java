@@ -26,7 +26,7 @@ public class MixinRabbit_RaidGardenGoal {
 
     @Inject(method = "tick", cancellable = true,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private void taiyitist$entityChangeBlock(CallbackInfo ci, @Local BlockPos blockPos, @Local BlockState blockState, @Local int i) {
+    private void neotenet$entityChangeBlock(CallbackInfo ci, @Local BlockPos blockPos, @Local BlockState blockState, @Local int i) {
         if (i == 0) {
             if (!CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockPos, Blocks.AIR.defaultBlockState())) {
                 ci.cancel();

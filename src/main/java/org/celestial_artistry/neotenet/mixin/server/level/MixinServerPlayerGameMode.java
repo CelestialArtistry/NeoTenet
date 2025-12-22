@@ -58,7 +58,7 @@ public abstract class MixinServerPlayerGameMode {
     @Shadow
     @Final
     private static Logger LOGGER;
-    private final AtomicReference<BlockBreakEvent> taiyitist$event = new AtomicReference<>();
+    private final AtomicReference<BlockBreakEvent> neotenet$event = new AtomicReference<>();
     // CraftBukkit start - whole method
     @Shadow
     public boolean interactResult;
@@ -107,7 +107,7 @@ public abstract class MixinServerPlayerGameMode {
     public abstract void destroyAndAck(BlockPos pos, int i, String string);
 
     @Inject(method = "changeGameModeForPlayer", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;setGameModeForPlayer(Lnet/minecraft/world/level/GameType;Lnet/minecraft/world/level/GameType;)V"))
-    private void taiyitist$gameModeEvent(GameType gameType, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$gameModeEvent(GameType gameType, CallbackInfoReturnable<Boolean> cir) {
         PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent(player.getBukkitEntity(), GameMode.getByValue(gameType.getId()));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -116,12 +116,12 @@ public abstract class MixinServerPlayerGameMode {
     }
 
     @Redirect(method = "changeGameModeForPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcastAll(Lnet/minecraft/network/protocol/Packet;)V"))
-    private void taiyitist$changeMessage(PlayerList instance, Packet<?> packet) {
+    private void neotenet$changeMessage(PlayerList instance, Packet<?> packet) {
         this.player.server.getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE, this.player), this.player);
     }
 
     @Inject(method = "destroyBlock", at = @At("HEAD"), cancellable = true)
-    private void taiyitist$fireBreakEvent(BlockPos blockposition, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$fireBreakEvent(BlockPos blockposition, CallbackInfoReturnable<Boolean> cir) {
         BlockState iblockdata = this.level.getBlockState(blockposition);
         // CraftBukkit start - fire BlockBreakEvent
         org.bukkit.block.Block bblock = CraftBlock.at(level, blockposition);
@@ -139,7 +139,7 @@ public abstract class MixinServerPlayerGameMode {
             }
 
             event = new BlockBreakEvent(bblock, this.player.getBukkitEntity());
-            taiyitist$event.set(event);
+            neotenet$event.set(event);
 
             // Sword + Creative mode pre-cancel
             event.setCancelled(isSwordNoBreak);
@@ -182,34 +182,34 @@ public abstract class MixinServerPlayerGameMode {
     @Inject(method = "destroyBlock", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/Block;playerWillDestroy(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/level/block/state/BlockState;",
             shift = At.Shift.BEFORE))
-    private void taiyitist$setDrops(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$setDrops(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         level.captureDrops = new ArrayList<>();
     }
 
     @Inject(method = "destroyBlock", at = @At("TAIL"), cancellable = true)
-    private void taiyitist$fireDropEvent(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$fireDropEvent(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         org.bukkit.block.BlockState state = CraftBlock.at(level, pos).getState();
-        if (level.captureDrops != null && taiyitist$event.get().isDropItems()) {
+        if (level.captureDrops != null && neotenet$event.get().isDropItems()) {
             CraftEventFactory.handleBlockDropItemEvent(CraftBlock.at(level, pos), state, this.player, level.captureDrops);
         }
         level.captureDrops = null;
 
         // Drop event experience
-        if (this.level.removeBlock(pos, false) && taiyitist$event.get() != null) {
-            this.level.getBlockState(pos).getBlock().popExperience(this.level, pos, taiyitist$event.getAndSet(null).getExpToDrop());
+        if (this.level.removeBlock(pos, false) && neotenet$event.get() != null) {
+            this.level.getBlockState(pos).getBlock().popExperience(this.level, pos, neotenet$event.getAndSet(null).getExpToDrop());
         }
         cir.setReturnValue(true);
     }
 
     @Inject(method = "destroyBlock", at = @At("RETURN"))
-    private void taiyitist$clearDrops(BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$clearDrops(BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
         this.level.captureDrops = null;
     }
 
     @Inject(method = "destroyBlock",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/server/level/ServerLevel;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"), cancellable = true)
-    private void taiyitist$resetState(BlockPos pos, CallbackInfoReturnable<Boolean> cir, @Local LocalRef<BlockState> blockState) {
+    private void neotenet$resetState(BlockPos pos, CallbackInfoReturnable<Boolean> cir, @Local LocalRef<BlockState> blockState) {
         blockState.set(this.level.getBlockState(pos)); // CraftBukkit - update state from plugins
         if (blockState.get().isAir())
             cir.setReturnValue(false); // CraftBukkit - A plugin set block to air without cancelling

@@ -21,7 +21,7 @@ public abstract class MixinBlock implements InjectionBlock {
 
 
     @Override
-    public int taiyitist$tryDropExperience(ServerLevel level, BlockPos pos, ItemStack heldItem, IntProvider amount) {
+    public int neotenet$tryDropExperience(ServerLevel level, BlockPos pos, ItemStack heldItem, IntProvider amount) {
         int i = EnchantmentHelper.processBlockExperience(level, heldItem, amount.sample(level.getRandom()));
         return i;
     }

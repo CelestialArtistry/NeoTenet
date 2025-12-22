@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinLootDataType {
 
     @Inject(method = "createLootTableValidator", cancellable = true, at = @At("RETURN"))
-    private static void taiyitist$setHandle(CallbackInfoReturnable<LootDataType.Validator<LootTable>> cir) {
+    private static void neotenet$setHandle(CallbackInfoReturnable<LootDataType.Validator<LootTable>> cir) {
         var validator = cir.getReturnValue();
         cir.setReturnValue((validationContext, resourceKey, object) -> {
             validator.run(validationContext, resourceKey, object);

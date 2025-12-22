@@ -24,7 +24,7 @@ public class MixinEnderMan_EndermanTakeBlockGoal {
 
     @Inject(method = "tick", cancellable = true,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/EnderMan;setCarriedBlock(Lnet/minecraft/world/level/block/state/BlockState;)V"))
-    private void taiyitist$entityChangeBlock(CallbackInfo ci, @Local BlockPos blockPos) {
+    private void neotenet$entityChangeBlock(CallbackInfo ci, @Local BlockPos blockPos) {
         if (!CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockPos, Blocks.AIR.defaultBlockState())) {
             ci.cancel();
         }

@@ -32,37 +32,37 @@ public abstract class MixinMapItemSavedData_HoldingPlayer {
     @Final
     MapItemSavedData this$0;
     @Unique
-    private final byte[] taiyitist$colors = this$0.colors;
+    private final byte[] neotenet$colors = this$0.colors;
     @Unique
     private final Collection<MapDecoration> icons = new java.util.ArrayList<>();
 
-    private final AtomicReference<RenderData> taiyitist$render = new AtomicReference<>();
-    private final AtomicReference<Player> taiyitist$player = new AtomicReference<>();
+    private final AtomicReference<RenderData> neotenet$render = new AtomicReference<>();
+    private final AtomicReference<Player> neotenet$player = new AtomicReference<>();
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void taiyitist$initRender(MapItemSavedData mapItemSavedData, Player player, CallbackInfo ci) {
-        taiyitist$player.set(player);
+    private void neotenet$initRender(MapItemSavedData mapItemSavedData, Player player, CallbackInfo ci) {
+        neotenet$player.set(player);
     }
 
     @Inject(method = "nextUpdatePacket", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData$HoldingPlayer;createPatch()Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData$MapPatch;"))
-    private void taiyitist$checkColors(MapId mapId, CallbackInfoReturnable<Packet<?>> cir) {
-        RenderData render = this$0.mapView.render((CraftPlayer) this.taiyitist$player.getAndSet(null).getBukkitEntity()); // CraftBukkit
-        taiyitist$render.set(render);
+    private void neotenet$checkColors(MapId mapId, CallbackInfoReturnable<Packet<?>> cir) {
+        RenderData render = this$0.mapView.render((CraftPlayer) this.neotenet$player.getAndSet(null).getBukkitEntity()); // CraftBukkit
+        neotenet$render.set(render);
         this$0.colors = render.buffer;
     }
 
     @Inject(method = "nextUpdatePacket", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData$HoldingPlayer;createPatch()Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData$MapPatch;",
             shift = At.Shift.AFTER))
-    private void taiyitist$setColors(MapId mapId, CallbackInfoReturnable<Packet<?>> cir) {
-        this$0.colors = taiyitist$colors;
+    private void neotenet$setColors(MapId mapId, CallbackInfoReturnable<Packet<?>> cir) {
+        this$0.colors = neotenet$colors;
     }
 
     @Redirect(method = "nextUpdatePacket", at = @At(value = "INVOKE", target = "Ljava/util/Map;values()Ljava/util/Collection;"))
-    private Collection<MapDecoration> taiyitist$resetCollections(Map instance) {
+    private Collection<MapDecoration> neotenet$resetCollections(Map instance) {
         // CraftBukkit start
-        for (org.bukkit.map.MapCursor cursor : taiyitist$render.getAndSet(null).cursors) {
+        for (org.bukkit.map.MapCursor cursor : neotenet$render.getAndSet(null).cursors) {
             if (cursor.isVisible()) {
                 icons.add(new MapDecoration(CraftMapCursor.CraftType.bukkitToMinecraftHolder(cursor.getType()), cursor.getX(), cursor.getY(), cursor.getDirection(), CraftChatMessage.fromStringOrOptional(cursor.getCaption())));
             }

@@ -142,7 +142,7 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
     }
 
     @Inject(method = "setInitialSpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerChunkCache;getGenerator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"), cancellable = true)
-    private static void taiyitist$spawnInit(ServerLevel level, ServerLevelData levelData, boolean generateBonusChest, boolean debug, CallbackInfo ci) {
+    private static void neotenet$spawnInit(ServerLevel level, ServerLevelData levelData, boolean generateBonusChest, boolean debug, CallbackInfo ci) {
         // CraftBukkit start
         if (level.generator != null) {
             Random rand = new Random(level.getSeed());
@@ -160,7 +160,7 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void taiyitist$loadOptions(Thread p_236723_, LevelStorageSource.LevelStorageAccess p_236724_, PackRepository p_236725_, WorldStem p_236726_, java.net.Proxy p_236727_, DataFixer p_236728_, Services p_236729_, ChunkProgressListenerFactory p_236730_, CallbackInfo ci) {
+    private void neotenet$loadOptions(Thread p_236723_, LevelStorageSource.LevelStorageAccess p_236724_, PackRepository p_236725_, WorldStem p_236726_, java.net.Proxy p_236727_, DataFixer p_236728_, Services p_236729_, ChunkProgressListenerFactory p_236730_, CallbackInfo ci) {
         OVERLOADED_THRESHOLD_NANOS = 30L * TimeUtil.NANOSECONDS_PER_SECOND / 20L; // CraftBukkit
         String[] arguments = ManagementFactory.getRuntimeMXBean().getInputArguments().toArray(new String[0]);
         OptionParser parser = new Main();
@@ -175,19 +175,19 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
     }
 
     @Inject(method = "stopServer", at = @At(value = "INVOKE", remap = false, ordinal = 0, shift = At.Shift.AFTER, target = "Lorg/slf4j/Logger;info(Ljava/lang/String;)V"))
-    public void taiyitist$unloadPlugins(CallbackInfo ci) {
+    public void neotenet$unloadPlugins(CallbackInfo ci) {
         if (this.server != null) {
             this.server.disablePlugins();
         }
     }
 
     @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;onServerExit()V"))
-    private void taiyitist$watchdogExit(CallbackInfo ci) {
+    private void neotenet$watchdogExit(CallbackInfo ci) {
         WatchdogThread.doStop();
     }
 
     @Inject(method = "stopServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;removeAll()V"))
-    private void taiyitist$stopThread(CallbackInfo ci) {
+    private void neotenet$stopThread(CallbackInfo ci) {
         try {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
@@ -195,7 +195,7 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
     }
 
     @Inject(method = "stopServer", at = @At("HEAD"), cancellable = true)
-    private void taiyitist$preventMultiple(CallbackInfo ci) {
+    private void neotenet$preventMultiple(CallbackInfo ci) {
         // CraftBukkit start - prevent double stopping on multiple threads
         synchronized(stopLock) {
             if (hasStopped) return; ci.cancel();
@@ -204,19 +204,19 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
     }
 
     @Inject(method = "loadLevel", at = @At("RETURN"))
-    public void taiyitist$enablePlugins(CallbackInfo ci) {
+    public void neotenet$enablePlugins(CallbackInfo ci) {
         this.server.enablePlugins(PluginLoadOrder.POSTWORLD);
         this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
         this.connection.acceptConnections();
     }
 
     @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;startMetricsRecordingTick()V"))
-    private void taiyitist$markTick(CallbackInfo ci) {
+    private void neotenet$markTick(CallbackInfo ci) {
         MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
     }
 
     @Inject(method = "createLevels", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;getDataStorage()Lnet/minecraft/world/level/storage/DimensionDataStorage;"))
-    private void taiyitist$worldInitEvent(ChunkProgressListener p_129816_, CallbackInfo ci, @Local ServerLevel serverLevel) {
+    private void neotenet$worldInitEvent(ChunkProgressListener p_129816_, CallbackInfo ci, @Local ServerLevel serverLevel) {
         // CraftBukkit start
         if (serverLevel.generator != null) {
             serverLevel.getWorld().getPopulators().addAll(serverLevel.generator.getDefaultPopulators(serverLevel.getWorld()));
@@ -226,14 +226,14 @@ public abstract class MixinMinecraftServer extends ReentrantBlockableEventLoop<T
     // CraftBukkit start
 
     @Inject(method = "createLevels", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;commandStorage:Lnet/minecraft/world/level/storage/CommandStorage;", opcode = Opcodes.PUTFIELD))
-    private void taiyitist$craftScoreboard(ChunkProgressListener p_129816_, CallbackInfo ci, @Local ServerLevel serverLevel) {
+    private void neotenet$craftScoreboard(ChunkProgressListener p_129816_, CallbackInfo ci, @Local ServerLevel serverLevel) {
         // CraftBukkit start
         this.server.scoreboardManager = new CraftScoreboardManager(((MinecraftServer) (Object) this), serverLevel.getScoreboard());
     }
     // CraftBukkit start
 
     @Inject(method = "createLevels", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;commandStorage:Lnet/minecraft/world/level/storage/CommandStorage;", opcode = Opcodes.PUTFIELD))
-    private void taiyitist$craftWorld(ChunkProgressListener p_129816_, CallbackInfo ci, @Local ServerLevel serverLevel) {
+    private void neotenet$craftWorld(ChunkProgressListener p_129816_, CallbackInfo ci, @Local ServerLevel serverLevel) {
         // CraftBukkit start
         this.server.scoreboardManager = new CraftScoreboardManager(((MinecraftServer) (Object) this), serverLevel.getScoreboard());
     }

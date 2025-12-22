@@ -24,7 +24,7 @@ public class MixinEndCrystalItem {
     @Inject(method = "useOn", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/boss/enderdragon/EndCrystal;setShowBottom(Z)V",
             shift = At.Shift.AFTER), cancellable = true)
-    private void taiyitist$handlePlaceEvent(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir,
+    private void neotenet$handlePlaceEvent(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir,
                                             @Local EndCrystal endCrystal) {
         // CraftBukkit start
         if (CraftEventFactory.callEntityPlaceEvent(context, endCrystal).isCancelled()) {

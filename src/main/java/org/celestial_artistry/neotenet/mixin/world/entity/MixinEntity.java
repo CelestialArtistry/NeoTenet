@@ -125,9 +125,9 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     @Shadow
     @Nullable
     private Entity.RemovalReason removalReason;
-    private transient EntityRemoveEvent.Cause taiyitist$removeCause;
-    private transient CreatureSpawnEvent.SpawnReason taiyitist$spawnReason;
-    private final AtomicReference<Vec3> taiyitist$location = new AtomicReference<>();
+    private transient EntityRemoveEvent.Cause neotenet$removeCause;
+    private transient CreatureSpawnEvent.SpawnReason neotenet$spawnReason;
+    private final AtomicReference<Vec3> neotenet$location = new AtomicReference<>();
 
     @Shadow
     public abstract double getX();
@@ -369,12 +369,12 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "getMaxAirSupply", cancellable = true, at = @At("RETURN"))
-    private void taiyitist$useBukkitMaxAir(CallbackInfoReturnable<Integer> cir) {
+    private void neotenet$useBukkitMaxAir(CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(this.maxAirTicks);
     }
 
     @Inject(method = "setPose", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/network/syncher/SynchedEntityData;set(Lnet/minecraft/network/syncher/EntityDataAccessor;Ljava/lang/Object;)V"))
-    public void taiyitist$setPose$EntityPoseChangeEvent(Pose pose, CallbackInfo ci) {
+    public void neotenet$setPose$EntityPoseChangeEvent(Pose pose, CallbackInfo ci) {
         if (pose == this.getPose()) {
             ci.cancel();
             return;
@@ -384,7 +384,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "setRot", at = @At(value = "HEAD"))
-    public void taiyitist$infCheck(float yaw, float pitch, CallbackInfo ci) {
+    public void neotenet$infCheck(float yaw, float pitch, CallbackInfo ci) {
         // CraftBukkit start - yaw was sometimes set to NaN, so we need to set it back to 0
         if (Float.isNaN(yaw)) {
             yaw = 0;
@@ -416,7 +416,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     @Inject(method = "move", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/Entity;onGround()Z",
             ordinal = 1))
-    private void taiyitist$move$blockCollide(MoverType type, Vec3 pos, CallbackInfo ci, @Local(ordinal = 1) Vec3 vec3) {
+    private void neotenet$move$blockCollide(MoverType type, Vec3 pos, CallbackInfo ci, @Local(ordinal = 1) Vec3 vec3) {
         // CraftBukkit start
         if (horizontalCollision && getBukkitEntity() instanceof Vehicle) {
             Vehicle vehicle = (Vehicle) this.getBukkitEntity();
@@ -441,13 +441,13 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "saveAsPassenger", cancellable = true, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/Entity;getEncodeId()Ljava/lang/String;"))
-    public void taiyitist$writeUnlessRemoved$persistCheck(CompoundTag compound, CallbackInfoReturnable<Boolean> cir) {
+    public void neotenet$writeUnlessRemoved$persistCheck(CompoundTag compound, CallbackInfoReturnable<Boolean> cir) {
         if (!this.persist)
             cir.setReturnValue(false);
     }
 
     @Inject(method = "load", at = @At(value = "RETURN"))
-    public void taiyitist$read$ReadBukkitValues(CompoundTag compound, CallbackInfo ci) {
+    public void neotenet$read$ReadBukkitValues(CompoundTag compound, CallbackInfo ci) {
         // CraftBukkit start
         if ((Object) this instanceof LivingEntity entity) {
             this.tickCount = compound.getInt("Spigot.ticksLived");
@@ -502,7 +502,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "setInvisible", cancellable = true, at = @At("HEAD"))
-    private void taiyitist$preventVisible(boolean invisible, CallbackInfo ci) {
+    private void neotenet$preventVisible(boolean invisible, CallbackInfo ci) {
         if (this.persistentInvisibility) {
             ci.cancel();
         }
@@ -511,7 +511,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     @Inject(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;",
             cancellable = true,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    public void taiyitist$entityDropItem(ItemStack stack, float offsetY, CallbackInfoReturnable<ItemEntity> cir, @Local ItemEntity itemEntity) {
+    public void neotenet$entityDropItem(ItemStack stack, float offsetY, CallbackInfoReturnable<ItemEntity> cir, @Local ItemEntity itemEntity) {
         EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (Item) (itemEntity).getBukkitEntity());
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -520,7 +520,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/world/entity/Entity;setPose(Lnet/minecraft/world/entity/Pose;)V"))
-    public void taiyitist$startRiding(Entity vehicle, boolean force, CallbackInfoReturnable<Boolean> cir) {
+    public void neotenet$startRiding(Entity vehicle, boolean force, CallbackInfoReturnable<Boolean> cir) {
         // CraftBukkit start
         if (vehicle.getBukkitEntity() instanceof Vehicle && this.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
             VehicleEnterEvent event = new VehicleEnterEvent((Vehicle) vehicle.getBukkitEntity(), this.getBukkitEntity());
@@ -546,7 +546,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "interact", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Leashable;setLeashedTo(Lnet/minecraft/world/entity/Entity;Z)V"))
-    private void taiyitist$leashEvent(Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> cir) {
+    private void neotenet$leashEvent(Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> cir) {
         if (CraftEventFactory.callPlayerLeashEntityEvent((Entity) (Object) this, player, player, interactionHand).isCancelled()) {
             //player.resendItemInHands(); // SPIGOT-7615: Resend to fix client desync with used item // Banner TODO Fixme
             ((ServerPlayer) player).connection.send(new ClientboundSetEntityLinkPacket((Entity) (Object) this, ((Leashable) this).getLeashHolder()));
@@ -555,7 +555,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "setSwimming", cancellable = true, at = @At(value = "HEAD"))
-    public void taiyitist$setSwimming$EntityToggleSwimEvent(boolean flag, CallbackInfo ci) {
+    public void neotenet$setSwimming$EntityToggleSwimEvent(boolean flag, CallbackInfo ci) {
         // CraftBukkit start
         if (this.valid && this.isSwimming() != flag && (Object) this instanceof LivingEntity) {
             if (CraftEventFactory.callToggleSwimEvent((LivingEntity) (Object) this, flag).isCancelled()) {
@@ -566,7 +566,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Redirect(method = "thunderHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;igniteForSeconds(F)V"))
-    public void taiyitist$onStruckByLightning$EntityCombustByEntityEvent0(Entity entity, float f) {
+    public void neotenet$onStruckByLightning$EntityCombustByEntityEvent0(Entity entity, float f) {
         final org.bukkit.entity.Entity thisBukkitEntity = this.getBukkitEntity();
         final org.bukkit.entity.Entity stormBukkitEntity = entity.getBukkitEntity();
         final PluginManager pluginManager = Bukkit.getPluginManager();
@@ -580,7 +580,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "setAirSupply", cancellable = true, at = @At(value = "HEAD"))
-    public void taiyitist$setAir$EntityAirChangeEvent(int air, CallbackInfo ci) {
+    public void neotenet$setAir$EntityAirChangeEvent(int air, CallbackInfo ci) {
         // CraftBukkit start
         EntityAirChangeEvent event = new EntityAirChangeEvent(this.getBukkitEntity(), air);
         // Suppress during worldgen
@@ -597,7 +597,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Redirect(method = "thunderHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    public boolean taiyitist$onStruckByLightning$EntityCombustByEntityEvent1(Entity instance, DamageSource source, float amount) {
+    public boolean neotenet$onStruckByLightning$EntityCombustByEntityEvent1(Entity instance, DamageSource source, float amount) {
         final org.bukkit.entity.Entity thisBukkitEntity = this.getBukkitEntity();
         final org.bukkit.entity.Entity stormBukkitEntity = instance.getBukkitEntity();
         final PluginManager pluginManager = Bukkit.getPluginManager();
@@ -619,7 +619,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     @Nullable
     @Override
     public Entity teleportTo(ServerLevel worldserver, Vec3 location) {
-        taiyitist$location.set(location);
+        neotenet$location.set(location);
         DimensionTransition dimensionTransition = this.portalProcess.getPortalDestination(worldserver, ((Entity) (Object) this));
         return changeDimension(dimensionTransition);
     }
@@ -630,14 +630,14 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Redirect(method = "teleportTo(Lnet/minecraft/server/level/ServerLevel;DDDLjava/util/Set;FF)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addDuringTeleport(Lnet/minecraft/world/entity/Entity;)V"))
-    private void taiyitist$skipIfNotInWorld(ServerLevel instance, Entity entity) {
+    private void neotenet$skipIfNotInWorld(ServerLevel instance, Entity entity) {
         if (this.inWorld) {
             instance.addDuringTeleport(entity);
         }
     }
 
     @Inject(method = "restoreFrom", at = @At("HEAD"))
-    private void taiyitist$forwardHandle(Entity entityIn, CallbackInfo ci) {
+    private void neotenet$forwardHandle(Entity entityIn, CallbackInfo ci) {
         entityIn.getBukkitEntity().setHandle((Entity) (Object) this);
         this.bukkitEntity = entityIn.getBukkitEntity();
         if (entityIn instanceof Mob) {
@@ -661,7 +661,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     @Redirect(method = "setBoundingBox",
             at = @At(value = "FIELD",
                     target = "Lnet/minecraft/world/entity/Entity;bb:Lnet/minecraft/world/phys/AABB;"))
-    private void taiyitist$resetBBox(Entity instance, AABB axisalignedbb) {
+    private void neotenet$resetBBox(Entity instance, AABB axisalignedbb) {
         // CraftBukkit start - block invalid bounding boxes
         double minX = axisalignedbb.minX,
                 minY = axisalignedbb.minY,
@@ -710,32 +710,32 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Inject(method = "setRemoved", at = @At("HEAD"))
-    private void taiyitist$setRemoved(Entity.RemovalReason removalReason, CallbackInfo ci) {
-        CraftEventFactory.callEntityRemoveEvent(((Entity) (Object) this), taiyitist$removeCause != null ? taiyitist$removeCause : null);
+    private void neotenet$setRemoved(Entity.RemovalReason removalReason, CallbackInfo ci) {
+        CraftEventFactory.callEntityRemoveEvent(((Entity) (Object) this), neotenet$removeCause != null ? neotenet$removeCause : null);
     }
 
     @Override
     public void pushRemoveCause(EntityRemoveEvent.Cause cause) {
-        this.taiyitist$removeCause = cause;
+        this.neotenet$removeCause = cause;
     }
 
     @Override
     public void pushSpawnCause(CreatureSpawnEvent.SpawnReason reason) {
-        this.taiyitist$spawnReason = reason;
+        this.neotenet$spawnReason = reason;
     }
 
     @Inject(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At("HEAD"))
-    private void taiyitist$spawnReason(ItemStack itemStack, float f, CallbackInfoReturnable<ItemEntity> cir) {
+    private void neotenet$spawnReason(ItemStack itemStack, float f, CallbackInfoReturnable<ItemEntity> cir) {
         pushSpawnCause(CreatureSpawnEvent.SpawnReason.NATURAL);
     }
 
     @Inject(method = "kill", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;remove(Lnet/minecraft/world/entity/Entity$RemovalReason;)V"))
-    private void taiyitist$killReason(CallbackInfo ci) {
+    private void neotenet$killReason(CallbackInfo ci) {
         pushRemoveCause(EntityRemoveEvent.Cause.DEATH);
     }
 
     @Inject(method = "onBelowWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;discard()V"))
-    private void taiyitist$pushOutOfWorldReason(CallbackInfo ci) {
+    private void neotenet$pushOutOfWorldReason(CallbackInfo ci) {
         pushRemoveCause(EntityRemoveEvent.Cause.OUT_OF_WORLD);
     }
 }

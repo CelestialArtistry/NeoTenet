@@ -23,7 +23,7 @@ public class MixinServerLevel_EntityCallbacks {
     ServerLevel this$0;
 
     @Inject(method = "onTrackingStart(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
-    private void taiyitist$valid(Entity entity, CallbackInfo ci) {
+    private void neotenet$valid(Entity entity, CallbackInfo ci) {
         entity.valid = true;
         // Paper start - Set origin location when the entity is being added to the world
         if (entity.getOriginVector() == null) {
@@ -37,7 +37,7 @@ public class MixinServerLevel_EntityCallbacks {
     }
 
     @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("TAIL"))
-    private void taiyitist$entityCleanup(Entity entity, CallbackInfo ci) {
+    private void neotenet$entityCleanup(Entity entity, CallbackInfo ci) {
         if (entity instanceof Player player) {
             for (ServerLevel serverLevel : this$0.getServer().getAllLevels()) {
                 DimensionDataStorage worldData = serverLevel.getDataStorage();
@@ -57,7 +57,7 @@ public class MixinServerLevel_EntityCallbacks {
     }
 
     @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
-    private void taiyitist$invalid(Entity entity, CallbackInfo ci) {
+    private void neotenet$invalid(Entity entity, CallbackInfo ci) {
         entity.inWorld = true;
         entity.valid = false;
         if (!(entity instanceof ServerPlayer)) {

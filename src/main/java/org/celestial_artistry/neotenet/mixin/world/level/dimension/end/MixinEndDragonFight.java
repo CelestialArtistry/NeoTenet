@@ -21,20 +21,20 @@ public class MixinEndDragonFight {
     @Shadow
     @Final
     public ServerBossEvent dragonEvent;
-    public boolean taiyitist$respawnDragon = false;
+    public boolean neotenet$respawnDragon = false;
 
     @Inject(method = "respawnDragon",
             at = @At(value = "FIELD",
                     target = "Lnet/minecraft/world/level/dimension/end/EndDragonFight;respawnCrystals:Ljava/util/List;",
                     shift = At.Shift.AFTER))
-    private void taiyitist$setRespawnResult(List<EndCrystal> crystals, CallbackInfo ci) {
-        taiyitist$respawnDragon = true;
+    private void neotenet$setRespawnResult(List<EndCrystal> crystals, CallbackInfo ci) {
+        neotenet$respawnDragon = true;
     }
 
     @Inject(method = "scanState", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/boss/enderdragon/EnderDragon;discard()V")
     )
-    private void taiyitist$pushNullReason(CallbackInfo ci, @Local EnderDragon enderDragon) {
+    private void neotenet$pushNullReason(CallbackInfo ci, @Local EnderDragon enderDragon) {
         enderDragon.pushRemoveCause(null); // CraftBukkit - add Bukkit remove cause
     }
 }

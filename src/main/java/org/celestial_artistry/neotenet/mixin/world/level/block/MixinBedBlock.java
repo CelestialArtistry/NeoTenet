@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinBedBlock {
 
     @Inject(method = "kickVillagerOutOfBed", at = @At(value = "HEAD"))
-    private void taiyitist$addCapture(Level level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$addCapture(Level level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (level.captureBlockStates) {
             cir.cancel();
         }

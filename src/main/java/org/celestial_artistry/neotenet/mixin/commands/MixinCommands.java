@@ -57,7 +57,7 @@ public abstract class MixinCommands implements InjectionCommands {
     }
 
     @Shadow
-    private static AtomicReference<String> taiyitist$lable;
+    private static AtomicReference<String> neotenet$lable;
     @Unique
     private static final AtomicReference<String> finishParsing$label = new AtomicReference<>();
     @Shadow
@@ -65,21 +65,21 @@ public abstract class MixinCommands implements InjectionCommands {
 
     @Override
     public void performCommandCB(ParseResults<CommandSourceStack> parseresults, String s, String label, boolean throwCommandError) {
-        taiyitist$lable.set(label);
+        neotenet$lable.set(label);
         performCommand$throwCommandError.set(false);
         this.performCommand(parseresults, s);
     }
 
     @Override
     public void performCommandCB(ParseResults<CommandSourceStack> pParseResults, String pCommand, String label) { // CraftBukkit
-        taiyitist$lable.set(label);
+        neotenet$lable.set(label);
         performCommand$throwCommandError.set(false);
         this.performCommand(pParseResults, pCommand);
     }
 
     @Nullable
     private static ContextChain<CommandSourceStack> finishParsing(ParseResults<CommandSourceStack> p_307220_, String p_307311_, CommandSourceStack p_307676_, String label) { // CraftBukkit
-        taiyitist$lable.set(label);
+        neotenet$lable.set(label);
         return finishParsing(p_307220_, p_307311_, p_307676_);
     }
 
@@ -137,7 +137,7 @@ public abstract class MixinCommands implements InjectionCommands {
 
     @Inject(method = "performCommand", at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;finishParsing(Lcom/mojang/brigadier/ParseResults;Ljava/lang/String;Lnet/minecraft/commands/CommandSourceStack;)Lcom/mojang/brigadier/context/ContextChain;"))
     private void neotenet$setLabel(ParseResults<CommandSourceStack> p_242844_, String p_242841_, CallbackInfo ci) {
-        var label = taiyitist$lable.get();
+        var label = neotenet$lable.get();
         finishParsing$label.set(label);
     }
 

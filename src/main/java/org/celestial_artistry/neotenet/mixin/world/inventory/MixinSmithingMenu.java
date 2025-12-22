@@ -31,7 +31,7 @@ public abstract class MixinSmithingMenu extends ItemCombinerMenu {
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
-    private void taiyitist$prepareSmithing(ResultContainer craftResultInventory, int index, ItemStack stack) {
+    private void neotenet$prepareSmithing(ResultContainer craftResultInventory, int index, ItemStack stack) {
         PrepareSmithingEvent event = new PrepareSmithingEvent(getBukkitView(), CraftItemStack.asCraftMirror(stack).clone());
         Bukkit.getServer().getPluginManager().callEvent(event);
     }

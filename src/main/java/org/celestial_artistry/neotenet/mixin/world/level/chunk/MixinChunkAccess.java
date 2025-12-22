@@ -46,19 +46,19 @@ public abstract class MixinChunkAccess implements BlockGetter, BiomeManager.Nois
     public DirtyCraftPersistentDataContainer persistentDataContainer;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void taiyitist$init(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, Registry<Biome> registry, long l, LevelChunkSection[] levelChunkSections, BlendingData blendingData, CallbackInfo ci) {
+    private void neotenet$init(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, Registry<Biome> registry, long l, LevelChunkSection[] levelChunkSections, BlendingData blendingData, CallbackInfo ci) {
         this.biomeRegistry = registry;
     }
 
     @Inject(method = "setUnsaved", at = @At("HEAD"))
-    private void taiyitist$dirty(boolean flag, CallbackInfo ci) {
+    private void neotenet$dirty(boolean flag, CallbackInfo ci) {
         if (!flag) {
             this.persistentDataContainer.dirty(false);
         }
     }
 
     @Inject(method = "isUnsaved", cancellable = true, at = @At("RETURN"))
-    private void taiyitist$isDirty(CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$isDirty(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(cir.getReturnValueZ() || this.persistentDataContainer.dirty());
     }
 

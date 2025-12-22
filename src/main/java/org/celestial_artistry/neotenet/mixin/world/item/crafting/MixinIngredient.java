@@ -26,16 +26,16 @@ public abstract class MixinIngredient implements InjectionIngredient {
     @Inject(method = "test(Lnet/minecraft/world/item/ItemStack;)Z",
             at = @At("HEAD"),
             cancellable = true)
-    private void taiyitist$test(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        for (ItemStack taiyitist$stack : this.getItems()) {
+    private void neotenet$test(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        for (ItemStack neotenet$stack : this.getItems()) {
             // CraftBukkit start
             if (exact) {
-                if (ItemStack.isSameItemSameComponents(taiyitist$stack, stack)) {
+                if (ItemStack.isSameItemSameComponents(neotenet$stack, stack)) {
                     cir.setReturnValue(true);
                 }
                 continue;
             }
-            if (taiyitist$stack.is(stack.getItem())) {
+            if (neotenet$stack.is(stack.getItem())) {
                 cir.setReturnValue(true);
             }
             // CraftBukkit end

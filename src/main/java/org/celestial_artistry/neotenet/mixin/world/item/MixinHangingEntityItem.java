@@ -25,7 +25,7 @@ public class MixinHangingEntityItem {
 
     @Inject(method = "useOn", cancellable = true,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/HangingEntity;playPlacementSound()V"))
-    public void taiyitist$hangingPlace(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir,
+    public void neotenet$hangingPlace(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir,
                                        @Local(ordinal = 0) BlockPos blockPos, @Local Direction direction,
                                        @Local ItemStack itemStack, @Local Level world, @Local HangingEntity hangingEntity) {
         // CraftBukkit start - fire HangingPlaceEvent

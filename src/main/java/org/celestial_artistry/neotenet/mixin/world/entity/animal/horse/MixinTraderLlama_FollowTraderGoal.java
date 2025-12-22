@@ -16,7 +16,7 @@ public abstract class MixinTraderLlama_FollowTraderGoal extends TargetGoal {
     }
 
     @Inject(method = "start", at = @At("HEAD"))
-    private void taiyitist$reason(CallbackInfo ci) {
+    private void neotenet$reason(CallbackInfo ci) {
         this.mob.bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true);
     }
 }
