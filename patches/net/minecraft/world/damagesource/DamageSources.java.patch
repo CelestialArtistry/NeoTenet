@@ -11,3 +11,13 @@
      public final Registry<DamageType> damageTypes;
      private final DamageSource inFire;
      private final DamageSource campfire;
+@@ -41,6 +_,9 @@
+     private final DamageSource stalagmite;
+     private final DamageSource outsideBorder;
+     private final DamageSource genericKill;
++    // CraftBukkit start
++    private DamageSource melting;
++    private DamageSource poison;
+ 
+     public DamageSources(RegistryAccess p_270740_) {
+         this.damageTypes = p_270740_.registryOrThrow(Registries.DAMAGE_TYPE);

@@ -1,5 +1,6 @@
 package org.celestial_artistry.neotenet.mixin.world.entity.player;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Either;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -113,8 +114,8 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
     }
 
     @Inject(method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;",
-            cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "RETURN", ordinal = 1))
-    private void neotenet$playerDropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem, CallbackInfoReturnable<ItemEntity> cir, double d0, ItemEntity itemEntity) {
+            cancellable = true, at = @At(value = "RETURN", ordinal = 1))
+    private void neotenet$playerDropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem, CallbackInfoReturnable<ItemEntity> cir, @Local(name = "itementity") ItemEntity itemEntity) {
         org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
         org.bukkit.entity.Item drop = (org.bukkit.entity.Item) itemEntity.getBukkitEntity();
 
