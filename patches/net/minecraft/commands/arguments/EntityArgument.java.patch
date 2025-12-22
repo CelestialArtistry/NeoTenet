@@ -1,9 +1,10 @@
 --- a/net/minecraft/commands/arguments/EntityArgument.java
 +++ b/net/minecraft/commands/arguments/EntityArgument.java
-@@ -13,6 +_,7 @@
+@@ -13,6 +_,8 @@
  import java.util.Collection;
  import java.util.List;
  import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.atomic.AtomicBoolean;
 +
  import net.minecraft.commands.CommandBuildContext;
  import net.minecraft.commands.CommandSourceStack;
@@ -19,6 +20,14 @@
      private static final Collection<String> EXAMPLES = Arrays.asList("Player", "0123", "@e", "@e[type=foo]", "dd12be42-52a9-4a91-a8a1-11c01849e498");
      public static final SimpleCommandExceptionType ERROR_NOT_SINGLE_ENTITY = new SimpleCommandExceptionType(Component.translatable("argument.entity.toomany"));
      public static final SimpleCommandExceptionType ERROR_NOT_SINGLE_PLAYER = new SimpleCommandExceptionType(Component.translatable("argument.player.toomany"));
+@@ -38,6 +_,7 @@
+     );
+     final boolean single;
+     final boolean playersOnly;
++    public AtomicBoolean parse$overridePermissions = new AtomicBoolean(false);
+ 
+     protected EntityArgument(boolean p_91447_, boolean p_91448_) {
+         this.single = p_91447_;
 @@ -127,7 +_,7 @@
          if (p_91482_.getSource() instanceof SharedSuggestionProvider sharedsuggestionprovider) {
              StringReader stringreader = new StringReader(p_91483_.getInput());

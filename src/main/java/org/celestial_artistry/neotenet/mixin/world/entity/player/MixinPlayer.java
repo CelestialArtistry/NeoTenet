@@ -8,7 +8,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Unit;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -136,6 +138,72 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
                 player.getInventory().addItem(drop.getItemStack());
             }
             cir.setReturnValue(null);
+        }
+    }
+
+    @Override
+    public ItemEntity drop(ItemStack p_36179_, boolean p_36180_, boolean p_36181_, boolean callEvent) {
+        if (p_36179_.isEmpty()) {
+            return null;
+        } else {
+            if (this.level().isClientSide) {
+                this.swing(InteractionHand.MAIN_HAND);
+            }
+
+            double d0 = this.getEyeY() - 0.3F;
+            ItemEntity itementity = new ItemEntity(this.level(), this.getX(), d0, this.getZ(), p_36179_);
+            itementity.setPickUpDelay(40);
+            if (p_36181_) {
+                itementity.setThrower(this);
+            }
+
+            if (p_36180_) {
+                float f = this.random.nextFloat() * 0.5F;
+                float f1 = this.random.nextFloat() * (float) (Math.PI * 2);
+                itementity.setDeltaMovement((double)(-Mth.sin(f1) * f), 0.2F, (double)(Mth.cos(f1) * f));
+            } else {
+                float f7 = 0.3F;
+                float f8 = Mth.sin(this.getXRot() * (float) (Math.PI / 180.0));
+                float f2 = Mth.cos(this.getXRot() * (float) (Math.PI / 180.0));
+                float f3 = Mth.sin(this.getYRot() * (float) (Math.PI / 180.0));
+                float f4 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
+                float f5 = this.random.nextFloat() * (float) (Math.PI * 2);
+                float f6 = 0.02F * this.random.nextFloat();
+                itementity.setDeltaMovement(
+                        (double)(-f3 * f2 * 0.3F) + Math.cos((double)f5) * (double)f6,
+                        (double)(-f8 * 0.3F + 0.1F + (this.random.nextFloat() - this.random.nextFloat()) * 0.1F),
+                        (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6
+                );
+            }
+
+            // CraftBukkit start - fire PlayerDropItemEvent
+            if (!callEvent) { // SPIGOT-2942: Add boolean to call event
+                return itementity;
+            }
+            org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
+            org.bukkit.entity.Item drop = (org.bukkit.entity.Item) itementity.getBukkitEntity();
+
+            PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
+            this.level().getCraftServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
+                if (p_36181_ && (cur == null || cur.getAmount() == 0)) {
+                    // The complete stack was dropped
+                    player.getInventory().setItemInHand(drop.getItemStack());
+                } else if (p_36181_ && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
+                    // Only one item is dropped
+                    cur.setAmount(cur.getAmount() + 1);
+                    player.getInventory().setItemInHand(cur);
+                } else {
+                    // Fallback
+                    player.getInventory().addItem(drop.getItemStack());
+                }
+                return null;
+            }
+            // CraftBukkit end
+
+            return itementity;
         }
     }
 

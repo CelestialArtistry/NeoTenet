@@ -9,7 +9,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntitySelectorParser.class)
 public abstract class MixinEntitySelectorParser implements InjectionEntitySelectorParser {
@@ -20,28 +22,30 @@ public abstract class MixinEntitySelectorParser implements InjectionEntitySelect
 
     @Shadow private boolean usesSelectors;
 
-    @Unique
-    private AtomicBoolean taiyitist$overridePermissions = new AtomicBoolean(false);
+    @Shadow
+    private AtomicBoolean  parseSelector$overridePermissions;
+    @Shadow
+    public AtomicBoolean parse$overridePermissions;
 
     @Override
     public void parseSelector(boolean overridePermissions) throws CommandSyntaxException {
-        taiyitist$overridePermissions.set(overridePermissions);
+        parseSelector$overridePermissions.set(overridePermissions);
         parseSelector();
     }
 
     @Redirect(method = "parseSelector", at = @At(value = "FIELD", target = "Lnet/minecraft/commands/arguments/selector/EntitySelectorParser;usesSelectors:Z"))
     private void taiyitist$resetUseSelectors(EntitySelectorParser instance, boolean value) {
-        this.usesSelectors = !taiyitist$overridePermissions.getAndSet(false);
+        this.usesSelectors = !parseSelector$overridePermissions.getAndSet(false);
     }
 
-    @Redirect(method = "parse", at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/arguments/selector/EntitySelectorParser;parseSelector()V"))
-    private void taiyitist$resetParseSelectors(EntitySelectorParser instance) throws CommandSyntaxException {
-        this.parseSelector(taiyitist$overridePermissions.getAndSet(false));
+    @Inject(method = "parse", at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/arguments/selector/EntitySelectorParser;parseSelector()V"))
+    private void taiyitist$resetParseSelectors(CallbackInfoReturnable<EntitySelector> cir) throws CommandSyntaxException {
+        parseSelector$overridePermissions.set(parse$overridePermissions.getAndSet(false));
     }
 
     @Override
     public EntitySelector parse(boolean overridePermissions) throws CommandSyntaxException {
-        taiyitist$overridePermissions.set(overridePermissions);
+        parseSelector$overridePermissions.set(overridePermissions);
         return parse();
     }
 }

@@ -1373,7 +1373,7 @@
              if (this.player.getInventory().selected != p_9909_.getSlot() && this.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                  this.player.stopUsingItem();
              }
-@@ -1214,41 +_,69 @@
+@@ -1214,47 +_,73 @@
              this.player.resetLastActionTime();
          } else {
              LOGGER.warn("{} tried to set an invalid carried item", this.player.getName().getString());
@@ -1439,9 +1439,8 @@
      private void performUnsignedChatCommand(String p_338482_) {
 +        // CraftBukkit start
 +        String command1 = "/" + p_338482_;
-+        if (org.spigotmc.SpigotConfig.logCommands) { // Paper - Add missing SpigotConfig logCommands check
-+            ServerGamePacketListenerImpl.LOGGER.info(this.player.getScoreboardName() + " issued server command: " + command1);
-+        }
++        ServerGamePacketListenerImpl.LOGGER.info(this.player.getScoreboardName() + " issued server command: " + command1);
++
 +        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(this.getCraftPlayer(), command1, new LazyPlayerSet(this.server));
 +        this.cserver.getPluginManager().callEvent(event);
 +
@@ -1451,9 +1450,18 @@
 +        p_338482_ = event.getMessage().substring(1);
 +        // CraftBukkit end
          ParseResults<CommandSourceStack> parseresults = this.parseCommand(p_338482_);
++
          if (this.server.enforceSecureProfile() && SignableCommand.hasSignableArguments(parseresults)) {
-             LOGGER.error(
-@@ -1265,29 +_,56 @@
+-            LOGGER.error(
+-                "Received unsigned command packet from {}, but the command requires signable arguments: {}", this.player.getGameProfile().getName(), p_338482_
+-            );
+-            this.player.sendSystemMessage(INVALID_COMMAND_SIGNATURE);
++            ServerGamePacketListenerImpl.LOGGER.error("Received unsigned command packet from {}, but the command requires signable arguments: {}", this.player.getGameProfile().getName(), parseresults);
++            this.player.sendSystemMessage(ServerGamePacketListenerImpl.INVALID_COMMAND_SIGNATURE);
+         } else {
+             this.server.getCommands().performCommand(parseresults, p_338482_);
+         }
+@@ -1265,29 +_,51 @@
          Optional<LastSeenMessages> optional = this.unpackAndApplyLastSeen(p_338604_.lastSeenMessages());
          if (!optional.isEmpty()) {
              this.tryHandleChat(p_338604_.command(), () -> {
@@ -1471,41 +1479,44 @@
      }
  
      private void performSignedChatCommand(ServerboundChatCommandSignedPacket p_338593_, LastSeenMessages p_250484_) {
+-        ParseResults<CommandSourceStack> parseresults = this.parseCommand(p_338593_.command());
+-
+-        Map<String, PlayerChatMessage> map;
 +        // CraftBukkit start
 +        String command = "/" + p_338593_.command();
-+        if (org.spigotmc.SpigotConfig.logCommands) { // Paper - Add missing SpigotConfig logCommands check
-+            ServerGamePacketListenerImpl.LOGGER.info(this.player.getScoreboardName() + " issued server command: " + command);
-+        } // Paper - Add missing SpigotConfig logCommands check
-+        org.bukkit.event.player.PlayerCommandPreprocessEvent event = new org.bukkit.event.player.PlayerCommandPreprocessEvent(getCraftPlayer(), command, new LazyPlayerSet(server));
++        ServerGamePacketListenerImpl.LOGGER.info(this.player.getScoreboardName() + " issued server command: " + command);
++
++        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(this.getCraftPlayer(), command, new LazyPlayerSet(this.server));
++        this.cserver.getPluginManager().callEvent(event);
++
++        if (event.isCancelled()) {
++            return;
++        }
 +        command = event.getMessage().substring(1);
 +
-+        // Paper start - Fix cancellation and message changing
-         ParseResults<CommandSourceStack> parseresults = this.parseCommand(p_338593_.command());
- 
-         Map<String, PlayerChatMessage> map;
++        ParseResults<CommandSourceStack> parseresults = this.parseCommand(command);
++        // CraftBukkit end
++
++        Map map;
++
          try {
-+            // Always parse the original command to add to the chat chain
-             map = this.collectSignedArguments(p_338593_, SignableCommand.of(parseresults), p_250484_);
-         } catch (SignedMessageChain.DecodeException signedmessagechain$decodeexception) {
-             this.handleMessageDecodeFailure(signedmessagechain$decodeexception);
+-            map = this.collectSignedArguments(p_338593_, SignableCommand.of(parseresults), p_250484_);
+-        } catch (SignedMessageChain.DecodeException signedmessagechain$decodeexception) {
+-            this.handleMessageDecodeFailure(signedmessagechain$decodeexception);
++            map = (p_338593_.command().equals(command)) ?  this.collectSignedArguments(p_338593_, SignableCommand.of(parseresults), p_250484_) : Collections.emptyMap(); // CraftBukkit
++        } catch (SignedMessageChain.DecodeException signedmessagechain_a) {
++            this.handleMessageDecodeFailure(signedmessagechain_a);
              return;
          }
  
-+        if (event.isCancelled()) {
-+            // Only now are we actually good to return
-+            return;
-+        }
-+
-+        // Remove signed parts if the command was changed
-+        if (!command.equals(p_338593_.command())) {
-+            parseresults = this.parseCommand(command);
-+            map = Collections.emptyMap();
-+        }
-+        // Paper end - Fix cancellation and message changing
-+
-         CommandSigningContext commandsigningcontext = new CommandSigningContext.SignedArguments(map);
-         parseresults = Commands.mapSource(parseresults, p_301740_ -> p_301740_.withSigningContext(commandsigningcontext, this.chatMessageChain));
+-        CommandSigningContext commandsigningcontext = new CommandSigningContext.SignedArguments(map);
+-        parseresults = Commands.mapSource(parseresults, p_301740_ -> p_301740_.withSigningContext(commandsigningcontext, this.chatMessageChain));
 -        this.server.getCommands().performCommand(parseresults, p_338593_.command());
++        CommandSigningContext.SignedArguments commandsigningcontext_a = new CommandSigningContext.SignedArguments(map);
++
++        parseresults = Commands.<CommandSourceStack>mapSource(parseresults, (commandlistenerwrapper) -> { // CraftBukkit - decompile error
++            return commandlistenerwrapper.withSigningContext(commandsigningcontext_a, this.chatMessageChain);
++        });
 +        this.server.getCommands().performCommand(parseresults, command); // CraftBukkit
      }
  
