@@ -46,18 +46,15 @@ public class InstallationManager {
         }
 
         try {
-            Path universalJar = Paths.get("libraries/net/neoforged/neoforge/" + NEOFORGE_VERSION + "/neoforge-" + NEOFORGE_VERSION + "-universal.jar");
-
-            String sysType = File.pathSeparatorChar == ';' ? "win" : "unix";
-            Path argsFile = Paths.get("libraries/net/neoforged/neoforge/" + NEOFORGE_VERSION + "/" + sysType + "_args.txt");
-
-            if (!Files.exists(universalJar)) {
-                System.out.println("Universal jar not found: " + universalJar);
-                return false;
-            }
-
-            if (!Files.exists(argsFile)) {
-                System.out.println("Args file not found: " + argsFile);
+            Path versionFile = Paths.get("libraries/org/celestial_artistry/neotenet/version.txt");
+            if (Files.exists(versionFile)) {
+                String existingVersion = new String(Files.readAllBytes(versionFile)).trim();
+                if (!getImplementationVersion().equals(existingVersion)) {
+                    System.out.println("Version mismatch. Existing: " + existingVersion + ", Expected: " + getImplementationVersion());
+                    return false;
+                }
+            } else {
+                System.out.println("Version file not found: " + versionFile);
                 return false;
             }
 
@@ -124,16 +121,38 @@ public class InstallationManager {
             );
             pb.inheritIO();
             Process process = pb.start();
-            return process.waitFor() == 0;
+            boolean success = process.waitFor() == 0;
+
+            if (success) {
+                createVersionFile();
+            }
+            
+            return success;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
+    
+    private static void createVersionFile() {
+        try {
+            Path versionDir = Paths.get("libraries/org/celestial_artistry/neotenet");
+            Files.createDirectories(versionDir);
+            
+            Path versionFile = versionDir.resolve("version.txt");
+            String version = getImplementationVersion() != null ? getImplementationVersion() : "unknown";
+            Files.write(versionFile, version.getBytes());
+            
+            System.out.println("Created version file at: " + versionFile.toAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("Failed to create version file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     public static void moveAndRunServerScripts() {
         try {
-            Path targetDir = Paths.get("libraries/org/taiyitistmc/launcher/script");
+            Path targetDir = Paths.get("libraries/org/celestial_artistry/neotenet/launcher/script");
             Files.createDirectories(targetDir);
 
             Path targetRunBat = targetDir.resolve("run.bat");
