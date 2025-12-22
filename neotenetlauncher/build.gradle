@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.celestial_artistry.neotenet'
+version = rootProject.version
+
+base {
+    archivesName = "neotenet-launcher"
+}
+
+def neotaiyitistProjectDir = rootProject.layout.projectDirectory.dir("projects/neotenet")
+def installerJarDir = neotaiyitistProjectDir.dir("build/libs")
+def installerJarFile = installerJarDir.file("neotenet-${version}-installer.jar")
+
+
+tasks.register('launcherJar', Jar) {
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": version,
+                "Main-Class": "org.celestial_artistry.neotenet.launcher.NeoTenetLauncher",
+        )
+    }
+
+    from sourceSets.main.output
+
+    dependsOn project(':neotenet').tasks.named('installerJar')
+
+    from(installerJarFile.asFile) {
+        into('META-INF/installer')
+    }
+}

@@ -42,5 +42,5 @@ jobs:
           makeLatest: true
           removeArtifacts: true
           tag: "1.21.1-release"
-          artifacts: ./neotaiyitistlauncher/build/libs/*.jar
+          artifacts: ./neotenetlauncher/build/libs/*.jar
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -19,13 +19,37 @@
  import java.util.function.Predicate;
  import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
+@@ -33,7 +_,6 @@
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.NonNullList;
+-import net.minecraft.core.component.DataComponents;
+ import net.minecraft.core.particles.BlockParticleOption;
+ import net.minecraft.core.particles.ItemParticleOption;
+ import net.minecraft.core.particles.ParticleOptions;
+@@ -88,7 +_,6 @@
+ import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+ import net.minecraft.world.entity.animal.FlyingAnimal;
+-import net.minecraft.world.entity.animal.Wolf;
+ import net.minecraft.world.entity.boss.wither.WitherBoss;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+@@ -96,7 +_,6 @@
+ import net.minecraft.world.entity.projectile.Projectile;
+ import net.minecraft.world.food.FoodProperties;
+ import net.minecraft.world.item.ArmorItem;
+-import net.minecraft.world.item.AxeItem;
+ import net.minecraft.world.item.ElytraItem;
+ import net.minecraft.world.item.Equipable;
+ import net.minecraft.world.item.Item;
 @@ -130,9 +_,11 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.world.entity.InjectionLivingEntity;
++import org.celestial_artistry.neotenet.injection.world.entity.InjectionLivingEntity;
  
 -public abstract class LivingEntity extends Entity implements Attackable, net.neoforged.neoforge.common.extensions.ILivingEntityExtension {
 +public abstract class LivingEntity extends Entity implements Attackable, net.neoforged.neoforge.common.extensions.ILivingEntityExtension, InjectionLivingEntity {

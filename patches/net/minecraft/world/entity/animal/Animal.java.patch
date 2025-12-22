@@ -4,7 +4,7 @@
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.pathfinder.PathType;
-+import org.taiyitistmc.injection.world.entity.animal.InjectionAnimal;
++import org.celestial_artistry.neotenet.injection.world.entity.animal.InjectionAnimal;
  
 -public abstract class Animal extends AgeableMob {
 +public abstract class Animal extends AgeableMob implements InjectionAnimal {

@@ -18,7 +18,7 @@
  import net.minecraft.world.level.ChunkPos;
 -
 -public interface Component extends Message, FormattedText {
-+import org.taiyitistmc.injection.network.chat.InjectionComponent;
++import org.celestial_artistry.neotenet.injection.network.chat.InjectionComponent;
 +
 +public interface Component extends Message, FormattedText, InjectionComponent, Iterable<Component> { // CraftBukkit
 +

@@ -35,8 +35,8 @@
 +import org.bukkit.craftbukkit.CraftServer;
 +import org.bukkit.event.world.WorldLoadEvent;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.server.InjectionMinecraftServer;
-+import org.taiyitistmc.neoforge.BukkitRegistry;
++import org.celestial_artistry.neotenet.injection.server.InjectionMinecraftServer;
++import org.celestial_artistry.neotenet.neoforge.BukkitRegistry;
  
 -public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, ChunkIOErrorReporter, CommandSource, AutoCloseable {
 +public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, ChunkIOErrorReporter, CommandSource, AutoCloseable, InjectionMinecraftServer {

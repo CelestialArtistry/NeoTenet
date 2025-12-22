@@ -7,7 +7,7 @@
 -
 -public class RconConsoleSource implements CommandSource {
 +import org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender;
-+import org.taiyitistmc.injection.server.rcon.InjectionRconConsoleSource;
++import org.celestial_artistry.neotenet.injection.server.rcon.InjectionRconConsoleSource;
 +
 +import java.net.SocketAddress;
 +

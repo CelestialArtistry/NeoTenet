@@ -13,7 +13,7 @@
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
-+import org.taiyitistmc.injection.commands.InjectionCommandSourceStack;
++import org.celestial_artistry.neotenet.injection.commands.InjectionCommandSourceStack;
  
 -public class CommandSourceStack implements ExecutionCommandSource<CommandSourceStack>, SharedSuggestionProvider, net.neoforged.neoforge.common.extensions.ICommandSourceStackExtension {
 +public class CommandSourceStack implements ExecutionCommandSource<CommandSourceStack>, SharedSuggestionProvider, net.neoforged.neoforge.common.extensions.ICommandSourceStackExtension, InjectionCommandSourceStack {

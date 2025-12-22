@@ -4,7 +4,7 @@
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
-+import org.taiyitistmc.injection.world.entity.projectile.InjectionThrowableItemProjectile;
++import org.celestial_artistry.neotenet.injection.world.entity.projectile.InjectionThrowableItemProjectile;
  
 -public abstract class ThrowableItemProjectile extends ThrowableProjectile implements ItemSupplier {
 +public abstract class ThrowableItemProjectile extends ThrowableProjectile implements ItemSupplier, InjectionThrowableItemProjectile {

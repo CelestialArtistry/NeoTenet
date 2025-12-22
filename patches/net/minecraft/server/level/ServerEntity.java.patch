@@ -12,7 +12,7 @@
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.server.level.InjectionServerEntity;
++import org.celestial_artistry.neotenet.injection.server.level.InjectionServerEntity;
  
 -public class ServerEntity {
 +public class ServerEntity implements InjectionServerEntity {

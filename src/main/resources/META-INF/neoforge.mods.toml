@@ -19,4 +19,4 @@ license="LGPL v2.1"
 [[mixins]]
     config ="neoforge.mixins.json"
 [[mixins]]
-    config ="neotaiyitist.mixins.json"
+    config ="neotenet.mixins.json"

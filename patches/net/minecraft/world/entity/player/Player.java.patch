@@ -43,7 +43,7 @@
  import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.world.entity.player.InjectionPlayer;
++import org.celestial_artistry.neotenet.injection.world.entity.player.InjectionPlayer;
  
 -public abstract class Player extends LivingEntity implements net.neoforged.neoforge.common.extensions.IPlayerExtension {
 +public abstract class Player extends LivingEntity implements net.neoforged.neoforge.common.extensions.IPlayerExtension, InjectionPlayer {

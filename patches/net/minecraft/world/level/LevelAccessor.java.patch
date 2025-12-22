@@ -4,7 +4,7 @@
  import net.minecraft.world.ticks.LevelTickAccess;
  import net.minecraft.world.ticks.ScheduledTick;
  import net.minecraft.world.ticks.TickPriority;
-+import org.taiyitistmc.injection.world.level.InjectionLevelAccessor;
++import org.celestial_artistry.neotenet.injection.world.level.InjectionLevelAccessor;
  
 -public interface LevelAccessor extends CommonLevelAccessor, LevelTimeAccess {
 +public interface LevelAccessor extends CommonLevelAccessor, LevelTimeAccess, InjectionLevelAccessor {

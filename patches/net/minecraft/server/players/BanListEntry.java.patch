@@ -4,7 +4,7 @@
  import java.util.Locale;
  import javax.annotation.Nullable;
  import net.minecraft.network.chat.Component;
-+import org.taiyitistmc.injection.server.players.InjectionBanListEntry;
++import org.celestial_artistry.neotenet.injection.server.players.InjectionBanListEntry;
  
 -public abstract class BanListEntry<T> extends StoredUserEntry<T> {
 +public abstract class BanListEntry<T> extends StoredUserEntry<T> implements InjectionBanListEntry {

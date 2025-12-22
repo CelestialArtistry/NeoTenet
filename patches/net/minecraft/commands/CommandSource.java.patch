@@ -4,7 +4,7 @@
  package net.minecraft.commands;
  
  import net.minecraft.network.chat.Component;
-+import org.taiyitistmc.injection.commands.InjectionCommandSource;
++import org.celestial_artistry.neotenet.injection.commands.InjectionCommandSource;
  
 -public interface CommandSource {
 +public interface CommandSource extends InjectionCommandSource {

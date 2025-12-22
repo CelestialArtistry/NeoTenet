@@ -4,7 +4,7 @@
  import net.minecraft.network.protocol.common.ClientboundDisconnectPacket;
  import net.minecraft.server.MinecraftServer;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.server.network.InjectionServerConnectionListener;
++import org.celestial_artistry.neotenet.injection.server.network.InjectionServerConnectionListener;
  
 -public class ServerConnectionListener {
 +public class ServerConnectionListener implements InjectionServerConnectionListener {

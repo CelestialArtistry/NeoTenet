@@ -4,7 +4,7 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
-+import org.taiyitistmc.injection.world.level.block.entity.InjectionContainerOpenersCounter;
++import org.celestial_artistry.neotenet.injection.world.level.block.entity.InjectionContainerOpenersCounter;
  
 -public abstract class ContainerOpenersCounter {
 +public abstract class ContainerOpenersCounter implements InjectionContainerOpenersCounter {

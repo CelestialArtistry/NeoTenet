@@ -4,7 +4,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.taiyitistmc.injection.world.level.InjectionLevelWriter;
++import org.celestial_artistry.neotenet.injection.world.level.InjectionLevelWriter;
  
 -public interface LevelWriter {
 +public interface LevelWriter extends InjectionLevelWriter {

@@ -4,7 +4,7 @@
  import net.minecraft.world.ticks.LevelChunkTicks;
  import net.minecraft.world.ticks.TickContainerAccess;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.world.level.chunk.InjectionLevelChunk;
++import org.celestial_artistry.neotenet.injection.world.level.chunk.InjectionLevelChunk;
  
 -public class LevelChunk extends ChunkAccess implements net.neoforged.neoforge.attachment.IAttachmentHolder {
 +public class LevelChunk extends ChunkAccess implements net.neoforged.neoforge.attachment.IAttachmentHolder, InjectionLevelChunk {

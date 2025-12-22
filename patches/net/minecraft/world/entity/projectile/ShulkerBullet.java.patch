@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.taiyitistmc.injection.world.entity.projectile.InjectionShulkerBullet;
++import org.celestial_artistry.neotenet.injection.world.entity.projectile.InjectionShulkerBullet;
  
 -public class ShulkerBullet extends Projectile {
 +public class ShulkerBullet extends Projectile implements InjectionShulkerBullet {

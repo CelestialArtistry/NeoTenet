@@ -28,15 +28,15 @@ dependencyResolutionManagement {
     }
 }
 
-if (rootProject.name.toLowerCase() == "neotaiyitist") {
-    // Solve name clashes between projects/neotaiyitist and the rootProject for Eclipse.
-    rootProject.name = "NeoTaiyitist-Root"
+if (rootProject.name.toLowerCase() == "neotenet") {
+    // Solve name clashes between projects/neotenet and the rootProject for Eclipse.
+    rootProject.name = "NeoTenet-Root"
 }
 
 include ':base'
 project(':base').projectDir = file('projects/base')
-include ':neotaiyitist'
-project(':neotaiyitist').projectDir = file('projects/neotaiyitist')
+include ':neotenet'
+project(':neotenet').projectDir = file('projects/neotenet')
 
 include ':coremods'
 // Ensure a unique artifact id within JIJ that does not conflict with net.neoforged:coremods, which is
@@ -50,4 +50,4 @@ gradle.settingsEvaluated {
     gradle.extensions.add("repositoryBaseUrls", dependencyResolutionManagement.repositories.findAll { it instanceof MavenArtifactRepository }.collect { it.url }.toArray(URI[]::new))
 }
 
-include 'neotaiyitistlauncher'
+include 'neotenetlauncher'

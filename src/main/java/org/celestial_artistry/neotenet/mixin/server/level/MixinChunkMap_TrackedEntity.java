@@ -1,0 +1,29 @@
+package org.celestial_artistry.neotenet.mixin.server.level;
+
+import java.util.Set;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ServerEntity;
+import net.minecraft.server.network.ServerPlayerConnection;
+import net.minecraft.world.entity.Entity;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(ChunkMap.TrackedEntity.class)
+public class MixinChunkMap_TrackedEntity {
+
+    @Shadow
+    @Final
+    public Set<ServerPlayerConnection> seenBy;
+    @Shadow
+    @Final
+    public ServerEntity serverEntity;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void taiyitist$setTrackedPlayers(ChunkMap outer, Entity entity, int range, int updateFrequency, boolean sendVelocityUpdates, CallbackInfo ci) {
+        this.serverEntity.setTrackedPlayers(this.seenBy);
+    }
+}

@@ -43,14 +43,6 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.alchemy.PotionBrewing;
-@@ -59,6 +_,7 @@
- import net.minecraft.world.level.chunk.LevelChunk;
- import net.minecraft.world.level.chunk.status.ChunkStatus;
- import net.minecraft.world.level.dimension.DimensionType;
-+import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.entity.EntityTypeTest;
- import net.minecraft.world.level.entity.LevelEntityGetter;
- import net.minecraft.world.level.gameevent.GameEvent;
 @@ -71,12 +_,30 @@
  import net.minecraft.world.level.saveddata.maps.MapId;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -76,7 +68,7 @@
 +import org.bukkit.generator.ChunkGenerator;
 +import org.jetbrains.annotations.ApiStatus;
 +import org.spigotmc.SpigotWorldConfig;
-+import org.taiyitistmc.injection.world.level.InjectionLevel;
++import org.celestial_artistry.neotenet.injection.world.level.InjectionLevel;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable, net.neoforged.neoforge.common.extensions.ILevelExtension {
 +public abstract class Level extends AttachmentHolder implements LevelAccessor, AutoCloseable, ILevelExtension, InjectionLevel {

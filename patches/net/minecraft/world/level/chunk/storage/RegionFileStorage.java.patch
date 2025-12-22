@@ -4,7 +4,7 @@
  import net.minecraft.nbt.StreamTagVisitor;
  import net.minecraft.util.ExceptionCollector;
  import net.minecraft.world.level.ChunkPos;
-+import org.taiyitistmc.injection.world.level.chunk.storage.InjectionRegionFileStorage;
++import org.celestial_artistry.neotenet.injection.world.level.chunk.storage.InjectionRegionFileStorage;
  
 -public final class RegionFileStorage implements AutoCloseable {
 +public final class RegionFileStorage implements AutoCloseable, InjectionRegionFileStorage {

@@ -1,10 +1,18 @@
 --- a/net/minecraft/world/level/block/SignBlock.java
 +++ b/net/minecraft/world/level/block/SignBlock.java
+@@ -8,7 +_,6 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.network.chat.CommonComponents;
+-import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.contents.PlainTextContents;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.stats.Stats;
 @@ -38,8 +_,9 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.taiyitistmc.injection.world.level.block.InjectionSignBlock;
++import org.celestial_artistry.neotenet.injection.world.level.block.InjectionSignBlock;
  
 -public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 +public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, InjectionSignBlock {

@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
+@@ -48,7 +_,6 @@
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.HoverEvent;
+ import net.minecraft.network.chat.MutableComponent;
+-import net.minecraft.network.chat.Style;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.game.ClientGamePacketListener;
+ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+@@ -95,7 +_,6 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+-import net.minecraft.world.level.block.FenceGateBlock;
+ import net.minecraft.world.level.block.HoneyBlock;
+ import net.minecraft.world.level.block.Mirror;
+ import net.minecraft.world.level.block.Portal;
 @@ -126,9 +_,12 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreHolder;
@@ -7,7 +23,7 @@
 +import org.bukkit.craftbukkit.entity.CraftEntity;
 +import org.bukkit.util.Vector;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.world.entity.InjectionEntity;
++import org.celestial_artistry.neotenet.injection.world.entity.InjectionEntity;
  
 -public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess, CommandSource, ScoreHolder, net.neoforged.neoforge.common.extensions.IEntityExtension {
 +public abstract class Entity extends net.neoforged.neoforge.attachment.AttachmentHolder implements SyncedDataHolder, Nameable, EntityAccess, CommandSource, ScoreHolder, net.neoforged.neoforge.common.extensions.IEntityExtension, InjectionEntity {

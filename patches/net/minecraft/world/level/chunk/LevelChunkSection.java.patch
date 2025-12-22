@@ -4,7 +4,7 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.material.FluidState;
-+import org.taiyitistmc.injection.world.level.chunk.InjectionLevelChunkSection;
++import org.celestial_artistry.neotenet.injection.world.level.chunk.InjectionLevelChunkSection;
  
 -public class LevelChunkSection {
 +public class LevelChunkSection implements InjectionLevelChunkSection {

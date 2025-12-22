@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.taiyitistmc.injection.world.level.InjectionEntityGetter;
++import org.celestial_artistry.neotenet.injection.world.level.InjectionEntityGetter;
  
 -public interface EntityGetter {
 +public interface EntityGetter extends InjectionEntityGetter {

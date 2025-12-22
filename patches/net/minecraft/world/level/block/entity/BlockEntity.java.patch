@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
+@@ -16,7 +_,6 @@
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.NbtOps;
+-import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 @@ -25,10 +_,14 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
@@ -7,7 +15,7 @@
 +import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 +import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.world.level.block.entity.InjectionBlockEntity;
++import org.celestial_artistry.neotenet.injection.world.level.block.entity.InjectionBlockEntity;
  
 -public abstract class BlockEntity implements net.neoforged.neoforge.common.extensions.IBlockEntityExtension {
 +public abstract class BlockEntity extends net.neoforged.neoforge.attachment.AttachmentHolder implements net.neoforged.neoforge.common.extensions.IBlockEntityExtension, InjectionBlockEntity {

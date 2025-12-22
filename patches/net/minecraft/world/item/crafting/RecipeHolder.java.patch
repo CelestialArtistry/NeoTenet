@@ -4,7 +4,7 @@
  import net.minecraft.network.RegistryFriendlyByteBuf;
  import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.resources.ResourceLocation;
-+import org.taiyitistmc.injection.world.item.crafting.InjectionRecipeHolder;
++import org.celestial_artistry.neotenet.injection.world.item.crafting.InjectionRecipeHolder;
  
 -public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) {
 +public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) implements InjectionRecipeHolder {

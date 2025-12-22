@@ -1,10 +1,18 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
+@@ -59,7 +_,6 @@
+ import net.minecraft.world.item.crafting.Ingredient;
+ import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
 @@ -71,8 +_,9 @@
  import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.world.entity.animal.allay.InjectionAllay;
++import org.celestial_artistry.neotenet.injection.world.entity.animal.allay.InjectionAllay;
  
 -public class Allay extends PathfinderMob implements InventoryCarrier, VibrationSystem {
 +public class Allay extends PathfinderMob implements InventoryCarrier, VibrationSystem, InjectionAllay {

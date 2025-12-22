@@ -42,7 +42,7 @@
  import org.slf4j.Logger;
 -
 -public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
-+import org.taiyitistmc.injection.server.network.InjectionServerCommonPacketListenerImpl;
++import org.celestial_artistry.neotenet.injection.server.network.InjectionServerCommonPacketListenerImpl;
 +
 +public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener, CraftPlayer.TransferCookieConnection, InjectionServerCommonPacketListenerImpl {
 +

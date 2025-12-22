@@ -1,11 +1,18 @@
 --- a/net/minecraft/world/item/trading/MerchantOffer.java
 +++ b/net/minecraft/world/item/trading/MerchantOffer.java
-@@ -8,8 +_,10 @@
+@@ -2,14 +_,16 @@
+ 
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
++
+ import java.util.Optional;
+ import net.minecraft.network.RegistryFriendlyByteBuf;
  import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.util.Mth;
  import net.minecraft.world.item.ItemStack;
 +import org.bukkit.craftbukkit.inventory.CraftMerchantRecipe;
-+import org.taiyitistmc.injection.world.item.trading.InjectionMerchantOffer;
++import org.celestial_artistry.neotenet.injection.world.item.trading.InjectionMerchantOffer;
  
 -public class MerchantOffer {
 +public class MerchantOffer implements InjectionMerchantOffer {

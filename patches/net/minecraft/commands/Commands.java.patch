@@ -40,7 +40,7 @@
  import net.minecraft.util.profiling.jfr.JvmProfiler;
  import net.minecraft.world.level.GameRules;
  import org.slf4j.Logger;
-+import org.taiyitistmc.injection.commands.InjectionCommands;
++import org.celestial_artistry.neotenet.injection.commands.InjectionCommands;
  
 -public class Commands {
 +public class Commands implements InjectionCommands {

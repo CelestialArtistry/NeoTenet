@@ -1,10 +1,18 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -12,18 +_,21 @@
+@@ -4,26 +_,27 @@
+ import com.mojang.serialization.DataResult;
+ import com.mojang.serialization.MapCodec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+-import java.util.List;
+ import net.minecraft.core.HolderLookup;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.network.RegistryFriendlyByteBuf;
  import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
-+import org.taiyitistmc.injection.world.item.crafting.InjectionShapelessRecipe;
++import org.celestial_artistry.neotenet.injection.world.item.crafting.InjectionShapelessRecipe;
  
 -public class ShapelessRecipe implements CraftingRecipe {
 +public class ShapelessRecipe implements CraftingRecipe, InjectionShapelessRecipe {

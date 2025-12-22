@@ -4,7 +4,7 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.BlockEntity;
-+import org.taiyitistmc.injection.world.InjectionContainer;
++import org.celestial_artistry.neotenet.injection.world.InjectionContainer;
  
 -public interface Container extends Clearable {
 +public interface Container extends Clearable, InjectionContainer {

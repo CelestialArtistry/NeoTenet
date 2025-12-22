@@ -1,10 +1,17 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -1,6 +_,5 @@
+ package net.minecraft.world.level.chunk;
+ 
+-import com.google.common.base.Suppliers;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.MapCodec;
 @@ -76,12 +_,13 @@
  import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
  import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
  import org.apache.commons.lang3.mutable.MutableBoolean;
-+import org.taiyitistmc.injection.world.level.chunk.InjectionChunkGenerator;
++import org.celestial_artistry.neotenet.injection.world.level.chunk.InjectionChunkGenerator;
  
 -public abstract class ChunkGenerator {
 +public abstract class ChunkGenerator implements InjectionChunkGenerator {
