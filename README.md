@@ -58,10 +58,10 @@ NeoTenet features full support for Spigot's net.minecraft.server (NMS) classes:
 
 Getting started with NeoTenet is simple:
 
-1. Download the launcher from [GitHub releases](https://github.com/TaiyitstMC/Taiyitst/releases)
+1. Download the launcher from [GitHub releases](https://github.com/CelestialArtistry/NeoTenet/releases)
 2. Run the launcher just like you would with a standard Spigot JAR file:
    ```bash
-   java -jar neotenet-launcher.jar
+   java -jar neotenet-launcher-{version}.jar
    ```
 
 ## 💬 Community
@@ -70,6 +70,10 @@ Join our growing community to get support, share ideas, and contribute to the pr
 
 [Discord Server](https://discord.gg/stTgbjkJ) • [GitHub Issues](https://github.com/TaiyitstMC/Taiyitst/issues)
 
+## 🤝 Contributing
+
+We welcome contributions from the community! If you'd like to contribute to NeoTenet, please read our [Contribution Guidelines](docs/CONTRIBUTING.md) for information on how to get started.
+
 ## 🔗 Upstream Projects
 
 NeoTenet builds upon the excellent work of these open-source projects:
@@ -77,7 +81,7 @@ NeoTenet builds upon the excellent work of these open-source projects:
 - [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - Plugin support foundation
 - [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - Plugin support implementation
 - [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - Plugin support enhancements
-- [**TENET**](https://github.com/Rz-C/TENET) - Core architectural concepts
+- [**TENET**](https://github.com/Rz-C/TENET) - Technical inspiration
 - [**Arclight**](https://github.com/IzzelAliz/Arclight.git) - Technical inspiration
 
 ## 🙏 Special Thanks
@@ -85,4 +89,5 @@ NeoTenet builds upon the excellent work of these open-source projects:
 We extend our heartfelt gratitude to our contributors and supporters:
 
 - [Rz-C](https://github.com/Rz-C) - nicknamed as T Shi Huang, the Project sponsor and contributor
+
 Without their generous support, this project would not be possible.
