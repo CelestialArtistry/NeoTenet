@@ -41,7 +41,7 @@ Follow these steps to contribute to NeoTenet:
 
 7. **Make your changes**
    - Commonly, modify code using mixins. See examples in `src/org/celestial_artistry/neotenet/mixin`
-   - If you want to add public fields and static methods from CraftBukkit, or other things that mixins cannot do, modify the patched Minecraft sources in `projects/neotenet/src/main/java` as needed
+   - If you want to add fields and static methods from CraftBukkit, or other things that mixins cannot do, modify the patched Minecraft sources in `projects/neotenet/src/main/java` as needed
    - The unmodified sources are available in `projects/base/src/main/java` for your reference
    - ⚠️ Do not modify the base sources
 
@@ -61,7 +61,7 @@ Follow these steps to contribute to NeoTenet:
 
 By contributing to NeoTenet, you agree to the following terms:
 
-- You grant CelestialArtistry a license to use your code contributed to the primary codebase (everything **not** under patches) in NeoForge, under the LGPLv2.1 license.
-- You assign copyright ownership of your contributions to the patches codebase (everything under patches) to NeoForged, where it will be licensed under the LGPLv2.1 license.
+- You grant CelestialArtistry a license to use your code contributed to the primary codebase (everything **not** under patches) in NeoTenet, under the LGPLv2.1 license.
+- You assign copyright ownership of your contributions to the patches codebase (everything under patches) to CelestialArtistry, where it will be licensed under the LGPLv2.1 license.
 
 This is intended as a **legally binding copyright assignment** to the CelestialArtistry project for contributions under the patches codebase. However, you retain your copyright for all other contributions.
