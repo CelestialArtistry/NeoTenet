@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 
 public class InstallationManager {
 
+    private static String NEOFORGE_VERSION = "21.1.217";
+
     public static boolean checkAndInstall() {
         try {
             if (isAlreadyInstalled()) {
@@ -44,12 +46,10 @@ public class InstallationManager {
         }
 
         try {
-            String version = getImplementationVersion();
-
-            Path universalJar = Paths.get("libraries/net/neoforged/neoforge/" + version + "/neoforge-" + version + "-universal.jar");
+            Path universalJar = Paths.get("libraries/net/neoforged/neoforge/" + NEOFORGE_VERSION + "/neoforge-" + NEOFORGE_VERSION + "-universal.jar");
 
             String sysType = File.pathSeparatorChar == ';' ? "win" : "unix";
-            Path argsFile = Paths.get("libraries/net/neoforged/neoforge/" + version + "/" + sysType + "_args.txt");
+            Path argsFile = Paths.get("libraries/net/neoforged/neoforge/" + NEOFORGE_VERSION + "/" + sysType + "_args.txt");
 
             if (!Files.exists(universalJar)) {
                 System.out.println("Universal jar not found: " + universalJar);
@@ -205,18 +205,17 @@ public class InstallationManager {
     }
 
     private static void updateScriptVersionNumbers(Path targetRunBat, Path targetRunSh) throws IOException {
-        String version = getImplementationVersion();
-        if (version == null) {
+        if (NEOFORGE_VERSION == null) {
             System.err.println("Could not determine implementation version for script update");
             return;
         }
         
         if (Files.exists(targetRunBat)) {
-            updateVersionInScript(targetRunBat, version);
+            updateVersionInScript(targetRunBat, NEOFORGE_VERSION);
         }
         
         if (Files.exists(targetRunSh)) {
-            updateVersionInScript(targetRunSh, version);
+            updateVersionInScript(targetRunSh, NEOFORGE_VERSION);
         }
     }
     

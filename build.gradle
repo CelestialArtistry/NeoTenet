@@ -10,7 +10,7 @@ plugins {
 }
 
 
-project.version = '1.21.1-' + gradleutils.gitInfo.abbreviatedId // Taiyitist
+project.version = '21.1.217'
 
 
 // Print version, generally useful to know - also appears on CI

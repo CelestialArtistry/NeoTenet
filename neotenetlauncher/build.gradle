@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'net.neoforged.gradleutils' version '4.0.1'
 }
 
 group = 'org.celestial_artistry.neotenet'
-version = rootProject.version
+version = '1.21.1-' + gradleutils.gitInfo.abbreviatedId // NeoTenet
 
 base {
     archivesName = "neotenet-launcher"
@@ -11,7 +12,7 @@ base {
 
 def neotaiyitistProjectDir = rootProject.layout.projectDirectory.dir("projects/neotenet")
 def installerJarDir = neotaiyitistProjectDir.dir("build/libs")
-def installerJarFile = installerJarDir.file("neotenet-${version}-installer.jar")
+def installerJarFile = installerJarDir.file("neotenet-${rootProject.version}-installer.jar")
 
 
 tasks.register('launcherJar', Jar) {
