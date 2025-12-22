@@ -24,10 +24,26 @@ import java.util.function.Function;
 public class NeoTenetRemapper {
 
     public static final NeoTenetRemapper INSTANCE;
+    public static final File DUMP;
+    public static final Function<byte[], byte[]> SWITCH_TABLE_FIXER;
 
     static {
         try {
             INSTANCE = new NeoTenetRemapper();
+            String property = System.getProperty("neotent.remapper.dump");
+            if (property != null) {
+                DUMP = new File(property);
+                if (!DUMP.exists()) {
+                    DUMP.mkdirs();
+                }
+                try {
+                    FileUtils.forceDelete(DUMP);
+                } catch (IOException ignored) {
+                }
+            } else {
+                DUMP = null;
+            }
+            SWITCH_TABLE_FIXER = (Function<byte[], byte[]>) Class.forName("org.celestial_artistry.neotenet.asm.SwitchTableFixer").getField("INSTANCE").get(null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
