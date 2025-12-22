@@ -27,17 +27,17 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final int SLOT_CLICKED_OUTSIDE = -999;
      public static final int QUICKCRAFT_TYPE_CHARITABLE = 0;
-@@ -61,7 +_,9 @@
+@@ -61,6 +_,10 @@
      @Nullable
      private ContainerSynchronizer synchronizer;
      private boolean suppressRemoteUpdates;
--
 +    // CraftBukkit start
 +    public boolean checkReachable = true;
 +    private Component title;
++    public InventoryView bukkitView;
+ 
      protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
          this.menuType = p_38851_;
-         this.containerId = p_38852_;
 @@ -511,6 +_,12 @@
      }
  

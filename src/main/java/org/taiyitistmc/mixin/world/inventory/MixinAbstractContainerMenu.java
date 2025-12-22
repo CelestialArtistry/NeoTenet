@@ -30,7 +30,7 @@ public abstract class MixinAbstractContainerMenu implements InjectionAbstractCon
     private Component title;
 
     @Shadow
-    private InventoryView bukkitView;
+    public InventoryView bukkitView;
 
 
     // This provides a fallback that returns null

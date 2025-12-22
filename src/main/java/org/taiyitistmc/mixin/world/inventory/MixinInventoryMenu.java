@@ -1,7 +1,6 @@
 package org.taiyitistmc.mixin.world.inventory;
 
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -35,7 +34,7 @@ public abstract class MixinInventoryMenu extends RecipeBookMenu<CraftingInput, C
     public Player owner;
 
     @Shadow
-    private CraftInventoryView bukkitEntity;
+    public CraftInventoryView bukkitEntity;
 
     protected MixinInventoryMenu(@Nullable MenuType<?> menuType, int i) {
         super(menuType, i);
