@@ -26,6 +26,6 @@ public class MixinEntitySelector {
 
     @ModifyExpressionValue(method = "lambda$pushableBy$6", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;isPushable()Z"))
     private static boolean neotenet$collidable(boolean original, @Local(name = "p_20430_") Entity p_20430_) {
-        return p_20430_.canCollideWithBukkit(neotenet$entity.getAndSet(null)) || !neotenet$entity.getAndSet(null).canCollideWithBukkit(p_20430_);
+        return p_20430_.canCollideWithBukkit(neotenet$entity.get()) || !neotenet$entity.get().canCollideWithBukkit(p_20430_);
     }
 }
