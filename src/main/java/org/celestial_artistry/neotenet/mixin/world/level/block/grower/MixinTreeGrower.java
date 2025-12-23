@@ -22,14 +22,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinTreeGrower {
 
     @Inject(method = "growTree", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/event/level/BlockGrowFeatureEvent;isCanceled()Z", ordinal = 0))
-    private void neotenet$setTreeType(ServerLevel p_304396_, ChunkGenerator p_304672_, BlockPos p_304643_, BlockState p_304439_, RandomSource p_304893_, CallbackInfoReturnable<Boolean> cir, @Local(name = "holder") Holder<ConfiguredFeature<?, ?>> holder) {
+    private void neotenet$setTreeType(ServerLevel p_304396_, ChunkGenerator p_304672_, BlockPos p_304643_, BlockState p_304439_, RandomSource p_304893_, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 0) Holder<ConfiguredFeature<?, ?>> holder) {
         if (holder != null) {
             setTreeType(holder);
         }
     }
 
-    @Inject(method = "growTree", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/event/level/BlockGrowFeatureEvent;isCanceled()Z", ordinal = 1))
-    private void neotenet$setTreeType0(ServerLevel p_304396_, ChunkGenerator p_304672_, BlockPos p_304643_, BlockState p_304439_, RandomSource p_304893_, CallbackInfoReturnable<Boolean> cir, @Local(name = "holder1") Holder<ConfiguredFeature<?, ?>> holder1) {
+    @Inject(method = "growTree", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/event/EventHooks;fireBlockGrowFeature(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Holder;)Lnet/neoforged/neoforge/event/level/BlockGrowFeatureEvent;"))
+    private void neotenet$setTreeType0(ServerLevel p_304396_, ChunkGenerator p_304672_, BlockPos p_304643_, BlockState p_304439_, RandomSource p_304893_, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 0) Holder<ConfiguredFeature<?, ?>> holder1) {
         if (holder1 != null) {
             setTreeType(holder1);
         }

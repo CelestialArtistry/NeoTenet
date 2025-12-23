@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinOozingMobEffect {
 
     @Inject(method = "spawnSlimeOffspring", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private void neotenet$pushCause(Level p_338724_, double p_338555_, double p_338811_, double p_338192_, CallbackInfo ci, @Local(name = "slime") Slime slime) {
+    private void neotenet$pushCause(Level p_338724_, double p_338555_, double p_338811_, double p_338192_, CallbackInfo ci, @Local(ordinal = 0) Slime slime) {
         slime.pushSpawnCause(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT); // CraftBukkit
     }
 }

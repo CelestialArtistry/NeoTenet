@@ -16,12 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public interface MixinLeashable {
 
     @Shadow
-    static <E extends Entity & Leashable> void dropLeash(E p_352163_, boolean p_352286_, boolean p_352272_) {
+    private static <E extends Entity & Leashable> void dropLeash(E p_352163_, boolean p_352286_, boolean p_352272_) {
 
     }
 
     @Inject(method = "writeLeashData", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/LeashFenceKnotEntity;getPos()Lnet/minecraft/core/BlockPos;"), cancellable = true)
-    private void neotenet$dontSave(CompoundTag p_352349_, Leashable.LeashData p_352363_, CallbackInfo ci, @Local(name = "leashfenceknotentity") LeashFenceKnotEntity leashfenceknotentity) {
+    private void neotenet$dontSave(CompoundTag p_352349_, Leashable.LeashData p_352363_, CallbackInfo ci, @Local(ordinal = 0) LeashFenceKnotEntity leashfenceknotentity) {
         // CraftBukkit start - SPIGOT-7487: Don't save (and possible drop) leash, when the holder was removed by a plugin
         if (leashfenceknotentity != null && leashfenceknotentity.pluginRemoved) {
             ci.cancel();

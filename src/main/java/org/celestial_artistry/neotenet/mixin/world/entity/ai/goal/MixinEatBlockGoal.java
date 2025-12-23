@@ -20,12 +20,12 @@ public class MixinEatBlockGoal {
     private Mob mob;
 
     @ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/event/EventHooks;canEntityGrief(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z", ordinal = 0))
-    private boolean neotenet$callEntityChangeBlockEvent(boolean original, @Local(name = "blockpos") BlockPos blockpos) {
+    private boolean neotenet$callEntityChangeBlockEvent(boolean original, @Local(ordinal = 0) BlockPos blockpos) {
         return CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos, Blocks.AIR.defaultBlockState(), !original);
     }
 
     @ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/event/EventHooks;canEntityGrief(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z", ordinal = 1))
-    private boolean neotenet$callEntityChangeBlockEvent0(boolean original, @Local(name = "blockpos1") BlockPos blockpos1) {
+    private boolean neotenet$callEntityChangeBlockEvent0(boolean original, @Local(ordinal = 1) BlockPos blockpos1) {
         return CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos1, Blocks.AIR.defaultBlockState(), !original);
     }
 }

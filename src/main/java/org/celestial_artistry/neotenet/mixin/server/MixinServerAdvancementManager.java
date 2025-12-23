@@ -29,7 +29,7 @@ public class MixinServerAdvancementManager {
     }
 
     @Redirect(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "FIELD", target = "Lnet/minecraft/server/ServerAdvancementManager;advancements:Ljava/util/Map;", opcode = Opcodes.PUTFIELD))
-    private void neotenet$mutableAdvancements(ServerAdvancementManager instance, Map<ResourceLocation, AdvancementHolder> value, @Local(name = "builder") ImmutableMap.Builder<ResourceLocation, AdvancementHolder> builder) {
+    private void neotenet$mutableAdvancements(ServerAdvancementManager instance, Map<ResourceLocation, AdvancementHolder> value, @Local(ordinal = 0) ImmutableMap.Builder<ResourceLocation, AdvancementHolder> builder) {
         this.advancements = new HashMap<>(builder.buildOrThrow()); // CraftBukkit - SPIGOT-7734: mutable
     }
 }

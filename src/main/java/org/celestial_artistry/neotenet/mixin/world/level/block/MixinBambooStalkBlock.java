@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class MixinBambooStalkBlock {
 
     @ModifyExpressionValue(method = "performBonemeal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"))
-    private Comparable neotenet$noBamboo(Comparable original, @Local(name = "blockstate") BlockState blockstate) {
+    private Comparable neotenet$noBamboo(Comparable original, @Local(ordinal = 0) BlockState blockstate) {
         return !blockstate.is(Blocks.BAMBOO);
     }
 }

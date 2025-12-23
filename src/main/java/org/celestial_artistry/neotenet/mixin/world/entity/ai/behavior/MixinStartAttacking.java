@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 public class MixinStartAttacking {
 
     @Inject(method = "lambda$create$1", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/declarative/MemoryAccessor;set(Ljava/lang/Object;)V"), cancellable = true)
-    private static void neotenet$startTargetEvent(Predicate p_259618_, Function p_259435_, MemoryAccessor p_258778_, MemoryAccessor p_258779_, ServerLevel p_258773_, Mob p_258774_, long p_258775_, CallbackInfoReturnable<Boolean> cir, @Local(name = "livingentity") LivingEntity livingentity) {
+    private static void neotenet$startTargetEvent(Predicate p_259618_, Function p_259435_, MemoryAccessor p_258778_, MemoryAccessor p_258779_, ServerLevel p_258773_, Mob p_258774_, long p_258775_, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 0) LivingEntity livingentity) {
         // CraftBukkit start
         EntityTargetEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_258774_, livingentity, (livingentity instanceof ServerPlayer) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
         if (event.isCancelled()) {

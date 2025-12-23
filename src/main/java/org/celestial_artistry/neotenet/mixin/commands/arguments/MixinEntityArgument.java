@@ -31,7 +31,7 @@ public abstract class MixinEntityArgument implements InjectionEntityArgument {
     }
 
     @Inject(method = "parse(Lcom/mojang/brigadier/StringReader;Z)Lnet/minecraft/commands/arguments/selector/EntitySelector;", at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/arguments/selector/EntitySelectorParser;parse()Lnet/minecraft/commands/arguments/selector/EntitySelector;"))
-    private void neotenet$markParse(StringReader p_353134_, boolean p_353142_, CallbackInfoReturnable<EntitySelector> cir, @Local(name = "entityselectorparser") EntitySelectorParser entityselectorparser) {
+    private void neotenet$markParse(StringReader p_353134_, boolean p_353142_, CallbackInfoReturnable<EntitySelector> cir, @Local(ordinal = 0) EntitySelectorParser entityselectorparser) {
         entityselectorparser.parse$overridePermissions.set(parse$overridePermissions.getAndSet(false));
     }
 }

@@ -117,7 +117,7 @@ public abstract class MixinPlayer extends LivingEntity implements InjectionPlaye
 
     @Inject(method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;",
             cancellable = true, at = @At(value = "RETURN", ordinal = 1))
-    private void neotenet$playerDropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem, CallbackInfoReturnable<ItemEntity> cir, @Local(name = "itementity") ItemEntity itemEntity) {
+    private void neotenet$playerDropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem, CallbackInfoReturnable<ItemEntity> cir, @Local(ordinal = 0) ItemEntity itemEntity) {
         org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
         org.bukkit.entity.Item drop = (org.bukkit.entity.Item) itemEntity.getBukkitEntity();
 

@@ -27,7 +27,7 @@ public class MixinVillagerMakeLove {
 
     @Inject(method = "breed", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"), cancellable = true)
-    private void neotenet$makeLoveEvent(ServerLevel p_24656_, Villager p_24657_, Villager p_24658_, CallbackInfoReturnable<Optional<Villager>> cir, @Local(name = "villager") Villager villager) {
+    private void neotenet$makeLoveEvent(ServerLevel p_24656_, Villager p_24657_, Villager p_24658_, CallbackInfoReturnable<Optional<Villager>> cir, @Local(ordinal = 1) Villager villager) {
         // CraftBukkit start - call EntityBreedEvent
         if (CraftEventFactory.callEntityBreedEvent(villager, p_24658_, p_24657_, null, null, 0).isCancelled()) {
             cir.setReturnValue(Optional.empty());
