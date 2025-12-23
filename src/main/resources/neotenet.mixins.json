@@ -252,6 +252,7 @@
     "world.level.MixinWorldBorder",
     "world.level.block.MixinAbstractCandleBlock",
     "world.level.block.MixinBambooSaplingBlock",
+    "world.level.block.MixinBambooStalkBlock",
     "world.level.block.MixinBaseCommandBlock",
     "world.level.block.MixinBedBlock",
     "world.level.block.MixinBeehiveBlock",

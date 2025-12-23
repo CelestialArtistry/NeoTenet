@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/BambooStalkBlock.java
 +++ b/net/minecraft/world/level/block/BambooStalkBlock.java
+@@ -43,6 +_,7 @@
+     public static final int STAGE_DONE_GROWING = 1;
+     public static final int AGE_THIN_BAMBOO = 0;
+     public static final int AGE_THICK_BAMBOO = 1;
++    boolean shouldUpdateOthers = false; // CraftBukkit
+ 
+     @Override
+     public MapCodec<BambooStalkBlock> codec() {
 @@ -97,7 +_,8 @@
              return null;
          } else {
