@@ -1,5 +1,6 @@
 package org.celestial_artistry.neotenet.mixin.world.item;
 
+import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -21,22 +22,15 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class MixinEggItem {
 
     @Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean neotenet$cancelAddEntity(Level instance, Entity entity) {
-        return false;
-    }
-
-    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z",
-            shift = At.Shift.AFTER), cancellable = true)
-    private void neotenet$handleEggEntity(Level level, Player player, InteractionHand usedHand,
-                                           CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir,
-                                           @Local ItemStack itemStack, @Local ThrownEgg thrownEgg) {
+    private boolean neotenet$cancelAddEntity(Level instance, Entity entity, @Local ItemStack itemStack, @Local ThrownEgg thrownEgg, @Cancellable CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
         // CraftBukkit start
-        if (!level.addFreshEntity(thrownEgg)) {
-            if (player instanceof ServerPlayer) {
-                ((ServerPlayer) player).getBukkitEntity().updateInventory();
+        if (!instance.addFreshEntity(thrownEgg)) {
+            if (entity instanceof ServerPlayer) {
+                ((ServerPlayer) entity).getBukkitEntity().updateInventory();
             }
             cir.setReturnValue(InteractionResultHolder.fail(itemStack));
         }
         // CraftBukkit end
+        return true;
     }
 }
