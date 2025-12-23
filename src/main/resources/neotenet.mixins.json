@@ -96,6 +96,7 @@
     "world.entity.MixinMob",
     "world.entity.MixinNeutralMob",
     "world.entity.MixinTamableAnimal",
+    "world.entity.ai.behavior.MixinAssignProfessionFromJobSite",
     "world.entity.ai.behavior.MixinStartAttacking",
     "world.entity.ai.behavior.MixinStopAttackingIfTargetInvalid",
     "world.entity.ai.behavior.warden.MixinDigging",
