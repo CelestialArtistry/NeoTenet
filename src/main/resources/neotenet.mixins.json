@@ -29,7 +29,9 @@
     "server.MixinMain",
     "server.MixinMinecraftServer",
     "server.MixinPlayerAdvancements",
+    "server.MixinServerAdvancementManager",
     "server.MixinServerFunctionManager",
+    "server.MixinServerScoreboard",
     "server.MixinServerTickRateManager",
     "server.MixinWorldLoader",
     "server.bossevents.MixinCustomBossEvent",
@@ -46,6 +48,7 @@
     "server.commands.MixinSummonCommand",
     "server.commands.MixinTimeCommand",
     "server.commands.MixinTriggerCommand",
+    "server.commands.MixinWeatherCommand",
     "server.commands.MixinWorldBorderCommand",
     "server.dedicated.MixinDedicatedServer",
     "server.dedicated.MixinDedicatedServerProperties",
@@ -71,6 +74,7 @@
     "server.players.MixinSleepStatus",
     "server.players.MixinStoredUserList",
     "server.players.MixinUserWhiteList",
+    "server.rcon.MixinRconConsoleSource",
     "stats.MixinServerRecipeBook",
     "stats.MixinStatsCounter",
     "world.MixinBlockGetter",
@@ -187,6 +191,7 @@
     "world.inventory.MixinSmithingMenu",
     "world.inventory.MixinStonecutterMenu",
     "world.inventory.MixinStonecutterMenu1",
+    "world.item.MixinArmorItem",
     "world.item.MixinArmorStandItem",
     "world.item.MixinAxeItem",
     "world.item.MixinBlockItem",
@@ -331,6 +336,9 @@
   "injectors": {
     "maxShiftBy": 2,
     "defaultRequire": 1
+  },
+  "mixinextras": {
+    "minVersion": "0.8"
   },
   "mixinPriority": 400,
   "minVersion": "0.8"

@@ -1,5 +1,6 @@
 package org.celestial_artistry.neotenet.mixin.server.level;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -42,7 +43,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.inventory.HorseInventoryMenu;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -184,6 +187,10 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     @Shadow
     public abstract void setRespawnPosition(ResourceKey<Level> resourceKey, @Nullable BlockPos blockPos, float f, boolean bl, boolean bl2);
 
+    @Shadow
+    @Final
+    private ContainerSynchronizer containerSynchronizer;
+
     @Inject(method = "<init>", at = @At("RETURN"))
     public void neotenet$init(CallbackInfo ci) {
         this.displayName = getScoreboardName();
@@ -191,6 +198,56 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         this.maxHealthCache = this.getMaxHealth();
         this.neotenet$initialized = true;
     }
+
+    // Use method to resend items in hands in case of client desync, because the item use got cancelled.
+    // For example, when cancelling the leash event
+    @Override
+    public void resendItemInHands() {
+        containerMenu.findSlot(getInventory(), getInventory().selected).ifPresent(s -> {
+            containerSynchronizer.sendSlotChange(containerMenu, s, getMainHandItem());
+        });
+        containerSynchronizer.sendSlotChange(inventoryMenu, InventoryMenu.SHIELD_SLOT, getOffhandItem());
+    }
+
+    // Yes, this doesn't match Vanilla, but it's the best we can do for now.
+    // If this is an issue, PRs are welcome
+    @Override
+    public final BlockPos getSpawnPoint(ServerLevel worldserver) {
+        BlockPos blockposition = worldserver.getSharedSpawnPos();
+
+        if (worldserver.dimensionType().hasSkyLight() && worldserver.serverLevelData.getGameType() != GameType.ADVENTURE) {
+            int i = Math.max(0, this.server.getSpawnRadius(worldserver));
+            int j = Mth.floor(worldserver.getWorldBorder().getDistanceToBorder((double) blockposition.getX(), (double) blockposition.getZ()));
+
+            if (j < i) {
+                i = j;
+            }
+
+            if (j <= 1) {
+                i = 1;
+            }
+
+            long k = (long) (i * 2 + 1);
+            long l = k * k;
+            int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
+            int j1 = this.getCoprime(i1);
+            int k1 = RandomSource.create().nextInt(i1);
+
+            for (int l1 = 0; l1 < i1; ++l1) {
+                int i2 = (k1 + j1 * l1) % i1;
+                int j2 = i2 % (i * 2 + 1);
+                int k2 = i2 / (i * 2 + 1);
+                BlockPos blockposition1 = PlayerRespawnLogic.getOverworldRespawnPos(worldserver, blockposition.getX() + j2 - i, blockposition.getZ() + k2 - i);
+
+                if (blockposition1 != null) {
+                    return blockposition1;
+                }
+            }
+        }
+
+        return blockposition;
+    }
+    // CraftBukkit end
 
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
     private void neotenet$readExtra(CompoundTag compound, CallbackInfo ci) {
@@ -389,43 +446,6 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         } else {
             this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.START_RAINING, 0.0f));
         }
-    }
-
-    @Override
-    public BlockPos getSpawnPoint(ServerLevel worldserver) {
-        BlockPos blockposition = worldserver.getSharedSpawnPos();
-
-        if (worldserver.dimensionType().hasSkyLight() && worldserver.serverLevelData.getGameType() != GameType.ADVENTURE) {
-            int i = Math.max(0, this.server.getSpawnRadius(worldserver));
-            int j = Mth.floor(worldserver.getWorldBorder().getDistanceToBorder(blockposition.getX(), blockposition.getZ()));
-
-            if (j < i) {
-                i = j;
-            }
-
-            if (j <= 1) {
-                i = 1;
-            }
-
-            long k = i * 2L + 1;
-            long l = k * k;
-            int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
-            int j1 = this.getCoprime(i1);
-            int k1 = RandomSource.create().nextInt(i1);
-
-            for (int l1 = 0; l1 < i1; ++l1) {
-                int i2 = (k1 + j1 * l1) % i1;
-                int j2 = i2 % (i * 2 + 1);
-                int k2 = i2 / (i * 2 + 1);
-                BlockPos blockposition1 = PlayerRespawnLogic.getOverworldRespawnPos(worldserver, blockposition.getX() + j2 - i, blockposition.getZ() + k2 - i);
-
-                if (blockposition1 != null) {
-                    return blockposition1;
-                }
-            }
-        }
-
-        return blockposition;
     }
 
     @Override

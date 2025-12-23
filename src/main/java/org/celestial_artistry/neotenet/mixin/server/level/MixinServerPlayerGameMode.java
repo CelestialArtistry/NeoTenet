@@ -78,33 +78,10 @@ public abstract class MixinServerPlayerGameMode {
     @Shadow
     private GameType gameModeForPlayer;
     @Shadow
-    private int destroyProgressStart;
-    @Shadow
-    private int gameTicks;
-    @Shadow
-    private boolean isDestroyingBlock;
-    @Shadow
-    private BlockPos destroyPos;
-    @Shadow
-    private int lastSentState;
-    @Shadow
-    private boolean hasDelayedDestroy;
-    @Shadow
-    private BlockPos delayedDestroyPos;
-    @Shadow
-    private int delayedTickStart;
-
-    @Shadow
     public abstract boolean isCreative();
 
     @Shadow
-    protected abstract void debugLogging(BlockPos blockPos, boolean bl, int i, String string);
-
-    @Shadow
     public abstract boolean destroyBlock(BlockPos pos);
-
-    @Shadow
-    public abstract void destroyAndAck(BlockPos pos, int i, String string);
 
     @Inject(method = "changeGameModeForPlayer", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;setGameModeForPlayer(Lnet/minecraft/world/level/GameType;Lnet/minecraft/world/level/GameType;)V"))
     private void neotenet$gameModeEvent(GameType gameType, CallbackInfoReturnable<Boolean> cir) {

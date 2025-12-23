@@ -102,4 +102,8 @@ public interface InjectionServerPlayer extends InjectionPlayer {
     default void pushRespawnCause(PlayerRespawnEvent.RespawnReason reason) {
         throw new IllegalStateException("Not implemented");
     }
+
+    default void resendItemInHands() {
+        throw new IllegalStateException("Not implemented");
+    }
 }
