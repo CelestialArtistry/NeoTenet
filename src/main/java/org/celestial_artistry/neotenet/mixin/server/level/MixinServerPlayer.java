@@ -1,6 +1,5 @@
 package org.celestial_artistry.neotenet.mixin.server.level;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -54,6 +53,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.ScoreAccess;
@@ -83,6 +83,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -292,7 +293,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         return new ClientboundSetHealthPacket(this.getBukkitEntity().getScaledHealth(), foodLevelIn, saturationLevelIn);
     }
 
-    @Inject(method = "doTick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerPlayer;tickCount:I"))
+    @Inject(method = "doTick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerPlayer;tickCount:I", opcode = Opcodes.GETFIELD))
     private void neotenet$updateHealthAndExp(CallbackInfo ci) {
         if (this.maxHealthCache != this.getMaxHealth()) {
             this.getBukkitEntity().updateScaledHealth();
@@ -322,6 +323,12 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     @Inject(method = "isPvpAllowed", cancellable = true, at = @At("HEAD"))
     private void neotenet$pvpMode(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue((this.level().pvpMode));
+    }
+
+    @Redirect(method = "adjustSpawnLocation", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/storage/WorldData;getGameType()Lnet/minecraft/world/level/GameType;"))
+    private GameType neotenet$useWorldGameType(WorldData instance, @Local(argsOnly = true) ServerLevel p_352206_) {
+        return p_352206_.K.getGameType();
     }
 
     @Override
@@ -406,6 +413,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         neotenet$spawnChangeCause = cause;
         this.setRespawnPosition(level, pos, pitch, flag, flag1);
     }
+
 
     @Inject(method = "setRespawnPosition", at = @At("HEAD"))
     private void neotenet$spawnChangeEvent(ResourceKey<Level> resourceKey, BlockPos blockPos, float f, boolean bl, boolean bl2, CallbackInfo ci) {
