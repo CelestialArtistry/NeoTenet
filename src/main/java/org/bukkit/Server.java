@@ -1869,6 +1869,14 @@ public interface Server extends PluginMessageRecipient {
         }
     }
 
+    /**
+     * Gets the active {@link org.bukkit.command.CommandMap}
+     *
+     * @return the active command map
+     */
+    @NotNull
+    org.bukkit.command.CommandMap getCommandMap();
+
     @NotNull
     Spigot spigot();
     // Spigot end
