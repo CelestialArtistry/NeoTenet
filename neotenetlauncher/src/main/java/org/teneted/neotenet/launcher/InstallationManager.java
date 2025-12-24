@@ -46,7 +46,7 @@ public class InstallationManager {
         }
 
         try {
-            Path versionFile = Paths.get("libraries/org/celestial_artistry/neotenet/version.txt");
+            Path versionFile = Paths.get("libraries/org/teneted/neotenet/version.txt");
             if (Files.exists(versionFile)) {
                 String existingVersion = new String(Files.readAllBytes(versionFile)).trim();
                 if (!getImplementationVersion().equals(existingVersion)) {
@@ -136,7 +136,7 @@ public class InstallationManager {
     
     private static void createVersionFile() {
         try {
-            Path versionDir = Paths.get("libraries/org/celestial_artistry/neotenet");
+            Path versionDir = Paths.get("libraries/org/teneted/neotenet");
             Files.createDirectories(versionDir);
             
             Path versionFile = versionDir.resolve("version.txt");
@@ -152,7 +152,7 @@ public class InstallationManager {
 
     public static void moveAndRunServerScripts() {
         try {
-            Path targetDir = Paths.get("libraries/org/celestial_artistry/neotenet/launcher/script");
+            Path targetDir = Paths.get("libraries/org/teneted/neotenet/launcher/script");
             Files.createDirectories(targetDir);
 
             Path targetRunBat = targetDir.resolve("run.bat");
