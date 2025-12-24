@@ -13,7 +13,7 @@
  import net.minecraft.world.level.border.WorldBorder;
 +import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.timers.TimerQueue;
-+import org.celestial_artistry.neotenet.injection.world.level.storage.InjectionDerivedLevelData;
++import org.teneted.neotenet.injection.world.level.storage.InjectionDerivedLevelData;
  
 -public class DerivedLevelData implements ServerLevelData {
 +public class DerivedLevelData implements ServerLevelData, InjectionDerivedLevelData {

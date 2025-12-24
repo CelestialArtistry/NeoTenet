@@ -1,0 +1,86 @@
+package org.teneted.neotenet.mixin.world.entity.animal;
+
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.animal.allay.Allay;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.teneted.neotenet.injection.world.entity.animal.allay.InjectionAllay;
+
+@Mixin(Allay.class)
+public abstract class MixinAllay extends PathfinderMob implements InjectionAllay {
+
+
+    // @formatter:off
+    @Shadow @Final private static EntityDataAccessor<Boolean> DATA_CAN_DUPLICATE;
+    // @formatter:on
+    public boolean forceDancing = false;
+    private transient Allay neotenet$duplicate;
+
+    protected MixinAllay(EntityType<? extends PathfinderMob> entityType, Level level) {
+        super(entityType, level);
+    }
+
+    @Shadow
+    protected abstract void duplicateAllay();
+
+    @Override
+    public void setCanDuplicate(boolean canDuplicate) {
+        this.entityData.set(DATA_CAN_DUPLICATE, canDuplicate);
+    }
+
+    @Inject(method = "aiStep", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/allay/Allay;heal(F)V"))
+    private void neotenet$healReason(CallbackInfo ci) {
+        this.pushHealReason(EntityRegainHealthEvent.RegainReason.REGEN);
+    }
+
+    @Inject(method = "mobInteract", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/allay/Allay;duplicateAllay()V"))
+    private void neotenet$cancelDuplicate(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        var allay = neotenet$duplicate;
+        neotenet$duplicate = null;
+        if (allay == null) {
+            cir.setReturnValue(InteractionResult.SUCCESS);
+        }
+    }
+
+    @Inject(method = "shouldStopDancing", cancellable = true, at = @At("HEAD"))
+    private void neotenet$stopDancing(CallbackInfoReturnable<Boolean> cir) {
+        if (this.forceDancing) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Redirect(method = "duplicateAllay", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+    private boolean neotenet$captureDuplicate(Level instance, Entity entity) {
+        instance.pushAddEntityReason(CreatureSpawnEvent.SpawnReason.DUPLICATION);
+        if (instance.addFreshEntity(entity)) {
+            neotenet$duplicate = (Allay) entity;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Allay duplicateAllay0() {
+        try {
+            this.duplicateAllay();
+            return neotenet$duplicate;
+        } finally {
+            neotenet$duplicate = null;
+        }
+    }
+}

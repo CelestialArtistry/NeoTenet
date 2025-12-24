@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.level.block.InjectionBlock;
++import org.teneted.neotenet.injection.world.level.block.InjectionBlock;
  
 -public class Block extends BlockBehaviour implements ItemLike, net.neoforged.neoforge.common.extensions.IBlockExtension {
 +public class Block extends BlockBehaviour implements ItemLike, net.neoforged.neoforge.common.extensions.IBlockExtension, InjectionBlock {

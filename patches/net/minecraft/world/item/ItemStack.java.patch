@@ -28,7 +28,7 @@
  import net.minecraft.world.level.saveddata.maps.MapId;
  import org.apache.commons.lang3.mutable.MutableBoolean;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.item.InjectionItemStack;
++import org.teneted.neotenet.injection.world.item.InjectionItemStack;
  
 -public final class ItemStack implements DataComponentHolder, net.neoforged.neoforge.common.MutableDataComponentHolder, net.neoforged.neoforge.common.extensions.IItemStackExtension {
 +public final class ItemStack implements DataComponentHolder, net.neoforged.neoforge.common.MutableDataComponentHolder, net.neoforged.neoforge.common.extensions.IItemStackExtension, InjectionItemStack {

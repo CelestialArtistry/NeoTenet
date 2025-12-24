@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.Validate;
-+import org.celestial_artistry.neotenet.injection.world.entity.decoration.InjectionItemFrame;
++import org.teneted.neotenet.injection.world.entity.decoration.InjectionItemFrame;
  
 -public class ItemFrame extends HangingEntity {
 +public class ItemFrame extends HangingEntity implements InjectionItemFrame {

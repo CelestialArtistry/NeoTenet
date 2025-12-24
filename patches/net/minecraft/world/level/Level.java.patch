@@ -68,7 +68,7 @@
 +import org.bukkit.generator.ChunkGenerator;
 +import org.jetbrains.annotations.ApiStatus;
 +import org.spigotmc.SpigotWorldConfig;
-+import org.celestial_artistry.neotenet.injection.world.level.InjectionLevel;
++import org.teneted.neotenet.injection.world.level.InjectionLevel;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable, net.neoforged.neoforge.common.extensions.ILevelExtension {
 +public abstract class Level extends AttachmentHolder implements LevelAccessor, AutoCloseable, ILevelExtension, InjectionLevel {

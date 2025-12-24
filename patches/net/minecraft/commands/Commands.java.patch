@@ -41,9 +41,9 @@
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
  import net.minecraft.world.level.GameRules;
-+import org.celestial_artistry.neotenet.bukkit.BukkitDispatcher;
++import org.teneted.neotenet.bukkit.BukkitDispatcher;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.commands.InjectionCommands;
++import org.teneted.neotenet.injection.commands.InjectionCommands;
  
 -public class Commands {
 +public class Commands implements InjectionCommands {

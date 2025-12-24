@@ -13,7 +13,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.entity.InjectionEntityType;
++import org.teneted.neotenet.injection.world.entity.InjectionEntityType;
  
 -public class EntityType<T extends Entity> implements FeatureElement, EntityTypeTest<Entity, T> {
 +public class EntityType<T extends Entity> implements FeatureElement, EntityTypeTest<Entity, T>, InjectionEntityType {

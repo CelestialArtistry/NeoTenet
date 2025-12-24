@@ -13,7 +13,7 @@
  import net.minecraft.network.chat.Component;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.entity.Entity;
-+import org.celestial_artistry.neotenet.injection.commands.arguments.InjectionEntityArgument;
++import org.teneted.neotenet.injection.commands.arguments.InjectionEntityArgument;
  
 -public class EntityArgument implements ArgumentType<EntitySelector> {
 +public class EntityArgument implements ArgumentType<EntitySelector>, InjectionEntityArgument {

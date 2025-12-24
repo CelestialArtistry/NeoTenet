@@ -4,7 +4,7 @@
  import net.minecraft.world.level.validation.ForbiddenSymlinkInfo;
  import net.minecraft.world.level.validation.PathAllowList;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.level.storage.InjectionLevelStorageSource;
++import org.teneted.neotenet.injection.world.level.storage.InjectionLevelStorageSource;
  
 -public class LevelStorageSource {
 +public class LevelStorageSource implements InjectionLevelStorageSource {

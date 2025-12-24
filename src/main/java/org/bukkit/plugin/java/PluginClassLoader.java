@@ -25,11 +25,11 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
-import org.celestial_artistry.neotenet.bukkit.remapping.ClassLoaderRemapper;
-import org.celestial_artistry.neotenet.bukkit.remapping.NeoTenetRemapConfig;
-import org.celestial_artistry.neotenet.bukkit.remapping.NeoTenetRemapper;
-import org.celestial_artistry.neotenet.bukkit.remapping.RemappingClassLoader;
-import org.celestial_artistry.neotenet.bukkit.remapping.patcher.fix.PluginPropertiesManager;
+import org.teneted.neotenet.bukkit.remapping.ClassLoaderRemapper;
+import org.teneted.neotenet.bukkit.remapping.NeoTenetRemapConfig;
+import org.teneted.neotenet.bukkit.remapping.NeoTenetRemapper;
+import org.teneted.neotenet.bukkit.remapping.RemappingClassLoader;
+import org.teneted.neotenet.bukkit.remapping.patcher.fix.PluginPropertiesManager;
 import io.izzel.tools.product.Product2;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidPluginException;

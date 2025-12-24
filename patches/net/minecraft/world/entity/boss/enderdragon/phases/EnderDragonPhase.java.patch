@@ -4,7 +4,7 @@
  import java.lang.reflect.Constructor;
  import java.util.Arrays;
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-+import org.celestial_artistry.neotenet.injection.world.entity.boss.enderdragon.phases.InjectionEnderDragonPhase;
++import org.teneted.neotenet.injection.world.entity.boss.enderdragon.phases.InjectionEnderDragonPhase;
  
 -public class EnderDragonPhase<T extends DragonPhaseInstance> {
 +public class EnderDragonPhase<T extends DragonPhaseInstance> implements InjectionEnderDragonPhase {

@@ -4,7 +4,7 @@
  
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.world.entity.Entity;
-+import org.celestial_artistry.neotenet.injection.world.level.InjectionServerLevelAccessor;
++import org.teneted.neotenet.injection.world.level.InjectionServerLevelAccessor;
  
 -public interface ServerLevelAccessor extends LevelAccessor {
 +public interface ServerLevelAccessor extends LevelAccessor, InjectionServerLevelAccessor {

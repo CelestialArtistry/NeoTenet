@@ -17,7 +17,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.levelgen.Heightmap;
  import net.minecraft.world.phys.AABB;
-+import org.celestial_artistry.neotenet.injection.world.level.block.entity.InjectionBeaconBlockEntity;
++import org.teneted.neotenet.injection.world.level.block.entity.InjectionBeaconBlockEntity;
  
 -public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable {
 +public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable, InjectionBeaconBlockEntity {

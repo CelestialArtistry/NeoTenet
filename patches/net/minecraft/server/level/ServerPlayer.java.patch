@@ -14,7 +14,7 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.server.level.InjectionServerPlayer;
++import org.teneted.neotenet.injection.server.level.InjectionServerPlayer;
  
 -public class ServerPlayer extends Player {
 +public class ServerPlayer extends Player implements InjectionServerPlayer {

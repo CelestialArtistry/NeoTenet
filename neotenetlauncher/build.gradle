@@ -20,7 +20,7 @@ tasks.register('launcherJar', Jar) {
         attributes(
                 "Implementation-Title": project.name,
                 "Implementation-Version": version,
-                "Main-Class": "org.celestial_artistry.neotenet.launcher.NeoTenetLauncher",
+                "Main-Class": "org.teneted.neotenet.launcher.NeoTenetLauncher",
         )
     }
 

@@ -4,7 +4,7 @@
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.chunk.LevelChunk;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.server.level.InjectionDistanceManager;
++import org.teneted.neotenet.injection.server.level.InjectionDistanceManager;
  
 -public abstract class DistanceManager {
 +public abstract class DistanceManager implements InjectionDistanceManager {

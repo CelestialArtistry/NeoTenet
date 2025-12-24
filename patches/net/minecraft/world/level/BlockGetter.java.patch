@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.celestial_artistry.neotenet.injection.world.level.InjectionBlockGetter;
++import org.teneted.neotenet.injection.world.level.InjectionBlockGetter;
  
 -public interface BlockGetter extends LevelHeightAccessor, net.neoforged.neoforge.common.extensions.IBlockGetterExtension {
 +public interface BlockGetter extends LevelHeightAccessor, net.neoforged.neoforge.common.extensions.IBlockGetterExtension, InjectionBlockGetter {

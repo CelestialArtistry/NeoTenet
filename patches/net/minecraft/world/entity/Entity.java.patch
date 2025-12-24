@@ -23,7 +23,7 @@
 +import org.bukkit.craftbukkit.entity.CraftEntity;
 +import org.bukkit.util.Vector;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.entity.InjectionEntity;
++import org.teneted.neotenet.injection.world.entity.InjectionEntity;
  
 -public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess, CommandSource, ScoreHolder, net.neoforged.neoforge.common.extensions.IEntityExtension {
 +public abstract class Entity extends net.neoforged.neoforge.attachment.AttachmentHolder implements SyncedDataHolder, Nameable, EntityAccess, CommandSource, ScoreHolder, net.neoforged.neoforge.common.extensions.IEntityExtension, InjectionEntity {

@@ -4,7 +4,7 @@
  import net.minecraft.world.level.chunk.LevelChunkSection;
  import net.minecraft.world.level.chunk.status.ChunkStatus;
  import net.minecraft.world.level.lighting.LevelLightEngine;
-+import org.celestial_artistry.neotenet.injection.server.level.InjectionChunkHolder;
++import org.teneted.neotenet.injection.server.level.InjectionChunkHolder;
  
 -public class ChunkHolder extends GenerationChunkHolder {
 +public class ChunkHolder extends GenerationChunkHolder implements InjectionChunkHolder {

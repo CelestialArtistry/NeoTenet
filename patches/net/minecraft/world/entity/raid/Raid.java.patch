@@ -4,7 +4,7 @@
  import net.minecraft.world.level.block.entity.BannerPatterns;
  import net.minecraft.world.level.levelgen.Heightmap;
  import net.minecraft.world.phys.Vec3;
-+import org.celestial_artistry.neotenet.injection.world.entity.raid.InjectionRaid;
++import org.teneted.neotenet.injection.world.entity.raid.InjectionRaid;
  
 -public class Raid {
 +public class Raid implements InjectionRaid {

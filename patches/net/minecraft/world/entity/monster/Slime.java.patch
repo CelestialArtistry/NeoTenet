@@ -4,7 +4,7 @@
  import net.minecraft.world.level.WorldGenLevel;
  import net.minecraft.world.level.levelgen.WorldgenRandom;
  import net.minecraft.world.phys.Vec3;
-+import org.celestial_artistry.neotenet.injection.world.entity.monster.InjectionSlime;
++import org.teneted.neotenet.injection.world.entity.monster.InjectionSlime;
  
 -public class Slime extends Mob implements Enemy {
 +public class Slime extends Mob implements Enemy, InjectionSlime {

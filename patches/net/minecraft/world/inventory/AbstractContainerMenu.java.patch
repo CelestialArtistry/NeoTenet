@@ -20,7 +20,7 @@
  import net.minecraft.world.level.block.entity.BlockEntity;
 +import org.bukkit.inventory.InventoryView;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.inventory.InjectionAbstractContainerMenu;
++import org.teneted.neotenet.injection.world.inventory.InjectionAbstractContainerMenu;
  
 -public abstract class AbstractContainerMenu {
 +public abstract class AbstractContainerMenu implements InjectionAbstractContainerMenu {

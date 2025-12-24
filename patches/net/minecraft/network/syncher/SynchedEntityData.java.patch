@@ -4,7 +4,7 @@
  import net.minecraft.util.ClassTreeIdRegistry;
  import org.apache.commons.lang3.ObjectUtils;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.network.syncher.InjectionSynchedEntityData;
++import org.teneted.neotenet.injection.network.syncher.InjectionSynchedEntityData;
  
 -public class SynchedEntityData {
 +public class SynchedEntityData implements InjectionSynchedEntityData {

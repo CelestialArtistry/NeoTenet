@@ -8,7 +8,7 @@
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.level.InjectionNaturalSpawner_SpawnState;
++import org.teneted.neotenet.injection.world.level.InjectionNaturalSpawner_SpawnState;
  
 -public final class NaturalSpawner {
 +// TODO: ForgeHooks.canEntitySpawn

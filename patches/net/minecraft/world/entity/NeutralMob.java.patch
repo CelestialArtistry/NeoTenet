@@ -4,7 +4,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
-+import org.celestial_artistry.neotenet.injection.world.entity.InjectionNeutralMob;
++import org.teneted.neotenet.injection.world.entity.InjectionNeutralMob;
  
 -public interface NeutralMob {
 +public interface NeutralMob extends InjectionNeutralMob {

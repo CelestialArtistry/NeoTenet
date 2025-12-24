@@ -14,7 +14,7 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 +import org.bukkit.craftbukkit.CraftLootTable;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.level.storage.loot.InjectionLootTable;
++import org.teneted.neotenet.injection.world.level.storage.loot.InjectionLootTable;
  
 -public class LootTable {
 +public class LootTable implements InjectionLootTable {

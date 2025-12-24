@@ -16,7 +16,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.level.block.entity.InjectionBeehiveBlockEntity;
++import org.teneted.neotenet.injection.world.level.block.entity.InjectionBeehiveBlockEntity;
  
 -public class BeehiveBlockEntity extends BlockEntity {
 +public class BeehiveBlockEntity extends BlockEntity implements InjectionBeehiveBlockEntity {

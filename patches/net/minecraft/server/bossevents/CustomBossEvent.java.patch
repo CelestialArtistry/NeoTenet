@@ -11,7 +11,7 @@
  import net.minecraft.util.Mth;
  import net.minecraft.world.BossEvent;
 +import org.bukkit.boss.KeyedBossBar;
-+import org.celestial_artistry.neotenet.injection.server.bossevents.InjectionCustomBossEvent;
++import org.teneted.neotenet.injection.server.bossevents.InjectionCustomBossEvent;
  
 -public class CustomBossEvent extends ServerBossEvent {
 +public class CustomBossEvent extends ServerBossEvent implements InjectionCustomBossEvent {

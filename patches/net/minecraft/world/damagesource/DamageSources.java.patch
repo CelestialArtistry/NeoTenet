@@ -4,7 +4,7 @@
  import net.minecraft.world.entity.projectile.WitherSkull;
  import net.minecraft.world.level.Explosion;
  import net.minecraft.world.phys.Vec3;
-+import org.celestial_artistry.neotenet.injection.world.damagesource.InjectionDamageSources;
++import org.teneted.neotenet.injection.world.damagesource.InjectionDamageSources;
  
 -public class DamageSources {
 +public class DamageSources implements InjectionDamageSources {

@@ -13,7 +13,7 @@
  import net.minecraft.world.level.block.state.properties.RailShape;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.celestial_artistry.neotenet.injection.world.entity.vehicle.InjectionAbstractMinecart;
++import org.teneted.neotenet.injection.world.entity.vehicle.InjectionAbstractMinecart;
  
 -public abstract class AbstractMinecart extends VehicleEntity implements net.neoforged.neoforge.common.extensions.IAbstractMinecartExtension {
 +public abstract class AbstractMinecart extends VehicleEntity implements net.neoforged.neoforge.common.extensions.IAbstractMinecartExtension, InjectionAbstractMinecart {

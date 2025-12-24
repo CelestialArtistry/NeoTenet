@@ -140,7 +140,7 @@
 +import org.bukkit.util.Vector;
  import org.slf4j.Logger;
 +import org.spigotmc.SpigotConfig;
-+import org.celestial_artistry.neotenet.injection.server.network.InjectionServerGamePacketListenerImpl;
++import org.teneted.neotenet.injection.server.network.InjectionServerGamePacketListenerImpl;
  
  public class ServerGamePacketListenerImpl
      extends ServerCommonPacketListenerImpl

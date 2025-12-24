@@ -65,8 +65,8 @@
 +import org.bukkit.event.player.PlayerSpawnChangeEvent;
  import org.slf4j.Logger;
 +import org.spigotmc.event.player.PlayerSpawnLocationEvent;
-+import org.celestial_artistry.neotenet.injection.server.players.InjectionPlayerList;
-+import org.celestial_artistry.neotenet.neoforge.BukkitRegistry;
++import org.teneted.neotenet.injection.server.players.InjectionPlayerList;
++import org.teneted.neotenet.neoforge.BukkitRegistry;
  
 -public abstract class PlayerList {
 +public abstract class PlayerList implements InjectionPlayerList {

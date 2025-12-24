@@ -36,7 +36,7 @@
  import net.minecraft.world.level.timers.TimerCallbacks;
  import net.minecraft.world.level.timers.TimerQueue;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.level.storage.InjectionPrimaryLevelData;
++import org.teneted.neotenet.injection.world.level.storage.InjectionPrimaryLevelData;
  
 -public class PrimaryLevelData implements ServerLevelData, WorldData {
 +public class PrimaryLevelData implements ServerLevelData, WorldData, InjectionPrimaryLevelData {

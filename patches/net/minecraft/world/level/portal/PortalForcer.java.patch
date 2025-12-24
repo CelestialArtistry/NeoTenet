@@ -12,7 +12,7 @@
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.border.WorldBorder;
  import net.minecraft.world.level.levelgen.Heightmap;
-+import org.celestial_artistry.neotenet.injection.world.level.portal.InjectionPortalForcer;
++import org.teneted.neotenet.injection.world.level.portal.InjectionPortalForcer;
  
 -public class PortalForcer {
 +public class PortalForcer implements InjectionPortalForcer {

@@ -4,7 +4,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.celestial_artistry.neotenet.injection.world.entity.projectile.InjectionAbstractHurtingProjectile;
++import org.teneted.neotenet.injection.world.entity.projectile.InjectionAbstractHurtingProjectile;
  
 -public abstract class AbstractHurtingProjectile extends Projectile {
 +public abstract class AbstractHurtingProjectile extends Projectile implements InjectionAbstractHurtingProjectile {

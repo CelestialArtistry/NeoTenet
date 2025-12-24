@@ -4,7 +4,7 @@
  import java.util.function.BiFunction;
  import net.minecraft.core.BlockPos;
  import net.minecraft.world.level.Level;
-+import org.celestial_artistry.neotenet.injection.world.inventory.InjectionContainerLevelAccess;
++import org.teneted.neotenet.injection.world.inventory.InjectionContainerLevelAccess;
  
 -public interface ContainerLevelAccess {
 +public interface ContainerLevelAccess extends InjectionContainerLevelAccess {

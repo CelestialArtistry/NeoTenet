@@ -15,7 +15,7 @@
 +import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 +import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.level.block.entity.InjectionBlockEntity;
++import org.teneted.neotenet.injection.world.level.block.entity.InjectionBlockEntity;
  
 -public abstract class BlockEntity implements net.neoforged.neoforge.common.extensions.IBlockEntityExtension {
 +public abstract class BlockEntity extends net.neoforged.neoforge.attachment.AttachmentHolder implements net.neoforged.neoforge.common.extensions.IBlockEntityExtension, InjectionBlockEntity {

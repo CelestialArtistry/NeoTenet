@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.celestial_artistry.neotenet.injection.world.level.block.InjectionChestBlock;
++import org.teneted.neotenet.injection.world.level.block.InjectionChestBlock;
  
 -public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements SimpleWaterloggedBlock {
 +public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements SimpleWaterloggedBlock, InjectionChestBlock {

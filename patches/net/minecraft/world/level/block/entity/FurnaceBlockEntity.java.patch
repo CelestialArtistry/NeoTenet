@@ -4,7 +4,7 @@
  import net.minecraft.world.inventory.FurnaceMenu;
  import net.minecraft.world.item.crafting.RecipeType;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.celestial_artistry.neotenet.injection.world.level.block.entity.InjectionFurnaceBlockEntity;
++import org.teneted.neotenet.injection.world.level.block.entity.InjectionFurnaceBlockEntity;
  
 -public class FurnaceBlockEntity extends AbstractFurnaceBlockEntity {
 +public class FurnaceBlockEntity extends AbstractFurnaceBlockEntity implements InjectionFurnaceBlockEntity {

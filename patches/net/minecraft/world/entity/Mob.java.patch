@@ -12,7 +12,7 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
-+import org.celestial_artistry.neotenet.injection.world.entity.InjectionMob;
++import org.teneted.neotenet.injection.world.entity.InjectionMob;
  
 -public abstract class Mob extends LivingEntity implements EquipmentUser, Leashable, Targeting {
 +public abstract class Mob extends LivingEntity implements EquipmentUser, Leashable, Targeting, InjectionMob {

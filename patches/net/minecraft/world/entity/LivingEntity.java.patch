@@ -49,7 +49,7 @@
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
  import org.slf4j.Logger;
-+import org.celestial_artistry.neotenet.injection.world.entity.InjectionLivingEntity;
++import org.teneted.neotenet.injection.world.entity.InjectionLivingEntity;
  
 -public abstract class LivingEntity extends Entity implements Attackable, net.neoforged.neoforge.common.extensions.ILivingEntityExtension {
 +public abstract class LivingEntity extends Entity implements Attackable, net.neoforged.neoforge.common.extensions.ILivingEntityExtension, InjectionLivingEntity {

@@ -4,7 +4,7 @@
  import net.minecraft.world.item.alchemy.PotionContents;
  import net.minecraft.world.item.component.SuspiciousStewEffects;
  import net.minecraft.world.level.Level;
-+import org.celestial_artistry.neotenet.injection.world.item.InjectionSuspiciousStewItem;
++import org.teneted.neotenet.injection.world.item.InjectionSuspiciousStewItem;
  
 -public class SuspiciousStewItem extends Item {
 +public class SuspiciousStewItem extends Item implements InjectionSuspiciousStewItem {
