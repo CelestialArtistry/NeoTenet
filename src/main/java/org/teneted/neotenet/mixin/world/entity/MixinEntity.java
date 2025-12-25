@@ -101,8 +101,6 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     public final ActivationRange.ActivationType activationType =
             ActivationRange.initializeEntityActivationType((Entity) (Object) this);
     @Shadow
-    public int remainingFireTicks;
-    @Shadow
     public boolean horizontalCollision;
     @Shadow
     public int tickCount;
@@ -115,11 +113,6 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     private Level level;
     @Shadow
     private float yRot;
-    @Shadow
-    private float xRot;
-    @Shadow
-    @Nullable
-    private Entity vehicle;
     @Shadow
     private AABB bb;
     @Shadow
@@ -163,14 +156,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     public abstract float getXRot();
 
     @Shadow
-    public abstract int getMaxAirSupply();
-
-    @Shadow
     public abstract void setInvisible(boolean invisible);
-
-    @Shadow
-    @Nullable
-    public abstract Entity getFirstPassenger();
 
     @Shadow
     public abstract SynchedEntityData getEntityData();
@@ -191,16 +177,10 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     public abstract DamageSources damageSources();
 
     @Shadow
-    protected abstract ListTag newDoubleList(double... ds);
-
-    @Shadow
     public abstract boolean teleportTo(ServerLevel level, double x, double y, double z, Set<RelativeMovement> relativeMovements, float yRot, float xRot);
 
     @Shadow
     public abstract Level level();
-
-    @Shadow
-    protected abstract Vec3 getRelativePortalPosition(Direction.Axis axis, BlockUtil.FoundRectangle portal);
 
     @Shadow
     public abstract Vec3 getDeltaMovement();
@@ -216,10 +196,6 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
 
     @Shadow
     public abstract EntityType<?> getType();
-
-    @Shadow
-    protected abstract void removeAfterChangingDimensions();
-
     @Shadow
     public abstract void moveTo(Vec3 vec);
 

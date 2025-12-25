@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.jetbrains.annotations.Nullable;
@@ -89,6 +90,10 @@ public interface InjectionLivingEntity extends InjectionEntity {
     }
 
     default void setItemSlot(EquipmentSlot enumitemslot, ItemStack itemstack, boolean silent) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default boolean actuallyHurtBukkit(DamageSource p_21240_, float p_21241_, EntityDamageEvent event) {
         throw new IllegalStateException("Not implemented");
     }
 }

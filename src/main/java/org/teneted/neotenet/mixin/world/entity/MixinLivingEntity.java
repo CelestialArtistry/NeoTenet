@@ -1,10 +1,13 @@
 package org.teneted.neotenet.mixin.world.entity;
 
+import com.google.common.base.Function;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import java.util.Optional;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -18,12 +21,16 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.stats.Stats;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.CombatTracker;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Attackable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -34,6 +41,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
@@ -41,9 +49,12 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +71,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.teneted.neotenet.injection.world.entity.InjectionLivingEntity;
 
 @Mixin(value = LivingEntity.class, priority = 199)
-public abstract class MixinLivingEntity extends Entity implements Attackable, InjectionLivingEntity {
+public abstract class MixinLivingEntity extends Entity implements Attackable, net.neoforged.neoforge.common.extensions.ILivingEntityExtension, InjectionLivingEntity {
 
     @Shadow
     @Final
@@ -186,6 +197,33 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, In
     @Shadow
     @Final
     public CraftAttributeMap craftAttributes;
+
+    @Shadow
+    protected Stack<DamageContainer> damageContainers;
+
+    @Shadow
+    protected abstract float getDamageAfterMagicAbsorb(DamageSource p_21193_, float p_21194_);
+
+    @Shadow
+    protected abstract float getDamageAfterArmorAbsorb(DamageSource p_21162_, float p_21163_);
+
+    @Shadow
+    public abstract float getAbsorptionAmount();
+
+    @Shadow
+    public abstract void setAbsorptionAmount(float p_21328_);
+
+    @Shadow
+    protected abstract void hurtHelmet(DamageSource p_147213_, float p_147214_);
+
+    @Shadow
+    protected abstract void hurtArmor(DamageSource p_21122_, float p_21123_);
+
+    @Shadow
+    protected abstract void hurtCurrentlyUsedShield(float p_21316_);
+
+    @Shadow
+    protected abstract void blockUsingShield(LivingEntity p_21200_);
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void neotenet$init(EntityType<? extends LivingEntity> type, Level worldIn, CallbackInfo ci) {
@@ -428,4 +466,86 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, In
             neotenet$cause = null;
         }
     }
+
+    // CraftBukkit start
+    private EntityDamageEvent handleEntityDamage(final DamageSource damagesource, float f) {
+        float originalDamage = f;
+
+        Function<Double, Double> freezing = new Function<Double, Double>() {
+            @Override
+            public Double apply(Double f) {
+                if (damagesource.is(DamageTypeTags.IS_FREEZING) && getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
+                    return -(f - (f * 5.0F));
+                }
+                return -0.0;
+            }
+        };
+        float freezingModifier = freezing.apply((double) f).floatValue();
+        f += freezingModifier;
+
+        Function<Double, Double> hardHat = new Function<Double, Double>() {
+            @Override
+            public Double apply(Double f) {
+                if (damagesource.is(DamageTypeTags.DAMAGES_HELMET) && !((LivingEntity) (Object) this).getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
+                    return -(f - (f * 0.75F));
+                }
+                return -0.0;
+            }
+        };
+        float hardHatModifier = hardHat.apply((double) f).floatValue();
+        f += hardHatModifier;
+
+        Function<Double, Double> blocking = new Function<Double, Double>() {
+            @Override
+            public Double apply(Double f) {
+                return -((((LivingEntity) (Object) this).isDamageSourceBlocked(damagesource)) ? f : 0.0);
+            }
+        };
+        float blockingModifier = blocking.apply((double) f).floatValue();
+        f += blockingModifier;
+
+        Function<Double, Double> armor = new Function<Double, Double>() {
+            @Override
+            public Double apply(Double f) {
+                return -(f - getDamageAfterArmorAbsorb(damagesource, f.floatValue()));
+            }
+        };
+        float armorModifier = armor.apply((double) f).floatValue();
+        f += armorModifier;
+
+        Function<Double, Double> resistance = new Function<Double, Double>() {
+            @Override
+            public Double apply(Double f) {
+                if (!damagesource.is(DamageTypeTags.BYPASSES_EFFECTS) && ((LivingEntity) (Object) this).hasEffect(MobEffects.DAMAGE_RESISTANCE) && !damagesource.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
+                    int i = (((LivingEntity) (Object) this).getEffect(MobEffects.DAMAGE_RESISTANCE).getAmplifier() + 1) * 5;
+                    int j = 25 - i;
+                    float f1 = f.floatValue() * (float) j;
+                    return -(f - (f1 / 25.0F));
+                }
+                return -0.0;
+            }
+        };
+        float resistanceModifier = resistance.apply((double) f).floatValue();
+        f += resistanceModifier;
+
+        Function<Double, Double> magic = new Function<Double, Double>() {
+            @Override
+            public Double apply(Double f) {
+                return -(f - getDamageAfterMagicAbsorb(damagesource, f.floatValue()));
+            }
+        };
+        float magicModifier = magic.apply((double) f).floatValue();
+        f += magicModifier;
+
+        Function<Double, Double> absorption = new Function<Double, Double>() {
+            @Override
+            public Double apply(Double f) {
+                return -(Math.max(f - Math.max(f - ((LivingEntity) (Object) this).getAbsorptionAmount(), 0.0F), 0.0F));
+            }
+        };
+        float absorptionModifier = absorption.apply((double) f).floatValue();
+
+        return CraftEventFactory.handleLivingEntityDamageEvent(this, damagesource, originalDamage, freezingModifier, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, freezing, hardHat, blocking, armor, resistance, magic, absorption);
+    }
+
 }

@@ -189,6 +189,8 @@
     "world.entity.npc.MixinWanderingTraderSpawner",
     "world.entity.player.MixinInventory",
     "world.entity.player.MixinPlayer",
+    "world.gameevent.MixinGameEventDispatcher",
+    "world.gameevent.vibration.MixinVibrationSystem_Listener",
     "world.inventory.MixinAbstractContainerMenu",
     "world.inventory.MixinAbstractFurnaceContainer",
     "world.inventory.MixinAbstractFurnaceMenu",
