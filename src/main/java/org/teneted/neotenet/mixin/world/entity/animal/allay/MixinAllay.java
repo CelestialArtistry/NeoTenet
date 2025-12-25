@@ -1,4 +1,4 @@
-package org.teneted.neotenet.mixin.world.entity.animal;
+package org.teneted.neotenet.mixin.world.entity.animal.allay;
 
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.InteractionHand;
