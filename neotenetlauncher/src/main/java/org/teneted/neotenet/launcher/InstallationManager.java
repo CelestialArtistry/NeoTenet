@@ -2,6 +2,7 @@ package org.teneted.neotenet.launcher;
 
 import java.io.*;
 import java.nio.file.*;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -89,7 +90,7 @@ public class InstallationManager {
                 if (entry.getName().startsWith("META-INF/installer/") &&
                         entry.getName().endsWith("-installer.jar")) {
 
-                    Path tempDir = Files.createTempDirectory("neotaiyitist-installer-");
+                    Path tempDir = Files.createTempDirectory("neotenet-installer-");
                     Path installerPath = tempDir.resolve("installer.jar");
 
                     try (InputStream is = jarFile.getInputStream(entry);
@@ -200,19 +201,25 @@ public class InstallationManager {
 
             if (osName.contains("win")) {
                 if (Files.exists(targetRunBat)) {
-                    pb = new ProcessBuilder("cmd", "/c", targetRunBat.toAbsolutePath().toString());
+                    pb = new ProcessBuilder("cmd", "/c", "call", targetRunBat.toAbsolutePath().toString());
                     pb.inheritIO();
                     System.out.println("Running server script: " + targetRunBat.toAbsolutePath());
-                    pb.start();
+                    Process process = pb.start();
+                    int exitCode = process.waitFor();
+                    System.out.println("Server script finished with exit code: " + exitCode);
                 } else {
                     System.err.println("Windows batch file not found: " + targetRunBat);
                 }
             } else {
                 if (Files.exists(targetRunSh)) {
-                    pb = new ProcessBuilder("sh", targetRunSh.toAbsolutePath().toString());
+                    Files.setPosixFilePermissions(targetRunSh,
+                        PosixFilePermissions.fromString("rwxr-xr-x"));
+                    pb = new ProcessBuilder("sh", "-c", "exec " + targetRunSh.toAbsolutePath().toString());
                     pb.inheritIO();
                     System.out.println("Running server script: " + targetRunSh.toAbsolutePath());
-                    pb.start();
+                    Process process = pb.start();
+                    int exitCode = process.waitFor();
+                    System.out.println("Server script finished with exit code: " + exitCode);
                 } else {
                     System.err.println("Shell script not found: " + targetRunSh);
                 }
