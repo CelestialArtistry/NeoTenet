@@ -9,6 +9,17 @@ public class NeoTenetLauncher {
 
         System.setProperty("launcher.args", String.join(",", args));
 
+        // NeoTenet - Prepare Actions
+        /*
+        try {
+            Actions.init();
+            BootstrapLauncher.main(args);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
+         */
+
         if (!InstallationManager.checkAndInstall()) {
             System.err.println("Installation failed!");
             System.exit(1);
@@ -20,4 +31,4 @@ public class NeoTenetLauncher {
     public static String[] getCommandLineArgs() {
         return commandLineArgs.clone();
     }
- }
+}
