@@ -1,6 +1,8 @@
 package org.teneted.neotenet.mixin.world.entity.animal.goat;
 
 import java.util.concurrent.atomic.AtomicReference;
+
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -33,10 +35,10 @@ public abstract class MixinGoat extends Animal {
 
     @Inject(method = "mobInteract", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/player/Player;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"),
-            locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+            cancellable = true)
     private void neotenet$bucketFillEvent(Player player, InteractionHand hand,
-                                        CallbackInfoReturnable<InteractionResult> cir,
-                                        ItemStack itemStack) {
+                                          CallbackInfoReturnable<InteractionResult> cir,
+                                          @Local(ordinal = 0) ItemStack itemStack) {
         // CraftBukkit start - Got milk?
         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(),
                 player, this.blockPosition(), this.blockPosition(), null,
