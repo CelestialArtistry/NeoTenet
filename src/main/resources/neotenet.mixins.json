@@ -198,6 +198,7 @@
     "world.inventory.MixinSmithingMenu",
     "world.inventory.MixinStonecutterMenu",
     "world.inventory.MixinStonecutterMenu1",
+    "world.inventory.MixinTransientCraftingContainer",
     "world.item.MixinArmorItem",
     "world.item.MixinArmorStandItem",
     "world.item.MixinAxeItem",

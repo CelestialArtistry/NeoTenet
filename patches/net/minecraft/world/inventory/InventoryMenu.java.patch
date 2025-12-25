@@ -8,11 +8,14 @@
  
  public class InventoryMenu extends RecipeBookMenu<CraftingInput, CraftingRecipe> {
      public static final int CONTAINER_ID = 0;
-@@ -48,6 +_,7 @@
+@@ -48,6 +_,10 @@
      private final ResultContainer resultSlots = new ResultContainer();
      public final boolean active;
      private final Player owner;
 +    public CraftInventoryView bukkitEntity;
++    // CraftBukkit start
++    private Inventory player;
++    // CraftBukkit end
  
      public InventoryMenu(Inventory p_39706_, boolean p_39707_, final Player p_39708_) {
          super(null, 0);
