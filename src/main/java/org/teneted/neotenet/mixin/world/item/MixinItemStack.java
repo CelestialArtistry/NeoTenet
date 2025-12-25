@@ -2,6 +2,9 @@ package org.teneted.neotenet.mixin.world.item;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentHolder;
@@ -78,7 +81,7 @@ public abstract class MixinItemStack  implements DataComponentHolder, net.neofor
 
     @Shadow
     @Final
-    private PatchedDataComponentMap components;
+    PatchedDataComponentMap components;
 
     @Shadow
     public abstract int getCount();
@@ -91,27 +94,22 @@ public abstract class MixinItemStack  implements DataComponentHolder, net.neofor
 
     @Mutable
     @Shadow
-    @Final
     @Deprecated
     @Nullable
     private Item item;
 
     @Shadow
     private int count;
-    @Unique
-    InteractionResult enuminteractionresult;
-    @Unique
-    int oldCount = this.getCount();
-    @Unique
-    DataComponentPatch newData = this.components.asPatch();
-    @Unique
-    int newCount = this.getCount();
-    @Unique
-    DataComponentPatch oldData = this.components.asPatch();
 
     @Inject(method = "onItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/InteractionResult;indicateItemUse()Z"))
-    private void neotenet$bukkitHandleItem(UseOnContext p_41662_, Function<UseOnContext, InteractionResult> callback, CallbackInfoReturnable<InteractionResult> cir, @Local(ordinal = 0) Player player, @Local(ordinal = 0) BlockPos blockpos, @Local(ordinal = 0) Item item) {
+    private void neotenet$bukkitHandleItem(UseOnContext p_41662_, Function<UseOnContext, InteractionResult> callback, CallbackInfoReturnable<InteractionResult> cir,
+                                           @Local(ordinal = 0) Player player, @Local(ordinal = 0) BlockPos blockpos, @Local(ordinal = 0) Item item,
+                                           @Share("enuminteractionresult") LocalRef<InteractionResult> enuminteractionresult,
+                                           @Share("oldCount") LocalIntRef oldCount, @Share("newCount") LocalIntRef newCount,
+                                           @Share("oldData") LocalRef<DataComponentPatch> oldData, @Share("newData") LocalRef<DataComponentPatch> newData) {
         // CraftBukkit start - handle all block place event logic here
+        oldData.set(this.components.asPatch());
+        oldCount.set(this.getCount());
         ServerLevel world = (ServerLevel) p_41662_.getLevel();
 
         if (!(item instanceof BucketItem || item instanceof SolidBucketItem)) { // if not bucket
@@ -122,13 +120,15 @@ public abstract class MixinItemStack  implements DataComponentHolder, net.neofor
             }
         }
         try {
-            enuminteractionresult = item.useOn(p_41662_);
+            enuminteractionresult.set(item.useOn(p_41662_));
         } finally {
             world.captureBlockStates = false;
         }
-        this.setCount(oldCount);
-        this.restorePatch(oldData);
-        if (enuminteractionresult.consumesAction() && world.captureTreeGeneration && world.capturedBlockStates.size() > 0) {
+        newData.set(this.components.asPatch());
+        newCount.set(this.getCount());
+        this.setCount(oldCount.get());
+        this.restorePatch(oldData.get());
+        if (enuminteractionresult.get().consumesAction() && world.captureTreeGeneration && world.capturedBlockStates.size() > 0) {
             world.captureTreeGeneration = false;
             Location location = CraftLocation.toBukkit(blockpos, world.getWorld());
             TreeType treeType = SaplingBlock.treeType;
@@ -148,9 +148,9 @@ public abstract class MixinItemStack  implements DataComponentHolder, net.neofor
 
             if (!fertilizeEvent.isCancelled()) {
                 // Change the stack to its new contents if it hasn't been tampered with.
-                if (this.getCount() == oldCount && Objects.equals(this.components.asPatch(), oldData)) {
-                    this.restorePatch(newData);
-                    this.setCount(newCount);
+                if (this.getCount() == oldCount.get() && Objects.equals(this.components.asPatch(), oldData)) {
+                    this.restorePatch(newData.get());
+                    this.setCount(newCount.get());
                 }
                 for (CraftBlockState blockstate : blocks) {
                     // SPIGOT-7572 - Move fix for SPIGOT-7248 to CapturedBlockState, to allow bees in bee nest
@@ -160,13 +160,16 @@ public abstract class MixinItemStack  implements DataComponentHolder, net.neofor
             }
 
             SignItem.openSign = null; // SPIGOT-6758 - Reset on early return
-            cir.setReturnValue(enuminteractionresult);
+            cir.setReturnValue(enuminteractionresult.get());
         }
         world.captureTreeGeneration = false;
     }
 
     @Redirect(method = "onItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/stats/Stat;)V"))
-    private void neotenet$bukkitAwardStat(Player instance, Stat<?> p_36247_, @Local(argsOnly = true) UseOnContext p_41662_, @Local(ordinal = 0) BlockPos blockpos, @Local(ordinal = 0) Item item) {
+    private void neotenet$bukkitAwardStat(Player instance, Stat<?> p_36247_, @Local(argsOnly = true) UseOnContext p_41662_, @Local(ordinal = 0) BlockPos blockpos, @Local(ordinal = 0) Item item,
+                                          @Share("enuminteractionresult") LocalRef<InteractionResult> enuminteractionresult,
+                                          @Share("oldCount") LocalIntRef oldCount, @Share("newCount") LocalIntRef newCount,
+                                          @Share("oldData") LocalRef<DataComponentPatch> oldData, @Share("newData") LocalRef<DataComponentPatch> newData) {
         InteractionHand enumhand = p_41662_.getHand();
         BlockPlaceEvent placeEvent = null;
         var level = p_41662_.getLevel();
@@ -182,7 +185,7 @@ public abstract class MixinItemStack  implements DataComponentHolder, net.neofor
         }
 
         if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
-            enuminteractionresult = InteractionResult.FAIL; // cancel placement
+            enuminteractionresult.set(InteractionResult.FAIL); // cancel placement
             // PAIL: Remove this when MC-99075 fixed
             placeEvent.getPlayer().updateInventory();
             // revert back all captured blocks
@@ -200,9 +203,9 @@ public abstract class MixinItemStack  implements DataComponentHolder, net.neofor
             SignItem.openSign = null; // SPIGOT-6758 - Reset on early return
         } else {
             // Change the stack to its new contents if it hasn't been tampered with.
-            if (this.getCount() == oldCount && Objects.equals(this.components.asPatch(), oldData)) {
-                this.restorePatch(newData);
-                this.setCount(newCount);
+            if (this.getCount() == oldCount.get() && Objects.equals(this.components.asPatch(), oldData)) {
+                this.restorePatch(newData.get());
+                this.setCount(newCount.get());
             }
 
             for (Map.Entry<BlockPos, BlockEntity> e : world.capturedTileEntities.entrySet()) {
