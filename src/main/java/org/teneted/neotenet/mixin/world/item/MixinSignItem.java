@@ -1,5 +1,6 @@
 package org.teneted.neotenet.mixin.world.item;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -19,17 +20,9 @@ public class MixinSignItem {
 
     @Redirect(method = "updateCustomBlockEntityTag", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/SignBlock;openTextEdit(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/entity/SignBlockEntity;Z)V"))
-    private void neotenet$cancelOpen(SignBlock instance, Player player, SignBlockEntity signBlockEntity, boolean bl) {
-    }
-
-    @Inject(method = "updateCustomBlockEntityTag",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/block/SignBlock;openTextEdit(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/entity/SignBlockEntity;Z)V",
-                    shift = At.Shift.AFTER))
-    private void neotenet$setOpenSign(BlockPos pos, Level level, Player player,
-                                    ItemStack stack, BlockState state, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$setOpenSign(SignBlock instance, Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_, @Local(argsOnly = true) BlockPos p_43130_) {
         // CraftBukkit start - SPIGOT-4678
-        SignItem.openSign = pos;
+        SignItem.openSign = p_43130_;
         // CraftBukkit end
     }
 }

@@ -1,5 +1,6 @@
 package org.teneted.neotenet.mixin.world.item;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.FireChargeItem;
@@ -17,9 +18,9 @@ import org.teneted.neotenet.bukkit.DistValidate;
 @Mixin(FireChargeItem.class)
 public class MixinFireChargeItem {
 
-    @Inject(method = "useOn", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
+    @Inject(method = "useOn", cancellable = true,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/FireChargeItem;playSound(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
-    public void neotenet$blockIgnite(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir, Level world, BlockPos blockPos) {
+    public void neotenet$blockIgnite(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir, @Local(ordinal = 0) Level world, @Local(ordinal = 0) BlockPos blockPos) {
         if (DistValidate.isValid(context) && CraftEventFactory.callBlockIgniteEvent(world, blockPos, BlockIgniteEvent.IgniteCause.FIREBALL, context.getPlayer()).isCancelled()) {
             if (!context.getPlayer().getAbilities().instabuild) {
                 context.getItemInHand().shrink(1);

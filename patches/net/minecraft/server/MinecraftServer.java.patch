@@ -132,12 +132,11 @@
          serverleveldata.setGameType(GameType.SPECTATOR);
      }
  
--    public void prepareLevels(ChunkProgressListener p_129941_) {
++    // CraftBukkit start
+     private void prepareLevels(ChunkProgressListener p_129941_) {
 -        ServerLevel serverlevel = this.overworld();
 -        LOGGER.info("Preparing start region for dimension {}", serverlevel.dimension().location());
 -        BlockPos blockpos = serverlevel.getSharedSpawnPos();
-+    // CraftBukkit start
-+    private void prepareLevels(ChunkProgressListener p_129941_) {
 +        ServerLevel serverworld = this.overworld();
 +        this.forceTicks = true;
 +        LOGGER.info("Preparing start region for dimension {}", serverworld.dimension().location());

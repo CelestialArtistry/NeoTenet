@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/inventory/CraftingMenu.java
++++ b/net/minecraft/world/inventory/CraftingMenu.java
+@@ -16,6 +_,7 @@
+ import net.minecraft.world.item.crafting.RecipeType;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class CraftingMenu extends RecipeBookMenu<CraftingInput, CraftingRecipe> {
+     public static final int RESULT_SLOT = 0;
+@@ -25,11 +_,14 @@
+     private static final int INV_SLOT_END = 37;
+     private static final int USE_ROW_SLOT_START = 37;
+     private static final int USE_ROW_SLOT_END = 46;
+-    public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
++    public final TransientCraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3); // CraftBukkit
+     public final ResultContainer resultSlots = new ResultContainer();
+     public final ContainerLevelAccess access;
+     private final Player player;
+     private boolean placingRecipe;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    // CraftBukkit end
+ 
+     public CraftingMenu(int p_39353_, Inventory p_39354_) {
+         this(p_39353_, p_39354_, ContainerLevelAccess.NULL);
