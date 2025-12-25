@@ -3,6 +3,7 @@ package net.neoforged.neodev.installer;
 import net.neoforged.neodev.utils.MavenIdentifier;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
+import org.teneted.neotenetdev.NeoTenetDevUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,11 +57,17 @@ class LibraryCollector {
     private static final List<String> HOST_WHITELIST = List.of(
             "minecraft.net",
             "neoforged.net",
-            "mojang.com"
-    );
+            "mojang.com",
+            "https://hub.spigotmc.org/nexus/content/groups/public/",
+            "https://maven.izzel.io/releases",
+            "https://arclight.hypertention.cn/",
+            "https://piston-meta.mojang.com",
+            "https://bmclapi2.bangbang93.com/neoforge"
 
-    private static final URI MOJANG_MAVEN = URI.create("https://libraries.minecraft.net");
-    private static final URI NEOFORGED_MAVEN = URI.create("https://maven.neoforged.net/releases");
+    );// NeoTenet - add URL
+
+    private static final URI MOJANG_MAVEN = NeoTenetDevUtils.isCN() ? URI.create("https://piston-meta.mojang.com") : URI.create("https://libraries.minecraft.net");// NeoTenet - remove final and Use CN Mirrors
+    private static final URI NEOFORGED_MAVEN = NeoTenetDevUtils.isCN() ? URI.create("https://bmclapi2.bangbang93.com/neoforge") : URI.create("https://maven.neoforged.net/releases");// NeoTenet - remove final and Use CN Mirrors
 
     private final List<URI> repositoryUrls;
 
