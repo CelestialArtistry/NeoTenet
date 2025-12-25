@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
+@@ -1,6 +_,8 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import com.mojang.logging.LogUtils;
++
++import java.util.List;
+ import java.util.Objects;
+ import java.util.function.Predicate;
+ import net.minecraft.core.BlockPos;
+@@ -19,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.properties.BooleanProperty;
+ import net.minecraft.world.level.gameevent.GameEvent;
++import org.bukkit.entity.HumanEntity;
+ import org.slf4j.Logger;
+ 
+ public class ChiseledBookShelfBlockEntity extends BlockEntity implements Container {
+@@ -26,6 +_,8 @@
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final NonNullList<ItemStack> items = NonNullList.withSize(6, ItemStack.EMPTY);
+     public int lastInteractedSlot = -1;
++    public List<HumanEntity> transaction = new java.util.ArrayList<>();
++    private int maxStack = 1;
+ 
+     public ChiseledBookShelfBlockEntity(BlockPos p_249541_, BlockState p_251752_) {
+         super(BlockEntityType.CHISELED_BOOKSHELF, p_249541_, p_251752_);

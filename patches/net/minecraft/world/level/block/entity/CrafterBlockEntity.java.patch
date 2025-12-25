@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/level/block/entity/CrafterBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/CrafterBlockEntity.java
+@@ -21,6 +_,9 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.CrafterBlock;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.entity.HumanEntity;
++
++import java.util.List;
+ 
+ public class CrafterBlockEntity extends RandomizableContainerBlockEntity implements CraftingContainer {
+     public static final int CONTAINER_WIDTH = 3;
+@@ -55,6 +_,9 @@
+             return 10;
+         }
+     };
++    // CraftBukkit start - add fields and methods
++    public List<HumanEntity> transaction = new java.util.ArrayList<>();
++    private int maxStack = MAX_STACK;
+ 
+     public CrafterBlockEntity(BlockPos p_307502_, BlockState p_307485_) {
+         super(BlockEntityType.CRAFTER, p_307502_, p_307485_);

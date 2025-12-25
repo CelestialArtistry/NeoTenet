@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/SculkSpreader.java
++++ b/net/minecraft/world/level/block/SculkSpreader.java
+@@ -33,6 +_,7 @@
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.util.RandomSource;
++import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.block.state.BlockState;
+ import org.slf4j.Logger;
+@@ -51,6 +_,7 @@
+     private final int additionalDecayRate;
+     private List<SculkSpreader.ChargeCursor> cursors = new ArrayList<>();
+     private static final Logger LOGGER = LogUtils.getLogger();
++    public Level level; // CraftBukkit
+ 
+     public SculkSpreader(boolean p_222248_, TagKey<Block> p_222249_, int p_222250_, int p_222251_, int p_222252_, int p_222253_) {
+         this.isWorldGeneration = p_222248_;
