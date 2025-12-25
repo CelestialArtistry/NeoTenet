@@ -9,6 +9,9 @@ import org.teneted.neotenet.launcher.data.InstallProfile;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.net.URI;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -23,6 +26,22 @@ public class Actions {
     }};
 
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    static {
+        // NeoTent - add module
+        NeoTenetAgent.instrumentation.redefineModule(ModuleLayer.boot().findModule("java.base").orElseThrow(),
+                Set.of(),
+                Map.of(),
+                Map.of("java.lang", Set.of(Actions.class.getModule())),
+                Set.of(),
+                Map.of());
+        NeoTenetAgent.instrumentation.redefineModule(ModuleLayer.boot().findModule("java.base").orElseThrow(),
+                Set.of(),
+                Map.of("jdk.internal.module", Set.of(Actions.class.getModule())),
+                Map.of(),
+                Set.of(),
+                Map.of());
+    }
 
     public static void init() throws Throwable {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -49,14 +68,12 @@ public class Actions {
                 // NeoTent - wait for download
                 System.out.println("Download libraries...");
                 LibrariesAction.download(profile.libraries(), librariesDir);
-                // NeoTent - add module
-                NeoTenetAgent.instrumentation.redefineModule(ModuleLayer.boot().findModule("java.base").orElseThrow(),
-                        Set.of(),
-                        Map.of(),
-                        Map.of("java.lang", Set.of(Actions.class.getModule())),
-                        Set.of(),
-                        Map.of());
+
                 // NeoTent - add to path
+                MethodHandles.Lookup lookup = MethodHandles.lookup();
+                Class<?> modulesCl = lookup.findClass("jdk.internal.module.Modules");
+                MethodHandle addExportsToAllUnnamed = lookup.findStatic(modulesCl, "addExportsToAllUnnamed", MethodType.methodType(Void.TYPE, Module.class, String.class));
+                MethodHandle addOpensToAllUnnamed = lookup.findStatic(modulesCl, "addOpensToAllUnnamed", MethodType.methodType(Void.TYPE, Module.class, String.class));
                 String srcClassPath = System.getProperty("java.class.path");
                 StringBuilder classPath = new StringBuilder();
                 classPath.append(srcClassPath);
@@ -70,12 +87,9 @@ public class Actions {
                     }
                 });
                 System.setProperty("java.class.path", classPath.toString());
-                NeoTenetAgent.instrumentation.redefineModule(ModuleLayer.boot().findModule("java.base").orElseThrow(),
-                        Set.of(),
-                        Map.of(),
-                        Map.of("java.lang", Set.of(BootstrapLauncher.class.getModule())),
-                        Set.of(),
-                        Map.of());
+                addOpensToAllUnnamed.invoke(ModuleLayer.boot().findModule("java.base").orElseThrow(), "java.lang");
+                addExportsToAllUnnamed.invoke(ModuleLayer.boot().findModule("java.base").orElseThrow(), "java.lang");
+                Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher").getDeclaredMethod("main", String[].class).invoke(null);
             } else {
                 throw new RuntimeException("Installer jar not exist or broken");
             }
