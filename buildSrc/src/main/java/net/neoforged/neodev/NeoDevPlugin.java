@@ -231,7 +231,7 @@ public class NeoDevPlugin implements Plugin<Project> {
             task.from(project.zipTree(
                     tasks.named("jar", Jar.class).flatMap(AbstractArchiveTask::getArchiveFile)));
             task.exclude("net/minecraft/**");
-            task.exclude("com/**");
+            task.exclude("com/mojang/**");
             task.exclude("mcp/**");
 
             task.manifest(manifest -> {

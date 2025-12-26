@@ -94,6 +94,7 @@
     "world.entity.MixinAgeableMob",
     "world.entity.MixinEntity",
     "world.entity.MixinEntitySelector",
+    "world.entity.MixinExperienceOrb",
     "world.entity.MixinInteraction",
     "world.entity.MixinItemBasedSteering",
     "world.entity.MixinLeashable",
@@ -400,7 +401,7 @@
     "defaultRequire": 1
   },
   "mixinextras": {
-    "minVersion": "0.8"
+    "minVersion": "0.5.0"
   },
   "mixinPriority": 400,
   "minVersion": "0.8"
