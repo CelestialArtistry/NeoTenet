@@ -33,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.teneted.neotenet.NeoTenet;
+import org.teneted.neotenet.config.NeoTenetConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +59,7 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
         // CraftBukkit start
         SpigotConfig.init((File) this.options.valueOf("spigot-settings"));
         SpigotConfig.registerCommands();
+        NeoTenetConfig.init((File) this.options.valueOf("neotenet-settings"));
         this.server.loadPlugins();
         this.server.enablePlugins(PluginLoadOrder.STARTUP);
     }

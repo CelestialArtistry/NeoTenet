@@ -4,13 +4,14 @@ import com.github.lalyos.jfiglet.FigletFont;
 import net.neoforged.neoforge.internal.versions.neoforge.NeoForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.teneted.neotenet.config.NeoTenetConfigUtil;
 
 import java.io.InputStream;
 import java.time.ZoneId;
 
 public class NeoTenet {
 
-    public static final String MOD_ID = "neotaiyitist";
+    public static final String MOD_ID = "neotenet";
     public static final Logger LOGGER = LogManager.getLogger();
     public static final float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
 
@@ -20,10 +21,14 @@ public class NeoTenet {
     private static final String RESET = "\u001B[0m";
 
     public static void run() throws Exception {
+        NeoTenetConfigUtil.copyNeotenetConfig();
+        NeoTenetConfigUtil.lang();
         InputStream fontStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("larry3d.flf");
         String banner = FigletFont.convertOneLine(fontStream, "NeoTenet");
-        for (String line : banner.split("\n")) {
-            System.out.println(CYAN + line + RESET);
+        if (NeoTenetConfigUtil.showLogo()) {
+            for (String line : banner.split("\n")) {
+                System.out.println(CYAN + line + RESET);
+            }
         }
 
         System.out.println(YELLOW + "Welcome to NeoTenet for NeoForge " + NeoForgeVersion.getVersion() + ", Java " + javaVersion + RESET);

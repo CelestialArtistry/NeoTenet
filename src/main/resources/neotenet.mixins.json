@@ -15,6 +15,7 @@
     "commands.arguments.blocks.MixinBlockStateParser",
     "commands.arguments.selector.MixinEntitySelector",
     "commands.arguments.selector.MixinEntitySelectorParser",
+    "locale.MixinLanguage",
     "network.MixinVarint21LengthFieldPrepender",
     "network.connection.MixinConnection",
     "network.protocol.MixinPacketUtils",

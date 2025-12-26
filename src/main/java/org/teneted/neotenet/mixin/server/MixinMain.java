@@ -64,13 +64,13 @@ public abstract class MixinMain {
                 .describedAs("Yml file");
         // Spigot End
 
-        // Spigot Start
-        optionparser.acceptsAll(Arrays.asList("B", "banner-settings"), "File for banner settings")
+        // NeoTenet Start
+        optionparser.acceptsAll(Arrays.asList("N", "neotenet-settings"), "File for neotenet settings")
                 .withRequiredArg()
                 .ofType(File.class)
-                .defaultsTo(new File("banner-config", "banner.yml"))
+                .defaultsTo(new File("neotenet.yml"))
                 .describedAs("Yml file");
-        // Spigot End
+        // NeoTenet End
     }
 
     @Inject(method = "main", at = @At(value = "INVOKE",
