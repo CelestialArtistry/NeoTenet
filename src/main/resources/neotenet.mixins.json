@@ -137,6 +137,7 @@
     "world.entity.animal.MixinFox",
     "world.entity.animal.MixinIronGolem",
     "world.entity.animal.MixinOcelot",
+    "world.entity.animal.MixinPanda",
     "world.entity.animal.MixinPanda_HurtByTargetGoal",
     "world.entity.animal.MixinParrot",
     "world.entity.animal.MixinPig",
@@ -145,6 +146,7 @@
     "world.entity.animal.MixinRabbit_RaidGardenGoal",
     "world.entity.animal.MixinSheep",
     "world.entity.animal.MixinSheep1",
+    "world.entity.animal.MixinShoulderRidingEntity",
     "world.entity.animal.MixinSniffer",
     "world.entity.animal.MixinSnowGolem",
     "world.entity.animal.MixinTurtle",
@@ -379,6 +381,9 @@
     "world.level.chunk.storage.MixinRegionFileStorage",
     "world.level.dimension.end.MixinDragonRespawnAnimation",
     "world.level.dimension.end.MixinEndDragonFight",
+    "world.level.material.MixinFlowingFluid",
+    "world.level.material.MixinLavaFluid",
+    "world.level.redstone.MixinNeighborUpdater",
     "world.level.saveddata.maps.MixinMapItemSavedData",
     "world.level.saveddata.maps.MixinMapItemSavedData_HoldingPlayer",
     "world.level.storage.MixinDerivedLevelData",
@@ -386,7 +391,9 @@
     "world.level.storage.MixinLevelStorageSource",
     "world.level.storage.MixinPlayerDataStorage",
     "world.level.storage.MixinPrimaryLevelData",
-    "world.level.storage.loot.MixinLootDataType"
+    "world.level.storage.loot.MixinLootDataType",
+    "world.level.storage.loot.MixinLootTable",
+    "world.level.storage.loot.predicates.MixinExplosionCondition"
   ],
   "injectors": {
     "maxShiftBy": 2,
