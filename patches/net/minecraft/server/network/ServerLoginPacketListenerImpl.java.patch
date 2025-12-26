@@ -33,7 +33,7 @@
  import org.slf4j.Logger;
 -
 -public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
-+import org.celestial_artistry.neotenet.injection.server.network.InjectionServerLoginPacketListenerImpl;
++import org.teneted.neotenet.injection.server.network.InjectionServerLoginPacketListenerImpl;
 +
 +public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener, CraftPlayer.TransferCookieConnection, InjectionServerLoginPacketListenerImpl {
 +
