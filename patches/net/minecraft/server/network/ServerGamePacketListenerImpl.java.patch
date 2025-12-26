@@ -93,7 +93,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -180,17 +_,56 @@
+@@ -180,17 +_,57 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -104,6 +104,7 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -1573,7 +1574,7 @@
          for (int i = 0; i < p_215215_.length(); i++) {
              if (!StringUtil.isAllowedChatCharacter(p_215215_.charAt(i))) {
                  return true;
-@@ -1381,46 +_,232 @@
+@@ -1381,46 +_,239 @@
          return false;
      }
  
@@ -1664,20 +1665,27 @@
 +        }
 +    }
 +
-+    @Deprecated // Paper
-+    public void handleCommand(String s) { // Paper - private -> public
-+        // Paper start - Remove all this old duplicated logic
-+        if (s.startsWith("/")) {
-+            s = s.substring(1);
++    public void handleCommand(String s) {
++        LOGGER.info(this.player.getScoreboardName() + " issued server command: " + s);
++
++        CraftPlayer player = this.getCraftPlayer();
++
++        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, s, new LazyPlayerSet(server));
++        this.cserver.getPluginManager().callEvent(event);
++
++        if (event.isCancelled()) {
++            return;
 +        }
-+        /*
-+        It should be noted that this represents the "legacy" command execution path.
-+        Api can call commands even if there is no additional context provided.
-+        This method should ONLY be used if you need to execute a command WITHOUT
-+        an actual player's input.
-+        */
-+        this.performUnsignedChatCommand(s);
-+        // Paper end
++
++        try {
++            if (this.cserver.dispatchCommand(event.getPlayer(), event.getMessage().substring(1))) {
++                return;
++            }
++        } catch (org.bukkit.command.CommandException ex) {
++            player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
++            java.util.logging.Logger.getLogger(ServerGamePacketListenerImpl.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
++            return;
++        }
 +    }
 +    // CraftBukkit end
 +
@@ -2638,14 +2646,30 @@
                  );
          }
      }
-@@ -1840,13 +_,14 @@
-                         .getPlayerList()
-                         .broadcastAll(
-                             new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.INITIALIZE_CHAT), List.of(this.player))
+@@ -1833,20 +_,21 @@
+         this.chatSession = p_253823_;
+         this.signedMessageDecoder = p_253823_.createMessageDecoder(this.player.getUUID());
+         this.chatMessageChain
+-            .append(
+-                () -> {
+-                    this.player.setChatSession(p_253823_);
+-                    this.server
+-                        .getPlayerList()
+-                        .broadcastAll(
+-                            new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.INITIALIZE_CHAT), List.of(this.player))
 -                        );
-+                                , this.player); // Paper - Use single player info update packet on join
-                 }
-             );
+-                }
+-            );
++                .append(
++                        () -> {
++                            this.player.setChatSession(p_253823_);
++                            this.server
++                                    .getPlayerList()
++                                    .broadcastAll(
++                                            new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.INITIALIZE_CHAT), List.of(this.player))
++                                    );
++                        }
++                );
      }
  
      @Override
