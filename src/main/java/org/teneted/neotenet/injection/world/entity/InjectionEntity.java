@@ -94,10 +94,6 @@ public interface InjectionEntity {
         throw new IllegalStateException("Not implemented");
     }
 
-    default void setRemoved(Entity.RemovalReason entity_removalreason, EntityRemoveEvent.Cause cause) {
-        throw new IllegalStateException("Not implemented");
-    }
-
     default void pushRemoveCause(EntityRemoveEvent.Cause cause) {
         throw new IllegalStateException("Not implemented");
     }
