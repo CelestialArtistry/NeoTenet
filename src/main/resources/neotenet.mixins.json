@@ -152,6 +152,7 @@
     "world.entity.animal.MixinSniffer",
     "world.entity.animal.MixinSnowGolem",
     "world.entity.animal.MixinTurtle",
+    "world.entity.animal.MixinTurtle_TurtleLayEggGoal",
     "world.entity.animal.MixinWolf",
     "world.entity.animal.allay.MixinAllay",
     "world.entity.animal.armadillo.MixinArmadillo",
