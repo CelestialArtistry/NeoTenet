@@ -388,6 +388,8 @@
     "world.level.dimension.end.MixinDragonRespawnAnimation",
     "world.level.dimension.end.MixinEndDragonFight",
     "world.level.entity.MixinEntityAccess",
+    "world.level.levelgen.MixinPatrolSpawner",
+    "world.level.levelgen.MixinPhantomSpawner",
     "world.level.material.MixinFlowingFluid",
     "world.level.material.MixinLavaFluid",
     "world.level.redstone.MixinNeighborUpdater",
