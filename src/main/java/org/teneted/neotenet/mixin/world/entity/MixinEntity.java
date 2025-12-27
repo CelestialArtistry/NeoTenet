@@ -1,14 +1,17 @@
 package org.teneted.neotenet.mixin.world.entity;
 
 import com.google.common.collect.ImmutableList;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import net.minecraft.BlockUtil;
+
 import net.minecraft.commands.CommandSource;
-import net.minecraft.core.Direction;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -49,6 +52,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -75,13 +79,13 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spigotmc.ActivationRange;
 import org.spigotmc.event.entity.EntityMountEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -91,15 +95,12 @@ import org.teneted.neotenet.injection.world.entity.InjectionEntity;
 @Mixin(Entity.class)
 public abstract class MixinEntity implements Nameable, EntityAccess, CommandSource, InjectionEntity {
 
-    private static final int CURRENT_LEVEL = 2;
     @Shadow
     @Final
     public static int TOTAL_AIR_SUPPLY;
     @Shadow
     @Final
     private static EntityDataAccessor<Integer> DATA_AIR_SUPPLY_ID;
-    public final ActivationRange.ActivationType activationType =
-            ActivationRange.initializeEntityActivationType((Entity) (Object) this);
     @Shadow
     public boolean horizontalCollision;
     @Shadow
@@ -221,12 +222,6 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     protected abstract void handlePortal();
 
     @Shadow
-    public abstract void setRemainingFireTicks(int i);
-
-    @Shadow
-    public abstract void igniteForTicks(int i);
-
-    @Shadow
     @Nullable
     public abstract Entity changeDimension(DimensionTransition dimensionTransition);
 
@@ -261,6 +256,25 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     @Shadow
     private UUID originWorld;
 
+    @Shadow
+    public BlockPos lastLavaContact;
+
+    @Shadow
+    public abstract boolean isInLava();
+
+    @Shadow
+    private int remainingFireTicks;
+
+    @Shadow
+    public abstract void igniteForTicks(int p_320711_);
+
+    @Shadow
+    public abstract CompoundTag saveWithoutId(CompoundTag p_20241_);
+
+    @Shadow
+    @javax.annotation.Nullable
+    protected abstract String getEncodeId();
+
     @Override
     public void setOrigin(@NotNull Location location) {
         this.origin = location.toVector();
@@ -288,6 +302,11 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     }
 
     @Override
+    public CommandSender getBukkitSender(CommandSourceStack wrapper) {
+        return getBukkitEntity();
+    }
+
+    @Override
     public int getDefaultMaxAirSupply() {
         return TOTAL_AIR_SUPPLY;
     }
@@ -310,8 +329,25 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
         }
     }
 
+    private AtomicBoolean neotenet$callEvent = new AtomicBoolean(true);
+
+    @Inject(method = "igniteForSeconds", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;igniteForTicks(I)V"))
+    private void neotenet$callEntityCombustEvent(float p_345382_, CallbackInfo ci) {
+        if (neotenet$callEvent.get()) {
+            EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), p_345382_);
+            this.level.getCraftServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return;
+            }
+
+            p_345382_ = event.getDuration();
+        }
+    }
+
     @Override
     public void igniteForSeconds(float i, boolean callEvent) {
+        neotenet$callEvent.set(callEvent);
         if (callEvent) {
             EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), i);
             this.level.getCraftServer().getPluginManager().callEvent(event);
@@ -322,6 +358,7 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
 
             i = event.getDuration();
         }
+        this.igniteForTicks(Mth.floor(i * 20.0F));
     }
 
     @Override
@@ -342,6 +379,47 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     @Override
     public boolean canCollideWithBukkit(Entity entity) {
         return isPushable();
+    }
+
+    @WrapWithCondition(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;handlePortal()V"))
+    private boolean neotenet$checkIfPlayer(Entity instance) {
+        return ((Entity) (Object) this) instanceof ServerPlayer;
+    }
+
+    @Inject(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;checkBelowWorld()V"))
+    private void neotenet$setlastLavaContact(CallbackInfo ci) {
+        if (!this.isInLava()) {
+            this.lastLavaContact = null;
+        }
+    }
+
+    @Inject(method = "checkInsideBlocks", at = @At(value = "TAIL"))
+    private void neotenet$checkValid(CallbackInfo ci) {
+        if (valid) level.getChunk((int) Math.floor(this.getX()) >> 4, (int) Math.floor(this.getZ()) >> 4); // CraftBukkit
+    }
+
+    @Redirect(method = "lavaHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;igniteForSeconds(F)V"))
+    private void neotenet$combustEvent(Entity instance, float f) {
+        // CraftBukkit start - Fallen in lava TODO: this event spams!
+        if (((Entity) (Object) this) instanceof LivingEntity && remainingFireTicks <= 0) {
+            // not on fire yet
+            org.bukkit.block.Block damager = (lastLavaContact == null) ? null : org.bukkit.craftbukkit.block.CraftBlock.at(level, lastLavaContact);
+            org.bukkit.entity.Entity damagee = this.getBukkitEntity();
+            EntityCombustEvent combustEvent = new org.bukkit.event.entity.EntityCombustByBlockEvent(damager, damagee, 15);
+            this.level.getCraftServer().getPluginManager().callEvent(combustEvent);
+
+            if (!combustEvent.isCancelled()) {
+                this.igniteForSeconds(combustEvent.getDuration(), false);
+            }
+        } else {
+            // This will be called every single tick the entity is in lava, so don't throw an event
+            this.igniteForSeconds(15.0F, false);
+        }
+    }
+
+    @ModifyArg(method = "lavaHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 0)
+    private DamageSource neotenet$useDirect(DamageSource p_19946_) {
+        return p_19946_.directBlock(level, lastLavaContact);
     }
 
     @Inject(method = "getMaxAirSupply", cancellable = true, at = @At("RETURN"))
@@ -420,6 +498,22 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     public void neotenet$writeUnlessRemoved$persistCheck(CompoundTag compound, CallbackInfoReturnable<Boolean> cir) {
         if (!this.persist)
             cir.setReturnValue(false);
+    }
+
+    @Override
+    public boolean saveAsPassenger(CompoundTag nbttagcompound, boolean includeAll) {
+        if (this.removalReason != null && !this.removalReason.shouldSave()) {
+            return false;
+        } else {
+            String s = this.getEncodeId();
+            if (!this.persist || s == null) {
+                return false;
+            } else {
+                nbttagcompound.putString("id", s);
+                this.saveWithoutId(nbttagcompound);
+                return true;
+            }
+        }
     }
 
     @Inject(method = "load", at = @At(value = "RETURN"))

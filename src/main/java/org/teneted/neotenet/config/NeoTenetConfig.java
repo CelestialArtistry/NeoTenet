@@ -80,4 +80,10 @@ public class NeoTenetConfig {
         return config.getDouble(path, config.getDouble(path));
     }
 
+    public static String lang;
+
+    private static void lang() {
+        lang = getString("localization.locale", "en_us");
+    }
+
 }
