@@ -1,5 +1,6 @@
 package org.teneted.neotenet.mixin;
 
+import io.izzel.arclight.mixin.MixinTools;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -12,6 +13,7 @@ public class NeoTenetMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
         try {
+            MixinTools.setup();
             NeoTenet.run();
         } catch (Exception ex) {
             NeoTenet.LOGGER.error("Failed to load NeoTenet Server..., caused by " + ex.getCause());
