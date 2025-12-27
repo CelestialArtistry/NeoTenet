@@ -9,3 +9,13 @@
              this.shear(SoundSource.PLAYERS);
              this.gameEvent(GameEvent.SHEAR, p_330736_);
              if (!this.level().isClientSide) {
+@@ -151,5 +_,9 @@
+     @Override
+     public boolean readyForShearing() {
+         return !this.isSheared() && this.isAlive();
++    }
++
++    public static EntityDataAccessor<Boolean> getDataSheared() {
++        return DATA_SHEARED;
+     }
+ }

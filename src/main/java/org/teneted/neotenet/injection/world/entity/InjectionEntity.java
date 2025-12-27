@@ -20,6 +20,10 @@ import org.jetbrains.annotations.Nullable;
 
 public interface InjectionEntity {
 
+    default CompoundTag saveWithoutId(CompoundTag nbttagcompound, boolean includeAll) {
+        throw new IllegalStateException("Not implemented");
+    }
+
     default void addAdditionalSaveData(CompoundTag nbttagcompound, boolean includeAll) {
         throw new IllegalStateException("Not implemented");
     }

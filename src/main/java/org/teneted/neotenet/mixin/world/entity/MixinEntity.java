@@ -3,18 +3,26 @@ package org.teneted.neotenet.mixin.world.entity;
 import com.google.common.collect.ImmutableList;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import net.minecraft.CrashReport;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportedException;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -275,6 +283,75 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
     @javax.annotation.Nullable
     protected abstract String getEncodeId();
 
+    @Shadow
+    @javax.annotation.Nullable
+    private Entity vehicle;
+
+    @Shadow
+    protected abstract ListTag newDoubleList(double... p_20064_);
+
+    @Shadow
+    private float xRot;
+
+    @Shadow
+    protected abstract ListTag newFloatList(float... p_20066_);
+
+    @Shadow
+    public float fallDistance;
+
+    @Shadow
+    public abstract boolean onGround();
+
+    @Shadow
+    private boolean invulnerable;
+
+    @Shadow
+    private int portalCooldown;
+
+    @Shadow
+    @Final
+    private static int CURRENT_LEVEL;
+
+    @Shadow
+    public abstract int getMaxAirSupply();
+
+    @Shadow
+    public abstract boolean isCustomNameVisible();
+
+    @Shadow
+    public abstract boolean isSilent();
+
+    @Shadow
+    public abstract RegistryAccess registryAccess();
+
+    @Shadow
+    public abstract boolean isNoGravity();
+
+    @Shadow
+    private boolean hasGlowingTag;
+
+    @Shadow
+    public abstract int getTicksFrozen();
+
+    @Shadow
+    private boolean hasVisualFire;
+
+    @Shadow
+    @Final
+    private Set<String> tags;
+
+    @Shadow
+    public abstract boolean isVehicle();
+
+    @Shadow
+    public abstract List<Entity> getPassengers();
+
+    @Shadow
+    public abstract void fillCrashReportCategory(CrashReportCategory p_20051_);
+
+    @Shadow
+    protected abstract void addAdditionalSaveData(CompoundTag p_20139_);
+
     @Override
     public void setOrigin(@NotNull Location location) {
         this.origin = location.toVector();
@@ -516,8 +593,156 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
         }
     }
 
+    @Override
+    public CompoundTag saveWithoutId(CompoundTag nbttagcompound, boolean includeAll) {
+        // CraftBukkit end
+        try {
+            // CraftBukkit start - selectively save position
+            if (includeAll) {
+                if (this.vehicle != null) {
+                    nbttagcompound.put("Pos", this.newDoubleList(this.vehicle.getX(), this.getY(), this.vehicle.getZ()));
+                } else {
+                    nbttagcompound.put("Pos", this.newDoubleList(this.getX(), this.getY(), this.getZ()));
+                }
+            }
+            // CraftBukkit end
+
+            Vec3 vec3d = this.getDeltaMovement();
+
+            nbttagcompound.put("Motion", this.newDoubleList(vec3d.x, vec3d.y, vec3d.z));
+
+            // CraftBukkit start - Checking for NaN pitch/yaw and resetting to zero
+            // TODO: make sure this is the best way to address this.
+            if (Float.isNaN(this.yRot)) {
+                this.yRot = 0;
+            }
+
+            if (Float.isNaN(this.xRot)) {
+                this.xRot = 0;
+            }
+            // CraftBukkit end
+
+            nbttagcompound.put("Rotation", this.newFloatList(this.getYRot(), this.getXRot()));
+            nbttagcompound.putFloat("FallDistance", this.fallDistance);
+            nbttagcompound.putShort("Fire", (short) this.remainingFireTicks);
+            nbttagcompound.putShort("Air", (short) this.getAirSupply());
+            nbttagcompound.putBoolean("OnGround", this.onGround());
+            nbttagcompound.putBoolean("Invulnerable", this.invulnerable);
+            nbttagcompound.putInt("PortalCooldown", this.portalCooldown);
+            // CraftBukkit start - selectively save uuid and world
+            if (includeAll) {
+                nbttagcompound.putUUID("UUID", this.getUUID());
+                // PAIL: Check above UUID reads 1.8 properly, ie: UUIDMost / UUIDLeast
+                nbttagcompound.putLong("WorldUUIDLeast", ((ServerLevel) this.level).getWorld().getUID().getLeastSignificantBits());
+                nbttagcompound.putLong("WorldUUIDMost", ((ServerLevel) this.level).getWorld().getUID().getMostSignificantBits());
+            }
+            nbttagcompound.putInt("Bukkit.updateLevel", CURRENT_LEVEL);
+            if (!this.persist) {
+                nbttagcompound.putBoolean("Bukkit.persist", this.persist);
+            }
+            if (!this.visibleByDefault) {
+                nbttagcompound.putBoolean("Bukkit.visibleByDefault", this.visibleByDefault);
+            }
+            if (this.persistentInvisibility) {
+                nbttagcompound.putBoolean("Bukkit.invisible", this.persistentInvisibility);
+            }
+            // SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
+            if (this.maxAirTicks != this.getDefaultMaxAirSupply()) {
+                nbttagcompound.putInt("Bukkit.MaxAirSupply", this.getMaxAirSupply());
+            }
+            nbttagcompound.putInt("Spigot.ticksLived", this.tickCount);
+            // CraftBukkit end
+            Component ichatbasecomponent = this.getCustomName();
+
+            if (ichatbasecomponent != null) {
+                nbttagcompound.putString("CustomName", Component.Serializer.toJson(ichatbasecomponent, this.registryAccess()));
+            }
+
+            if (this.isCustomNameVisible()) {
+                nbttagcompound.putBoolean("CustomNameVisible", this.isCustomNameVisible());
+            }
+
+            if (this.isSilent()) {
+                nbttagcompound.putBoolean("Silent", this.isSilent());
+            }
+
+            if (this.isNoGravity()) {
+                nbttagcompound.putBoolean("NoGravity", this.isNoGravity());
+            }
+
+            if (this.hasGlowingTag) {
+                nbttagcompound.putBoolean("Glowing", true);
+            }
+
+            int i = this.getTicksFrozen();
+
+            if (i > 0) {
+                nbttagcompound.putInt("TicksFrozen", this.getTicksFrozen());
+            }
+
+            if (this.hasVisualFire) {
+                nbttagcompound.putBoolean("HasVisualFire", this.hasVisualFire);
+            }
+
+            ListTag nbttaglist;
+            Iterator iterator;
+
+            if (!this.tags.isEmpty()) {
+                nbttaglist = new ListTag();
+                iterator = this.tags.iterator();
+
+                while (iterator.hasNext()) {
+                    String s = (String) iterator.next();
+
+                    nbttaglist.add(StringTag.valueOf(s));
+                }
+
+                nbttagcompound.put("Tags", nbttaglist);
+            }
+
+            this.addAdditionalSaveData(nbttagcompound, includeAll); // CraftBukkit - pass on includeAll
+            if (this.isVehicle()) {
+                nbttaglist = new ListTag();
+                iterator = this.getPassengers().iterator();
+
+                while (iterator.hasNext()) {
+                    Entity entity = (Entity) iterator.next();
+                    CompoundTag nbttagcompound1 = new CompoundTag();
+
+                    if (entity.saveAsPassenger(nbttagcompound1, includeAll)) { // CraftBukkit - pass on includeAll
+                        nbttaglist.add(nbttagcompound1);
+                    }
+                }
+
+                if (!nbttaglist.isEmpty()) {
+                    nbttagcompound.put("Passengers", nbttaglist);
+                }
+            }
+
+            // CraftBukkit start - stores eventually existing bukkit values
+            if (this.bukkitEntity != null) {
+                this.bukkitEntity.storeBukkitValues(nbttagcompound);
+            }
+            // CraftBukkit end
+            return nbttagcompound;
+        } catch (Throwable throwable) {
+            CrashReport crashreport = CrashReport.forThrowable(throwable, "Saving entity NBT");
+            CrashReportCategory crashreportsystemdetails = crashreport.addCategory("Entity being saved");
+
+            this.fillCrashReportCategory(crashreportsystemdetails);
+            throw new ReportedException(crashreport);
+        }
+    }
+
+    // CraftBukkit start - allow excluding certain data when saving
+    @Override
+    public void addAdditionalSaveData(CompoundTag nbttagcompound, boolean includeAll) {
+        addAdditionalSaveData(nbttagcompound);
+    }
+    // CraftBukkit end
+
     @Inject(method = "load", at = @At(value = "RETURN"))
-    public void neotenet$read$ReadBukkitValues(CompoundTag compound, CallbackInfo ci) {
+    private void neotenet$read$ReadBukkitValues(CompoundTag compound, CallbackInfo ci) {
         // CraftBukkit start
         if ((Object) this instanceof LivingEntity entity) {
             this.tickCount = compound.getInt("Spigot.ticksLived");
