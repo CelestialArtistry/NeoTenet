@@ -1,7 +1,9 @@
 package org.teneted.neotenet.mixin.server.level;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Either;
@@ -668,51 +670,49 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, scoreHolder, ScoreAccess::increment);
     }
 
-    @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V"), cancellable = true)
-    private void neotenet$fireDeathEvent(DamageSource damageSource, CallbackInfo ci, @Local Component defaultMessage, @Local boolean flag, @Share("neotenet$ichatbasecomponent") LocalRef<Component> neotenet$ichatbasecomponent) {
+    @ModifyExpressionValue(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/GameRules;getBoolean(Lnet/minecraft/world/level/GameRules$Key;)Z"))
+    private boolean neotenet$keepInventory(boolean original) {
+        return original || this.isSpectator();
+    }
+
+    @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/GameRules;getBoolean(Lnet/minecraft/world/level/GameRules$Key;)Z"))
+    private void neotenet$checkIfRemoved(DamageSource p_9035_, CallbackInfo ci) {
         // CraftBukkit start - fire PlayerDeathEvent
         if (this.isRemoved()) {
             ci.cancel();
             return;
         }
-        List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<>(this.getInventory().getContainerSize());
-        boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
-        if (!keepInventory) {
-            for (ItemStack item : this.getInventory().getContents()) {
-                if (!item.isEmpty() && !EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
-                    loot.add(CraftItemStack.asCraftMirror(item).markForInventoryDrop());
-                }
+    }
+    @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;getDeathMessage()Lnet/minecraft/network/chat/Component;"), cancellable = true)
+    private void neotenet$fireDeathEvent(DamageSource p_9035_, CallbackInfo ci, @Local boolean flag, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag")LocalBooleanRef neotenet$flag) {
+        neotenet$flag.set(flag);
+        loot.set(new java.util.ArrayList<>(this.getInventory().getContainerSize()));
+        for (ItemStack item : this.getInventory().getContents()) {
+            if (!item.isEmpty() && !EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
+                loot.get().add(CraftItemStack.asCraftMirror(item).markForInventoryDrop());
             }
         }
+    }
 
+    @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;removeEntitiesOnShoulder()V"))
+    private void neotenet$addLoots(DamageSource p_9035_, CallbackInfo ci, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag")LocalBooleanRef neotenet$flag) {
         // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
-        this.dropFromLootTable(damageSource, this.lastHurtByPlayerTime > 0);
-        this.dropCustomDeathLoot(this.serverLevel(), damageSource, flag);
+        this.dropFromLootTable(p_9035_, this.lastHurtByPlayerTime > 0);
+        this.dropCustomDeathLoot(this.serverLevel(), p_9035_, neotenet$flag.get());
 
-        loot.addAll(this.drops);
+        loot.get().addAll(this.drops);
         this.drops.clear(); // SPIGOT-5188: make sure to clear
 
+        Component defaultMessage = this.getCombatTracker().getDeathMessage();
+
         String deathmessage = defaultMessage.getString();
-        keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
-        org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(((ServerPlayer) (Object) this), damageSource, loot, deathmessage, keepInventory);
+        keepLevel = neotenet$flag.get(); // SPIGOT-2222: pre-set keepLevel
+        org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(((ServerPlayer) (Object) this), p_9035_, loot.get(), deathmessage, neotenet$flag.get());
 
         // SPIGOT-943 - only call if they have an inventory open
         if (this.containerMenu != this.inventoryMenu) {
             this.closeContainer();
         }
-
-        String deathMessage = event.getDeathMessage();
-
-        if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
-            Component ichatbasecomponent;
-            if (deathMessage.equals(deathmessage)) {
-                ichatbasecomponent = this.getCombatTracker().getDeathMessage();
-            } else {
-                ichatbasecomponent = org.bukkit.craftbukkit.util.CraftChatMessage.fromStringOrNull(deathMessage);
-            }
-            neotenet$ichatbasecomponent.set(ichatbasecomponent);
-        }
-
     }
 
     @Override
