@@ -50,7 +50,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
@@ -702,9 +701,11 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
 
         loot.get().addAll(this.drops);
         this.drops.clear(); // SPIGOT-5188: make sure to clear
+    }
 
+    @Redirect(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;getDeathMessage()Lnet/minecraft/network/chat/Component;"))
+    private Component neotenet$callDeathEvent(CombatTracker instance, @Local(argsOnly = true) DamageSource p_9035_, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag")LocalBooleanRef neotenet$flag) {
         Component defaultMessage = this.getCombatTracker().getDeathMessage();
-
         String deathmessage = defaultMessage.getString();
         keepLevel = neotenet$flag.get(); // SPIGOT-2222: pre-set keepLevel
         org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(((ServerPlayer) (Object) this), p_9035_, loot.get(), deathmessage, neotenet$flag.get());
@@ -713,7 +714,24 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         if (this.containerMenu != this.inventoryMenu) {
             this.closeContainer();
         }
+        if (!event.getKeepInventory()) {
+            this.getInventory().clearContent();
+        }
+
+        String deathMessage = event.getDeathMessage();
+        Component ichatbasecomponent;
+
+        if (deathMessage != null && deathMessage.length() > 0 && neotenet$flag.get()) { // TODO: allow plugins to override?
+            if (deathMessage.equals(deathmessage)) {
+                ichatbasecomponent = this.getCombatTracker().getDeathMessage();
+            } else {
+                ichatbasecomponent = org.bukkit.craftbukkit.util.CraftChatMessage.fromStringOrNull(deathMessage);
+            }
+            return ichatbasecomponent;
+        }
+        return defaultMessage;
     }
+
 
     @Override
     public Entity changeDimension(ServerLevel worldserver, PlayerTeleportEvent.TeleportCause cause) {
