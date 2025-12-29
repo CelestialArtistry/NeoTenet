@@ -178,9 +178,10 @@ dependencies {
     // Must be implementation instead of compileOnly so that running dependent projects such as tests will trigger (re)compilation of coremods.
     // (Only needed when compiling through IntelliJ non-delegated builds - otherwise `compileOnly` would work).
     implementation(jarJar(project(":neoforge-coremods")))
-    implementation (jarJar("io.izzel.arclight:mixin-tools:1.2.6"))
+    implementation (jarJar("io.izzel.arclight:mixin-tools:1.2.6")) {
+        transitive = false
+    }
     annotationProcessor("io.izzel.arclight:mixin-tools:1.2.6") { transitive = false }
-
 }
 
 neoDev {
