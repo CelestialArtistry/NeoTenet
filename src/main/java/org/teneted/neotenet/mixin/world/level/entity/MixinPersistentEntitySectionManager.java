@@ -1,7 +1,6 @@
 package org.teneted.neotenet.mixin.world.level.entity;
 
-import io.izzel.arclight.mixin.Decorate;
-import io.izzel.arclight.mixin.Local;
+import com.llamalad7.mixinextras.sugar.Local;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
@@ -20,6 +19,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -58,9 +58,9 @@ public abstract class MixinPersistentEntitySectionManager<T extends EntityAccess
 
     @Unique private boolean neotenet$fireEvent = false;
 
-    @Decorate(method = "storeChunkSections", inject = true,
+    @Redirect(method = "storeChunkSections",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/entity/EntityPersistentStorage;storeEntities(Lnet/minecraft/world/level/entity/ChunkEntities;)V"))
-    private void neotenet$fireUnload(long pos, @Local(ordinal = -1) List<T> list) {
+    private void neotenet$fireUnload(long pos, @Local List<T> list) {
         if (neotenet$fireEvent) {
             CraftEventFactory.callEntitiesUnloadEvent(((EntityStorage) permanentStorage).level, new ChunkPos(pos),
                 list.stream().map(entity -> (Entity) entity).collect(Collectors.toList()));

@@ -1,8 +1,6 @@
 package org.teneted.neotenet.mixin.world.level.levelgen.structure.templatesystem;
 
-import io.izzel.arclight.mixin.Decorate;
-import io.izzel.arclight.mixin.DecorationOps;
-import io.izzel.arclight.mixin.Local;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.nbt.CompoundTag;
@@ -23,12 +21,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(StructureTemplate.class)
 public abstract class MixinStructureTemplate {
 
+    /*
     @Shadow
     public CraftPersistentDataContainer persistentDataContainer;
 
@@ -47,7 +47,7 @@ public abstract class MixinStructureTemplate {
         }
     }
 
-    @Decorate(method = "placeInWorld", inject = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;getRandomPalette(Ljava/util/List;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate$Palette;"))
+    @Redirect(method = "placeInWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;getRandomPalette(Ljava/util/List;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate$Palette;"))
     private void neotenet$unwrap(ServerLevelAccessor serverLevelAccessor, BlockPos blockPos, BlockPos blockPos2, StructurePlaceSettings structurePlaceSettings, RandomSource randomSource, int i,
                                  @Local(allocate = "wrappedAccess") ServerLevelAccessor wrappedAccess,
                                  @Local(allocate = "structureTransformer") CraftStructureTransformer structureTransformer) throws Throwable {
@@ -64,7 +64,7 @@ public abstract class MixinStructureTemplate {
         DecorationOps.blackhole().invoke(serverLevelAccessor, wrappedAccess, structureTransformer);
     }
 
-    @Decorate(method = "placeInWorld", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/level/ServerLevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+    @Redirect(method = "placeInWorld", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/level/ServerLevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
     private boolean neotenet$useTransformer(ServerLevelAccessor instance, BlockPos pos, BlockState blockState, int i,
                                             @Local(ordinal = -1) RandomSource randomSource,
                                             @Local(ordinal = -1) StructureTemplate.StructureBlockInfo structureBlockInfo,
@@ -88,10 +88,10 @@ public abstract class MixinStructureTemplate {
         return (boolean) DecorationOps.callsite().invoke(instance, pos, blockState, i);
     }
 
-    @Decorate(method = "placeInWorld", inject = true, at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;isIgnoreEntities()Z"))
+    @Redirect(method = "placeInWorld", inject = true, at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;isIgnoreEntities()Z"))
     private void neotenet$resetWrap(ServerLevelAccessor serverLevelAccessor, BlockPos blockPos, BlockPos blockPos2, StructurePlaceSettings structurePlaceSettings, RandomSource randomSource, int i,
                                     @Local(allocate = "wrappedAccess") ServerLevelAccessor wrappedAccess) throws Throwable {
         serverLevelAccessor = wrappedAccess;
         DecorationOps.blackhole().invoke(serverLevelAccessor);
-    }
+    }*/
 }
