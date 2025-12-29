@@ -197,6 +197,7 @@
     "world.entity.monster.piglin.MixinPiglin",
     "world.entity.monster.warden.MixinWarden",
     "world.entity.npc.MixinAbstractVillager",
+    "world.entity.npc.MixinInventoryCarrier",
     "world.entity.npc.MixinVillager",
     "world.entity.npc.MixinWanderingTrader",
     "world.entity.npc.MixinWanderingTraderSpawner",
