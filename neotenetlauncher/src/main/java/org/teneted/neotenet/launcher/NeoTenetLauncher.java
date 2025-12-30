@@ -1,6 +1,5 @@
 package org.teneted.neotenet.launcher;
 
-
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
 import org.teneted.neotenet.launcher.install.Actions;
 
@@ -14,22 +13,17 @@ public class NeoTenetLauncher {
         System.setProperty("launcher.args", String.join(",", commandLineArgs));
 
         try {
-            if (!Actions.ready()) Actions.init();
+            if (!Actions.ready()) {
+                boolean success= Actions.init();
+                if (success) {
+                    InstallationManager.createVersionFile();
+                }
+            }
             BootstrapLauncher.main(Actions.parseArgs(commandLineArgs));
 
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-
-        /*
-        if (!InstallationManager.checkAndInstall()) {
-            System.err.println("Installation failed!");
-            System.exit(1);
-        }
-
-        InstallationManager.moveAndRunServerScripts();
-
-         */
     }
 
     public static String[] getCommandLineArgs() {

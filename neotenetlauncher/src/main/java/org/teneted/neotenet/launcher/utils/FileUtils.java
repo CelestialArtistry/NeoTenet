@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class FileUtils {
     public static File copyToTempFile(InputStream inputStream) throws IOException {
-        File temp = File.createTempFile("neotent", new Random().nextInt() + "");
+        File temp = File.createTempFile("neotenet", new Random().nextInt() + "");
         copyTo(inputStream, new FileOutputStream(temp));
         return temp;
     }

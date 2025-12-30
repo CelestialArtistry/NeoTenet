@@ -2,6 +2,7 @@ package org.teneted.neotenet.mixin.locale;
 
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +30,7 @@ public abstract class MixinLanguage {
 
     @Redirect(method = "parseTranslations(Ljava/util/function/BiConsumer;Ljava/util/function/BiConsumer;Ljava/lang/String;)V", at = @At(value = "INVOKE", target = "Ljava/lang/Class;getResourceAsStream(Ljava/lang/String;)Ljava/io/InputStream;"))
     private static InputStream neotenet$useUserLanguage(Class instance, String e) {
-        return Language.class.getResourceAsStream("/assets/minecraft/lang/%s.json".formatted(NeoTenetConfigUtil.lang().toLowerCase(Locale.ROOT)));
+        return NeoForgeMod.class.getResourceAsStream("/assets/minecraft/lang/%s.json".formatted(NeoTenetConfigUtil.lang().toLowerCase(Locale.ROOT)));
     }
 }
 
