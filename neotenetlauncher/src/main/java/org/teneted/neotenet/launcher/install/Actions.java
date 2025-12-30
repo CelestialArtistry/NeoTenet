@@ -13,7 +13,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -33,7 +32,6 @@ public class Actions {
     private static MethodHandle addOpensToAllUnnamed;
     private static MethodHandle loadModule;
     private static MethodHandle SET_bootLayer;
-    private static MethodHandle name;
     private static ModuleLayer.Controller bootPath;
     private static String mcVersion;
     private static URLClassLoader installerLoader;
@@ -62,8 +60,6 @@ public class Actions {
             Class<?> builtinCL = lookup.findClass("jdk.internal.loader.BuiltinClassLoader");
             loadModule = lookup.findVirtual(builtinCL, "loadModule", MethodType.methodType(Void.TYPE, ModuleReference.class));
             SET_bootLayer = MethodHandles.privateLookupIn(System.class, lookup).unreflectSetter(System.class.getDeclaredField("bootLayer"));
-            Class<?> enumCl = lookup.findClass("java.lang.Enum");
-            name = lookup.findVirtual(enumCl, "name", MethodType.methodType(String.class));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -120,14 +116,18 @@ public class Actions {
             FileUtils.copyTo(jar.getInputStream(files.stream().filter(jarEntry -> jarEntry.getName().endsWith("-universal.jar"))
                     .findFirst()
                     .orElseThrow()), new FileOutputStream(universalJar));
-            loadInstallerLibraries(profile.libraries());
-            installerTask(file, profile.libraries());
+            installerTask(file, profile);
             File argsFile = getArgsFile();
             if (!argsFile.exists()) argsFile.createNewFile();
             FileUtils.copyTo(jar.getInputStream(files.stream().filter(entry -> entry.getName().contains(argsFile.getName()))
                             .findFirst()
                             .orElseThrow()),
                     new FileOutputStream(argsFile));
+            // Close the installer class loader to release all file handles and resources
+            if (installerLoader != null) {
+                installerLoader.close();
+                installerLoader = null;
+            }
         } else {
             // NeoTent - for project
             throw new RuntimeException("Not support");
@@ -138,27 +138,17 @@ public class Actions {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         FileUtils.copyTo(fis, bos);
         String str = bos.toString(StandardCharsets.UTF_8);
-        if (System.getProperty("os.name").contains("Windows")) {
-            str = str.replace(":", ";");
-        }
-        List<String> args = List.of(str.split("\n"));
-        args.forEach(arg -> {
-            try {
-                if (arg.startsWith("--") && !arg.contains("add-modules")) {
-                    String[] largs = arg.split(" ");
-                    if (largs[0].equalsIgnoreCase("--fml.mcVersion")) {
-                        mcVersion = largs[1];
-                    }
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        });
+        mcVersion = Arrays.stream(str.split("\n"))
+                .filter(arg -> arg.startsWith("--fml.mcVersion"))
+                .findFirst()
+                .orElseThrow()
+                .split(" ")[1];
     }
 
 
-    private static void installerTask(URI file, List<Library> libraries) throws Throwable {
+    private static void installerTask(URI file, InstallProfile profile) throws Throwable {
         File launcherJar = new File(file);
+        List<Library> libraries = profile.libraries();
         System.out.println("try download minecraft server for " + mcVersion + "...");
         File serverJar = new File(Actions.libraries, "net/minecraft/server/" + mcVersion + "/server-" + mcVersion + ".jar");
         Library neoform = libraries.stream().filter(library -> library.name().startsWith("net.neoforged:neoform"))
@@ -167,64 +157,137 @@ public class Actions {
         Library neoforge = libraries.stream().filter(library -> library.name().startsWith("net.neoforged:neoforge"))
                 .findFirst()
                 .orElseThrow();
-        String neoformVer = neoform.name().split(":")[2].replace("@zip", "");
-        File serverJarUnpacked = new File(Actions.libraries, "net/minecraft/server/" + neoformVer + "/server-" + neoformVer + "-unpacked.jar");
-        if (!serverJarUnpacked.getParentFile().exists()) {
-            serverJarUnpacked.getParentFile().mkdirs();
-        }
-        File serverJarSlim = new File(Actions.libraries, "net/minecraft/server/" + neoformVer + "/server-" + neoformVer + "-slim.jar");
-        File serverJarExtra = new File(Actions.libraries, "net/minecraft/server/" + neoformVer + "/server-" + neoformVer + "-extra.jar");
-        File serverJarSrg = new File(Actions.libraries, "net/minecraft/server/" + neoformVer + "/server-" + neoformVer + "-srg.jar");
-        File neoformZip = new File(Actions.libraries, neoform.downloads().artifact().path());
-        File serverMapping = new File(Actions.libraries, "net/minecraft/server/" + neoformVer + "/" + neoformVer + ".srg");
-        File serverPatcher = new File(Actions.libraries, "net/minecraft/server/" + neoformVer + "/server.lzma");
-        File serverPatched = new File(Actions.libraries, neoforge.downloads().artifact().path().replace("-universal", "-server"));
-        File mojangMapping = new File(Actions.libraries, "net/minecraft/server/" + neoformVer + "/" + neoformVer + ".mojang");
-        File mergeMapping = new File(Actions.libraries, "net/minecraft/server/" + neoformVer + "/" + neoformVer + ".mapping");
 
+        File neoformZip = new File(Actions.libraries, neoform.downloads().artifact().path());
+        File serverPatched = new File(Actions.libraries, neoforge.downloads().artifact().path().replace("-universal", "-server"));
+
+        String neoformVer = neoform.name().split(":")[2].replace("@zip", "");
+        File serverDir = new File(Actions.libraries, "net/minecraft/server/" + neoformVer);
+        if (!serverDir.exists()) {
+            serverDir.mkdirs();
+        }
+        File serverJarUnpacked = new File(serverDir, "server-" + neoformVer + "-unpacked.jar");
+        File serverJarSlim = new File(serverDir, "server-" + neoformVer + "-slim.jar");
+        File serverJarExtra = new File(serverDir, "server-" + neoformVer + "-extra.jar");
+        File serverJarSrg = new File(serverDir, "server-" + neoformVer + "-srg.jar");
+        File serverMapping = new File(serverDir, neoformVer + ".srg");
+        File serverPatcher = new File(serverDir, "server.lzma");
+        File mojangMapping = new File(serverDir, neoformVer + ".mojang");
+        File mergeMapping = new File(serverDir, neoformVer + ".mapping");
 
         if (!serverJar.exists())
             ServerAction.download(mcVersion, serverJar);
-        Class<?> tasksClass = installerLoader.loadClass("net.neoforged.installertools.Tasks");
-        Class<?> taskClass = installerLoader.loadClass("net.neoforged.installertools.Task");
-        Class<?> jarsplitterMain = installerLoader.loadClass("net.neoforged.jarsplitter.ConsoleTool");
-        Class<?> artMain = installerLoader.loadClass("net.neoforged.art.Main");
-        Class<?> patcherMain = installerLoader.loadClass("net.neoforged.binarypatcher.ConsoleTool");
-        Method get = Arrays.stream(tasksClass.getDeclaredMethods()).filter(method -> method.getName().equalsIgnoreCase("get")).findFirst().orElseThrow();
-        MethodHandle process = lookup.findVirtual(taskClass, "process", MethodType.methodType(Void.TYPE, String[].class));
-        MethodHandle jarsplitterM = lookup.findStatic(jarsplitterMain, "main", MethodType.methodType(Void.TYPE, String[].class));
-        MethodHandle artM = lookup.findStatic(artMain, "main", MethodType.methodType(Void.TYPE, String[].class));
-        MethodHandle patcherM = lookup.findStatic(patcherMain, "main", MethodType.methodType(Void.TYPE, String[].class));
 
-        Object EXTRACT_FILES = Arrays.stream(tasksClass.getEnumConstants()).filter(task -> task.toString().equalsIgnoreCase("EXTRACT_FILES"))
+        String jvm = System.getProperty("java.home") + "/bin/java";
+        if (System.getProperty("os.name").contains("Windows")) {
+            jvm += ".exe";
+        }
+        StringBuilder installerToolClassPaths = new StringBuilder();
+        StringBuilder jarsplitterToolsClassPaths = new StringBuilder();
+        StringBuilder binarypatcherClassPaths = new StringBuilder();
+        StringBuilder autoRenamingToolClassPaths = new StringBuilder();
+        parseLibraries(profile, installerToolClassPaths, "net.neoforged.installertools:installertools");
+        parseLibraries(profile, autoRenamingToolClassPaths, "net.neoforged:AutoRenamingTool");
+        parseLibraries(profile, binarypatcherClassPaths, "net.neoforged.installertools:binarypatcher");
+        parseLibraries(profile, jarsplitterToolsClassPaths, "net.neoforged.installertools:jarsplitter");
+
+        String installerTools = parseJar(profile, "net.neoforged.installertools:installertools");
+        String autoRenamingTool = parseJar(profile, "net.neoforged:AutoRenamingTool");
+        String binarypatcher = parseJar(profile, "net.neoforged.installertools:binarypatcher");
+        String jarsplitter = parseJar(profile, "net.neoforged.installertools:jarsplitter");
+        List<List<String>> cmds = new ArrayList<>();
+
+        String finalJvm = jvm;
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", installerToolClassPaths.toString(), "net.neoforged.installertools.ConsoleTool"));
+            addAll(List.of("--task", "EXTRACT_FILES"));
+            addAll(List.of("--archive", launcherJar.getPath(), "--from", "neodev/server-binpatches.lzma", "--to", serverPatcher.getPath()));
+        }});
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", installerToolClassPaths.toString(), "net.neoforged.installertools.ConsoleTool"));
+            addAll(List.of("--task", "BUNDLER_EXTRACT"));
+            addAll(List.of("--input", serverJar.getPath(), "--output", Actions.libraries.getPath(), "--libraries"));
+        }});
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", installerToolClassPaths.toString(), "net.neoforged.installertools.ConsoleTool"));
+            addAll(List.of("--task", "BUNDLER_EXTRACT"));
+            addAll(List.of("--input", serverJar.getPath(), "--output", serverJarUnpacked.getPath(), "--jar-only"));
+        }});
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", installerToolClassPaths.toString(), "net.neoforged.installertools.ConsoleTool"));
+            addAll(List.of("--task", "MCP_DATA"));
+            addAll(List.of("--input", neoformZip.getPath(), "--output", serverMapping.getPath(), "--key", "mappings"));
+        }});
+
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", installerToolClassPaths.toString(), "net.neoforged.installertools.ConsoleTool"));
+            addAll(List.of("--task", "DOWNLOAD_MOJMAPS"));
+            addAll(List.of("--version", mcVersion, "--side", "server", "--output", mojangMapping.getPath()));
+        }});
+
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", installerToolClassPaths.toString(), "net.neoforged.installertools.ConsoleTool"));
+            addAll(List.of("--task", "MERGE_MAPPING"));
+            addAll(List.of("--left", serverMapping.getPath(), "--output", mergeMapping.getPath(), "--right", mojangMapping.getPath(), "--classes", "--fields", "--methods", "--reverse-right"));
+        }});
+
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", jarsplitterToolsClassPaths.toString(), "net.neoforged.jarsplitter.ConsoleTool"));
+            addAll(List.of("--input", serverJarUnpacked.getPath(), "--slim", serverJarSlim.getPath(), "--extra", serverJarExtra.getPath(), "--srg", mergeMapping.getPath()));
+        }});
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", autoRenamingToolClassPaths.toString(), "net.neoforged.art.Main"));
+            addAll(List.of("--input", serverJarSlim.getPath(), "--output", serverJarSrg.getPath(), "--names", mergeMapping.getPath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"));
+        }});
+        cmds.add(new ArrayList<>() {{
+            addAll(List.of(finalJvm, "-cp", binarypatcherClassPaths.toString(), "net.neoforged.binarypatcher.ConsoleTool"));
+            addAll(List.of("--clean", serverJarSrg.getPath(), "--output", serverPatched.getPath(), "--apply", serverPatcher.getPath()));
+        }});
+
+        System.out.println("try remap server jar...");
+        //System.out.println(cmds);
+        cmds.forEach(cmd -> {
+            try {
+                Process process = Runtime.getRuntime().exec(cmd.toArray(new String[0]));
+
+                int size = 0;
+                byte[] read = new byte[1024];
+                while ((size = process.getInputStream().read(read)) != -1) {
+
+                }
+                process.waitFor();
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+
+    private static void parseLibraries(InstallProfile profile, StringBuilder classpath, String target) {
+        profile.processors().stream().filter(processor -> processor.jar().startsWith(target))
                 .findFirst()
-                .orElseThrow();
-        Object BUNDLER_EXTRACT = Arrays.stream(tasksClass.getEnumConstants()).filter(task -> task.toString().equalsIgnoreCase("BUNDLER_EXTRACT"))
+                .orElseThrow()
+                .classpath().forEach(cp -> {
+                    if (!classpath.isEmpty()) {
+                        classpath.append(File.pathSeparator);
+                    }
+                    classpath.append(new File(Actions.libraries, profile.libraries().stream().filter(library -> library.name().equalsIgnoreCase(cp))
+                            .findFirst()
+                            .orElseThrow()
+                            .downloads()
+                            .artifact()
+                            .path()).getPath());
+                });
+    }
+
+    private static String parseJar(InstallProfile profile, String target) {
+
+        return new File(libraries, profile.libraries().stream().filter(library -> library.name().startsWith(target))
                 .findFirst()
-                .orElseThrow();
-        Object MCP_DATA = Arrays.stream(tasksClass.getEnumConstants()).filter(task -> task.toString().equalsIgnoreCase("MCP_DATA"))
-                .findFirst()
-                .orElseThrow();
-        Object DOWNLOAD_MOJMAPS = Arrays.stream(tasksClass.getEnumConstants()).filter(task -> task.toString().equalsIgnoreCase("DOWNLOAD_MOJMAPS"))
-                .findFirst()
-                .orElseThrow();
-        Object MERGE_MAPPING = Arrays.stream(tasksClass.getEnumConstants()).filter(task -> task.toString().equalsIgnoreCase("MERGE_MAPPING"))
-                .findFirst()
-                .orElseThrow();
-        process.invoke(get.invoke(EXTRACT_FILES), new String[]{"--archive", launcherJar.getPath(), "--from", "neodev/server-binpatches.lzma", "--to", serverPatcher.getPath()});
-
-        process.invoke(get.invoke(BUNDLER_EXTRACT), new String[]{"--input", serverJar.getPath(), "--output", Actions.libraries.getPath(), "--libraries"});
-        process.invoke(get.invoke(BUNDLER_EXTRACT), new String[]{"--input", serverJar.getPath(), "--output", serverJarUnpacked.getPath(), "--jar-only"});
-
-        process.invoke(get.invoke(MCP_DATA), new String[]{"--input", neoformZip.getPath(), "--output", serverMapping.getPath(), "--key", "mappings"});
-
-        process.invoke(get.invoke(DOWNLOAD_MOJMAPS), new String[]{"--version", mcVersion, "--side", "server", "--output", mojangMapping.getPath()});
-
-        process.invoke(get.invoke(MERGE_MAPPING), new String[]{"--left", serverMapping.getPath(), "--output", mergeMapping.getPath(), "--right", mojangMapping.getPath(), "--classes", "--fields", "--methods", "--reverse-right"});
-
-        jarsplitterM.invoke((Object) new String[]{"--input", serverJarUnpacked.getPath(), "--slim", serverJarSlim.getPath(), "--extra", serverJarExtra.getPath(), "--srg", mergeMapping.getPath()});
-        artM.invoke((Object) new String[]{"--input", serverJarSlim.getPath(), "--output", serverJarSrg.getPath(), "--names", mergeMapping.getPath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"});
-        patcherM.invoke((Object) new String[]{"--clean", serverJarSrg.getPath(), "--output", serverPatched.getPath(), "--apply", serverPatcher.getPath()});
+                .orElseThrow()
+                .downloads()
+                .artifact()
+                .path()).getPath();
     }
 
     private static void loadLibraries() {
