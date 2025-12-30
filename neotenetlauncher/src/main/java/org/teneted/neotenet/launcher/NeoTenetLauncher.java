@@ -2,6 +2,9 @@ package org.teneted.neotenet.launcher;
 
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
 import org.teneted.neotenet.launcher.install.Actions;
+import org.teneted.neotenet.launcher.utils.EulaUtil;
+
+import java.util.Scanner;
 
 public class NeoTenetLauncher {
 
@@ -18,6 +21,11 @@ public class NeoTenetLauncher {
                 if (success) {
                     InstallationManager.createVersionFile();
                 }
+            }
+            if (!EulaUtil.hasAcceptedEULA()) {
+                System.out.println("You need to accept the eula to launch your server. Type true to continue.");
+                while (!"true".equals(new Scanner(System.in).next()));
+                EulaUtil.writeInfos();
             }
             BootstrapLauncher.main(Actions.parseArgs(commandLineArgs));
 
