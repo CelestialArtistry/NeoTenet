@@ -11,8 +11,8 @@ import java.util.Queue;
 
 public class LibrariesAction implements Runnable {
 
-    private static final Queue<Library> queue = new LinkedList<Library>();
-    private static int count = 3;
+    private static final Queue<Library> queue = new LinkedList<>();
+    private static final int count = 3;
     private final File root;
 
     public LibrariesAction(File librariesDir) {
@@ -46,12 +46,15 @@ public class LibrariesAction implements Runnable {
                     break;
                 }
                 //System.out.println("Try download " + library.name());
+                if (library.name().endsWith(":universal")) continue;
                 File target = new File(root, library.downloads().artifact().path());
                 if (target.exists() && FileUtils.checkFile(target, library.downloads().artifact().sha1())) {
-
                     continue;
                 }
+
+                // NeoTent - Extract from installer jar
                 FileUtils.download(library.downloads().artifact().url(), target);
+
                 System.out.println("Try check " + library.name());
                 if (!FileUtils.checkFile(target, library.downloads().artifact().sha1())) {
                     System.out.println("Checked failed " + library.name());

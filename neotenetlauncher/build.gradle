@@ -14,14 +14,22 @@ base {
 }
 
 def neotaiyitistProjectDir = rootProject.layout.projectDirectory.dir("projects/neotenet")
-def installerJarDir = neotaiyitistProjectDir.dir("build/libs")
-def installerJarFile = installerJarDir.file("neotenet-${rootProject.version}-installer.jar")
+def buildJarDir = neotaiyitistProjectDir.dir("build/libs")
+def neoDevDir = neotaiyitistProjectDir.dir("build/neodev")
+def universalJarFile = buildJarDir.file("neotenet-${rootProject.version}-universal.jar")
+def installProfile = neoDevDir.file("installer-profile.json")
+def serverArgs = neoDevDir.file("unix-server-args.txt")
+def serverPatch = neoDevDir.file("server-binpatches.lzma")
 
 
 dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.20.1")
 
     compileOnly "cpw.mods:bootstraplauncher:${project.bootstraplauncher_version}"
+    compileOnly "net.neoforged.installertools:installertools:2.1.2"
+    compileOnly "net.neoforged.installertools:jarsplitter:2.1.2"
+    compileOnly "net.neoforged:AutoRenamingTool:2.0.3"
+    compileOnly "net.neoforged.installertools:binarypatcher:2.1.2"
 }
 
 tasks.register('launcherJar', ShadowJar) {
@@ -41,7 +49,8 @@ tasks.register('launcherJar', ShadowJar) {
     dependsOn project(':neotenet').tasks.named('installerJar')
 
 
-    from(installerJarFile.asFile) {
-        into('META-INF/installer')
-    }
+    from(universalJarFile.asFile) { into('neodev/') }
+    from(installProfile.asFile) { into('neodev/') }
+    from(serverArgs.asFile) { into('neodev/') }
+    from(serverPatch.asFile) { into('neodev/') }
 }
