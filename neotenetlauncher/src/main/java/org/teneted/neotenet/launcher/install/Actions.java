@@ -194,6 +194,9 @@ public class Actions {
 
     private static List<String> getStrings(ByteArrayOutputStream bos) {
         String str = bos.toString(StandardCharsets.UTF_8);
+        if (System.getProperty("os.name").contains("Windows")) {
+            str = str.replace(":", ";");
+        }
         List<String> args = List.of(str.split("\n"));
         List<String> launcherArgs = new ArrayList<>();
         args.forEach(arg -> {
