@@ -13,9 +13,9 @@ base {
     archivesName = "neotenet-launcher"
 }
 
-def neotaiyitistProjectDir = rootProject.layout.projectDirectory.dir("projects/neotenet")
-def buildJarDir = neotaiyitistProjectDir.dir("build/libs")
-def neoDevDir = neotaiyitistProjectDir.dir("build/neodev")
+def neotenetDir = rootProject.layout.projectDirectory.dir("projects/neotenet")
+def buildJarDir = neotenetDir.dir("build/libs")
+def neoDevDir = neotenetDir.dir("build/neodev")
 def universalJarFile = buildJarDir.file("neotenet-${rootProject.version}-universal.jar")
 def installProfile = neoDevDir.file("installer-profile.json")
 def serverArgs = neoDevDir.file("unix-server-args.txt")
