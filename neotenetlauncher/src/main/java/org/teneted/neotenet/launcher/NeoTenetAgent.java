@@ -8,7 +8,6 @@ public class NeoTenetAgent {
     public static Instrumentation instrumentation;
 
     public static void premain(String args, Instrumentation instrumentation) {
-        System.out.println("Agent start");
         NeoTenetAgent.instrumentation = instrumentation;
     }
 

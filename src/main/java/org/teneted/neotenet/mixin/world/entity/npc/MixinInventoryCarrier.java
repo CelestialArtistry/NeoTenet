@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InventoryCarrier.class)
-public class MixinInventoryCarrier {
+public interface MixinInventoryCarrier {
 
     @Inject(method = "pickUpItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;onItemPickup(Lnet/minecraft/world/entity/item/ItemEntity;)V"), cancellable = true)
     private static void neotenet$callEntityPickupItemEvent(Mob p_219612_, InventoryCarrier p_219613_, ItemEntity p_219614_, CallbackInfo ci, @Local SimpleContainer simplecontainer, @Local ItemStack itemstack) {

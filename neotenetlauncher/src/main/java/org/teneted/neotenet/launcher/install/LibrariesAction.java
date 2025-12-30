@@ -34,6 +34,11 @@ public class LibrariesAction implements Runnable {
                 System.out.println("Something is wrong...");
             }
         }
+        try {
+            Thread.sleep(5000L);
+        } catch (InterruptedException e) {
+            System.out.println("Something is wrong...");
+        }
     }
 
     @Override
