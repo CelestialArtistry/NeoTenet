@@ -29,9 +29,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+// TODO fixme
 @Mixin(PersistentEntitySectionManager.class)
 public abstract class MixinPersistentEntitySectionManager<T extends EntityAccess> {
 
+    /*
     // @formatter:off
     @Shadow public abstract void close() throws IOException;
     @Shadow @Final private EntityPersistentStorage<T> permanentStorage;
@@ -88,5 +90,5 @@ public abstract class MixinPersistentEntitySectionManager<T extends EntityAccess
         if (entityAccess instanceof Entity entity) {
             entity.pushRemoveCause(EntityRemoveEvent.Cause.UNLOAD);
         }
-    }
+    }*/
 }

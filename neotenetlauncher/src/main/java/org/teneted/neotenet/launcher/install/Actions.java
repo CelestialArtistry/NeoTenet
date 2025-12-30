@@ -2,6 +2,7 @@ package org.teneted.neotenet.launcher.install;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.teneted.neotenet.launcher.InstallationManager;
 import org.teneted.neotenet.launcher.NeoTenetAgent;
 import org.teneted.neotenet.launcher.data.InstallProfile;
 import org.teneted.neotenet.launcher.data.Library;
@@ -86,7 +87,7 @@ public class Actions {
         }
     }
 
-    public static void init() throws Throwable {
+    public static boolean init() throws Throwable {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         URI file = Actions.class.getProtectionDomain()
                 .getCodeSource()
@@ -132,6 +133,7 @@ public class Actions {
             // NeoTent - for project
             throw new RuntimeException("Not support");
         }
+        return true;
     }
 
     private static void parseVersion(InputStream fis) throws IOException {
@@ -343,7 +345,7 @@ public class Actions {
     }
 
     public static boolean ready() {
-        return getArgsFile().exists();
+        return getArgsFile().exists() && InstallationManager.checkAndInstall();
     }
 
     public static String[] parseArgs(String[] commandLineArgs) throws Throwable {
