@@ -338,6 +338,8 @@
     "world.level.block.MixinDoublePlantBlock",
     "world.level.block.MixinDragonEggBlock",
     "world.level.block.MixinDropExperienceBlock",
+    "world.level.block.MixinDropperBlock",
+    "world.level.block.MixinEndGatewayBlock",
     "world.level.block.MixinEndPortalBlock",
     "world.level.block.MixinFarmBlock",
     "world.level.block.MixinFenceGateBlock",
