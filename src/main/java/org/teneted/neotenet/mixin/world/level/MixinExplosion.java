@@ -170,7 +170,7 @@ public class MixinExplosion {
         // CraftBukkit end
     }
 
-    @Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/Util;shuffle(Ljava/util/List;Lnet/minecraft/util/RandomSource;)V"))
+    @Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/Util;shuffle(Ljava/util/List;Lnet/minecraft/util/RandomSource;)V"), cancellable = true)
     private void neotent$finalizeExplosion(CallbackInfo ci) {
         // CraftBukkit start
         org.bukkit.World bworld = this.level.getWorld();
@@ -209,6 +209,7 @@ public class MixinExplosion {
         }
 
         if (this.wasCanceled) {
+            ci.cancel();
             return;
         }
         // CraftBukkit end
@@ -243,7 +244,7 @@ public class MixinExplosion {
             this.level.setBlockAndUpdate(p_46598_, FireBlock.getState(this.level, p_46598_));
         }
         // CraftBukkit end
-        return false;
+        return true;
     }
 
     @Inject(method = "addOrAppendStack", at = @At("HEAD"), cancellable = true)
