@@ -84,7 +84,6 @@ public class MixinExplosion {
     @Shadow
     public boolean wasCanceled;
 
-    private Vec3 vec31;
 
 
     @Redirect(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Explosion$BlockInteraction;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/Holder;)V",
@@ -142,32 +141,6 @@ public class MixinExplosion {
         }
         // CraftBukkit end
         return true;
-    }
-
-    @ModifyVariable(
-            method = "explode",
-            at = @At("STORE"),
-            ordinal = 1
-    )
-    private Vec3 neotenet$callEntityKnockbackEvent(Vec3 vec31) {
-        if (this.vec31 == null) return vec31;
-        return this.vec31;
-    }
-
-    @Inject(method = "explode", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/event/EventHooks;getExplosionKnockback(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/Explosion;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;"))
-    private void neotenet$callEntityKnockbackEvent(CallbackInfo ci, @Local Entity entity, @Local(ordinal = 5) double d13, @Local(ordinal = 1) Vec3 vec31) {
-        this.vec31 = vec31;
-        // CraftBukkit start - Call EntityKnockbackEvent
-        if (entity instanceof LivingEntity) {
-            Vec3 result = entity.getDeltaMovement().add(vec31);
-            EntityKnockbackEvent event = CraftEventFactory.callEntityKnockbackEvent((CraftLivingEntity) entity.getBukkitEntity(), source, EntityKnockbackEvent.KnockbackCause.EXPLOSION, d13, vec31, result.x, result.y, result.z);
-
-            // SPIGOT-7640: Need to subtract entity movement from the event result,
-            // since the code below (the setDeltaMovement call as well as the hitPlayers map)
-            // want the vector to be the relative velocity will the event provides the absolute velocity
-            this.vec31 = (event.isCancelled()) ? Vec3.ZERO : new Vec3(event.getFinalKnockback().getX(), event.getFinalKnockback().getY(), event.getFinalKnockback().getZ()).subtract(entity.getDeltaMovement());
-        }
-        // CraftBukkit end
     }
 
     @Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/Util;shuffle(Ljava/util/List;Lnet/minecraft/util/RandomSource;)V"))
