@@ -205,6 +205,8 @@
     "world.entity.player.MixinPlayer",
     "world.entity.vehicle.MixinBoat",
     "world.entity.vehicle.MixinChestBoat",
+    "world.entity.vehicle.MixinMinecartTNT",
+    "world.entity.vehicle.MixinVehicleEntity",
     "world.gameevent.MixinGameEventDispatcher",
     "world.gameevent.vibration.MixinVibrationSystem_Listener",
     "world.inventory.MixinAbstractContainerMenu",
