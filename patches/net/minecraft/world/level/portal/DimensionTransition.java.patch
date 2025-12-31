@@ -1,19 +1,70 @@
 --- a/net/minecraft/world/level/portal/DimensionTransition.java
 +++ b/net/minecraft/world/level/portal/DimensionTransition.java
-@@ -6,6 +_,7 @@
+@@ -6,29 +_,46 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.teneted.neotenet.injection.world.level.portal.InjectionDimensionTransition;
  
  public record DimensionTransition(
-     ServerLevel newLevel,
-@@ -15,7 +_,7 @@
-     float xRot,
-     boolean missingRespawnBlock,
-     DimensionTransition.PostDimensionTransition postDimensionTransition
+-    ServerLevel newLevel,
+-    Vec3 pos,
+-    Vec3 speed,
+-    float yRot,
+-    float xRot,
+-    boolean missingRespawnBlock,
+-    DimensionTransition.PostDimensionTransition postDimensionTransition
 -) {
++        ServerLevel newLevel,
++        Vec3 pos,
++        Vec3 speed,
++        float yRot,
++        float xRot,
++        boolean missingRespawnBlock,
++        DimensionTransition.PostDimensionTransition postDimensionTransition,
++        PlayerTeleportEvent.TeleportCause cause
 +) implements InjectionDimensionTransition {
      public static final DimensionTransition.PostDimensionTransition DO_NOTHING = p_352417_ -> {
      };
      public static final DimensionTransition.PostDimensionTransition PLAY_PORTAL_SOUND = DimensionTransition::playPortalSound;
+     public static final DimensionTransition.PostDimensionTransition PLACE_PORTAL_TICKET = DimensionTransition::placePortalTicket;
+ 
+     public DimensionTransition(
+-        ServerLevel p_348637_, Vec3 p_348645_, Vec3 p_348472_, float p_348548_, float p_348664_, DimensionTransition.PostDimensionTransition p_352139_
++            ServerLevel p_348637_, Vec3 p_348645_, Vec3 p_348472_, float p_348548_, float p_348664_, DimensionTransition.PostDimensionTransition p_352139_
+     ) {
+-        this(p_348637_, p_348645_, p_348472_, p_348548_, p_348664_, false, p_352139_);
+-    }
++        this(p_348637_, p_348645_, p_348472_, p_348548_, p_348664_, false, p_352139_, PlayerTeleportEvent.TeleportCause.UNKNOWN);
++    }
++
++    public DimensionTransition(ServerLevel newLevel, Vec3 pos, Vec3 speed, float yRot, float xRot, boolean missingRespawnBlock, DimensionTransition.PostDimensionTransition postDimensionTransition) {
++        this(newLevel, pos, speed, yRot, xRot, missingRespawnBlock, postDimensionTransition, PlayerTeleportEvent.TeleportCause.UNKNOWN);
++    }
++
++    public DimensionTransition(PlayerTeleportEvent.TeleportCause cause) {
++        this(null, Vec3.ZERO, Vec3.ZERO, 0.0F, 0.0F, false, DO_NOTHING, cause);
++    }
++
+ 
+     public DimensionTransition(ServerLevel p_348609_, Entity p_352432_, DimensionTransition.PostDimensionTransition p_352373_) {
+-        this(p_348609_, findAdjustedSharedSpawnPos(p_348609_, p_352432_), Vec3.ZERO, 0.0F, 0.0F, false, p_352373_);
++        this(p_348609_, findAdjustedSharedSpawnPos(p_348609_, p_352432_), Vec3.ZERO, 0.0F, 0.0F, false, p_352373_, PlayerTeleportEvent.TeleportCause.UNKNOWN);
++    }
++
++    public DimensionTransition(ServerLevel p_348609_, Entity p_352432_, DimensionTransition.PostDimensionTransition p_352373_, PlayerTeleportEvent.TeleportCause cause) {
++        this(p_348609_, findAdjustedSharedSpawnPos(p_348609_, p_352432_), Vec3.ZERO, 0.0F, 0.0F, false, p_352373_, cause);
++        // CraftBukkit end
+     }
+ 
+     private static void playPortalSound(Entity p_352075_) {
+@@ -42,7 +_,7 @@
+     }
+ 
+     public static DimensionTransition missingRespawnBlock(ServerLevel p_348517_, Entity p_352420_, DimensionTransition.PostDimensionTransition p_352305_) {
+-        return new DimensionTransition(p_348517_, findAdjustedSharedSpawnPos(p_348517_, p_352420_), Vec3.ZERO, 0.0F, 0.0F, true, p_352305_);
++        return new DimensionTransition(p_348517_, findAdjustedSharedSpawnPos(p_348517_, p_352420_), Vec3.ZERO, 0.0F, 0.0F, true, p_352305_, PlayerTeleportEvent.TeleportCause.UNKNOWN);
+     }
+ 
+     private static Vec3 findAdjustedSharedSpawnPos(ServerLevel p_352080_, Entity p_352400_) {

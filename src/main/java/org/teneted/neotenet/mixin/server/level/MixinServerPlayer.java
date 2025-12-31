@@ -7,17 +7,24 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Either;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+
 import net.minecraft.BlockUtil;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.critereon.ChangeDimensionTrigger;
+import net.minecraft.advancements.critereon.DistanceTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -27,6 +34,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.stats.ServerRecipeBook;
 import net.minecraft.util.Mth;
@@ -53,7 +61,9 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -71,18 +81,14 @@ import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.event.CraftPortalEvent;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.BlockStateListPopulator;
+import org.bukkit.craftbukkit.util.CraftDimensionUtil;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.event.entity.EntityExhaustionEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
-import org.bukkit.event.player.PlayerChangedMainHandEvent;
-import org.bukkit.event.player.PlayerLocaleChangeEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerSpawnChangeEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.MainHand;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
@@ -91,6 +97,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -134,6 +141,8 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     private Entity camera;
     @Shadow
     private int containerCounter;
+    @Shadow
+    private boolean respawnForced;
     private boolean neotenet$initialized = false;
     private float pluginRainPosition;
     private float pluginRainPositionPrevious;
@@ -142,6 +151,11 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     private final AtomicReference<PlayerTeleportEvent.TeleportCause> neotenet$changeDimensionCause = new AtomicReference<>(PlayerTeleportEvent.TeleportCause.UNKNOWN);
     // CraftBukkit end
     private transient BlockStateListPopulator neotenet$populator;
+    private PlayerDeathEvent event;
+    private boolean result;
+    private ServerLevel serverLevel;
+    private Location exit;
+
     public MixinServerPlayer(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
         super(level, blockPos, f, gameProfile);
     }
@@ -192,6 +206,8 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     @Shadow
     @Final
     private ContainerSynchronizer containerSynchronizer;
+    @Shadow
+    private Vec3 enteredNetherPosition;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void neotenet$init(CallbackInfo ci) {
@@ -254,11 +270,13 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
     private void neotenet$readExtra(CompoundTag compound, CallbackInfo ci) {
         this.getBukkitEntity().readExtraData(compound);
+        // CraftBukkit start
         String spawnWorld = compound.getString("SpawnWorld");
         CraftWorld oldWorld = (CraftWorld) Bukkit.getWorld(spawnWorld);
         if (oldWorld != null) {
             this.respawnDimension = oldWorld.getHandle().dimension();
         }
+        // CraftBukkit end
     }
 
     @Redirect(method = "addAdditionalSaveData", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hasExactlyOnePlayerPassenger()Z"))
@@ -294,6 +312,12 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         return new ClientboundSetHealthPacket(this.getBukkitEntity().getScaledHealth(), foodLevelIn, saturationLevelIn);
     }
 
+    @Redirect(method = "doTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"))
+    private void neotenet$sendBukkitSetHealth(ServerGamePacketListenerImpl instance, Packet packet) {
+        this.connection.send(new ClientboundSetHealthPacket(this.getBukkitEntity().getScaledHealth(), this.foodData.getFoodLevel(), this.foodData.getSaturationLevel()));// CraftBukkit
+
+    }
+
     @Inject(method = "doTick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerPlayer;tickCount:I", opcode = Opcodes.GETFIELD))
     private void neotenet$updateHealthAndExp(CallbackInfo ci) {
         if (this.maxHealthCache != this.getMaxHealth()) {
@@ -323,13 +347,158 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
 
     @Inject(method = "isPvpAllowed", cancellable = true, at = @At("HEAD"))
     private void neotenet$pvpMode(CallbackInfoReturnable<Boolean> cir) {
+        // CraftBukkit - this.server.isPvpAllowed() -> this.world.pvpMode
         cir.setReturnValue((this.level().pvpMode));
     }
 
+    @Inject(method = "changeDimension", cancellable = true, at = @At("HEAD"))
+    private void neotenet$changeDimension(CallbackInfoReturnable<Boolean> cir) {
+        if (this.isSleeping()) cir.setReturnValue(null);// CraftBukkit - SPIGOT-3154
+    }
+
+    @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"))
+    private void neotenet$changeDimension$teleport(ServerGamePacketListenerImpl instance, double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_, @Local(argsOnly = true) DimensionTransition p_350472_) {
+        this.result = instance.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, p_350472_.getTeleportCause());
+    }
+
+    @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"), cancellable = true)
+    private void neotenet$changeDimension$teleport$if(CallbackInfoReturnable<Entity> cir) {
+        if (!this.result) {
+            cir.cancel();
+        }
+    }
+
+    @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V", shift = At.Shift.BEFORE), cancellable = true)
+    private void neotenet$changeDimension$callPlayerTeleportEvent(DimensionTransition p_350472_, CallbackInfoReturnable<Entity> cir, @Local(ordinal = 1) ServerLevel serverLevel) {
+        // CraftBukkit start
+        Location enter = this.getBukkitEntity().getLocation();
+        Location exit = (serverLevel == null) ? null : CraftLocation.toBukkit(p_350472_.pos(), serverLevel.getWorld(), p_350472_.yRot(), p_350472_.xRot());
+        PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, p_350472_.cause());
+        Bukkit.getServer().getPluginManager().callEvent(tpEvent);
+        if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
+            cir.setReturnValue(null);
+        }
+        exit = tpEvent.getTo();
+        this.serverLevel = ((CraftWorld) exit.getWorld()).getHandle();
+        this.exit = exit;
+        // CraftBukkit end
+        this.setServerLevel(serverLevel);
+    }
+
+    @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"))
+    private void neotenet$changeDimension$teleport(ServerGamePacketListenerImpl instance, double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_, @Local(ordinal = 1) ServerLevel serverLevel1) {
+        instance.teleport(exit);// CraftBukkit - use internal teleport without event
+    }
+
+    @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/event/EventHooks;firePlayerChangedDimensionEvent(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/resources/ResourceKey;)V"))
+    private void neotenet$changeDimension$beforeReturn(DimensionTransition p_350472_, CallbackInfoReturnable<Entity> cir, @Local(ordinal = 1) ServerLevel serverLevel1) {
+        // CraftBukkit start
+        PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverLevel1.getWorld());
+        this.level().getCraftServer().getPluginManager().callEvent(changeEvent);
+        // CraftBukkit end
+    }
+
+    // CraftBukkit start
+    @Override
+    public CraftPortalEvent callPortalEvent(Entity entity, Location exit, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
+        Location enter = this.getBukkitEntity().getLocation();
+        PlayerPortalEvent event = new PlayerPortalEvent(this.getBukkitEntity(), enter, exit, cause, searchRadius, true, creationRadius);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null) {
+            return null;
+        }
+        return new CraftPortalEvent(event);
+    }
+    // CraftBukkit end
+
+    @Override
+    public DimensionTransition findRespawnPositionAndUseSpawnBlock(boolean p_348590_, DimensionTransition.PostDimensionTransition p_352261_, PlayerRespawnEvent.RespawnReason reason) {
+        DimensionTransition dimensionTransition;
+        boolean isBedSpawn = false;
+        boolean isAnchorSpawn = false;
+        // CraftBukkit end
+        BlockPos blockpos = this.getRespawnPosition();
+        float f = this.getRespawnAngle();
+        boolean flag = this.isRespawnForced();
+        ServerLevel serverlevel = this.server.getLevel(this.getRespawnDimension());
+        if (serverlevel != null && blockpos != null) {
+            Optional<ServerPlayer.RespawnPosAngle> optional = this.findRespawnAndUseSpawnBlock(serverlevel, blockpos, f, flag, p_348590_);
+            if (optional.isPresent()) {
+                ServerPlayer.RespawnPosAngle serverplayer$respawnposangle = optional.get();
+                // CraftBukkit start
+                isBedSpawn = serverplayer$respawnposangle.isBedSpawn();
+                isAnchorSpawn = serverplayer$respawnposangle.isAnchorSpawn();
+                dimensionTransition = new DimensionTransition(serverlevel, serverplayer$respawnposangle.position(), Vec3.ZERO, serverplayer$respawnposangle.yaw(), 0.0F, p_352261_);
+                // CraftBukkit end
+            } else {
+                dimensionTransition = DimensionTransition.missingRespawnBlock(this.server.overworld(), this, p_352261_); // CraftBukkit
+            }
+        } else {
+            dimensionTransition = new DimensionTransition(this.server.overworld(), this, p_352261_); // CraftBukkit
+        }
+        // CraftBukkit start
+        if (reason == null) {
+            return dimensionTransition;
+        }
+        org.bukkit.entity.Player respawnPlayer = this.getBukkitEntity();
+        Location location = CraftLocation.toBukkit(dimensionTransition.pos(), dimensionTransition.newLevel().getWorld(), dimensionTransition.yRot(), dimensionTransition.xRot());
+
+        PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn, isAnchorSpawn, reason);
+        this.level().getCraftServer().getPluginManager().callEvent(respawnEvent);
+
+        location = respawnEvent.getRespawnLocation();
+        return new DimensionTransition(((CraftWorld) location.getWorld()).getHandle(), CraftLocation.toVec3D(location), dimensionTransition.speed(), location.getYaw(), location.getPitch(), dimensionTransition.missingRespawnBlock(), dimensionTransition.postDimensionTransition(), dimensionTransition.getTeleportCause());
+        // CraftBukkit end
+    }
+
+
+
     @Redirect(method = "adjustSpawnLocation", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/level/storage/WorldData;getGameType()Lnet/minecraft/world/level/GameType;"))
-    private GameType neotenet$useWorldGameType(WorldData instance, @Local(argsOnly = true) ServerLevel p_352206_) {
+            target = "Lnet/minecraft/world/level/storage/ServerLevelData;getGameType()Lnet/minecraft/world/level/GameType;"))
+    private GameType neotenet$useWorldGameType(ServerLevelData instance, @Local(argsOnly = true) ServerLevel p_352206_) {
         return p_352206_.K.getGameType();
+    }
+
+    @Redirect(method = "triggerDimensionChangeTriggers", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/ChangeDimensionTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/resources/ResourceKey;)V"))
+    public void neotenet$triggerDimensionChangeTriggers(ChangeDimensionTrigger instance, ServerPlayer p_19758_, ResourceKey<Level> p_19759_, ResourceKey<Level> p_19760_, @Local(argsOnly = true) ServerLevel serverLevel) {
+        // CraftBukkit start
+        ResourceKey<Level> maindimensionkey = CraftDimensionUtil.getMainDimensionKey(serverLevel);
+        ResourceKey<Level> maindimensionkey1 = CraftDimensionUtil.getMainDimensionKey(this.level());
+        CriteriaTriggers.CHANGED_DIMENSION.trigger(((ServerPlayer) (Object) this), maindimensionkey, maindimensionkey1);
+        if (maindimensionkey != p_19759_ || maindimensionkey1 != p_19760_) {
+            CriteriaTriggers.CHANGED_DIMENSION.trigger(((ServerPlayer) (Object) this), p_19759_, p_19760_);
+        }
+    }
+
+    @Redirect(method = "triggerDimensionChangeTriggers", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/DistanceTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/phys/Vec3;)V"))
+    public void neotenet$triggerDimensionChangeTriggers$if(DistanceTrigger instance, ServerPlayer p_186166_, Vec3 p_186167_, @Local(argsOnly = true) ServerLevel serverLevel) {
+        // CraftBukkit start
+        ResourceKey<Level> maindimensionkey = CraftDimensionUtil.getMainDimensionKey(serverLevel);
+        ResourceKey<Level> maindimensionkey1 = CraftDimensionUtil.getMainDimensionKey(this.level());
+        if (maindimensionkey == Level.NETHER && maindimensionkey1 == Level.OVERWORLD && this.enteredNetherPosition != null) {
+            CriteriaTriggers.NETHER_TRAVEL.trigger(((ServerPlayer) (Object) this), this.enteredNetherPosition);
+        }
+        if (maindimensionkey1 != Level.NETHER) {
+            this.enteredNetherPosition = null;
+        }
+    }
+
+
+    @Shadow
+    public boolean isRespawnForced() {
+        return false;
+    }
+
+    @Shadow
+    public ResourceKey<Level> getRespawnDimension() {
+        return null;
+    }
+
+    @Shadow
+    public static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
+            ServerLevel p_348505_, BlockPos p_348607_, float p_348481_, boolean p_348513_, boolean p_348600_
+    ) {
+        return null;
     }
 
     @Override
@@ -682,8 +851,9 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
             return;
         }
     }
+
     @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;getDeathMessage()Lnet/minecraft/network/chat/Component;"), cancellable = true)
-    private void neotenet$fireDeathEvent(DamageSource p_9035_, CallbackInfo ci, @Local boolean flag, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag")LocalBooleanRef neotenet$flag) {
+    private void neotenet$fireDeathEvent(DamageSource p_9035_, CallbackInfo ci, @Local boolean flag, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag") LocalBooleanRef neotenet$flag) {
         neotenet$flag.set(flag);
         loot.set(new java.util.ArrayList<>(this.getInventory().getContainerSize()));
         for (ItemStack item : this.getInventory().getContents()) {
@@ -694,7 +864,7 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;removeEntitiesOnShoulder()V"))
-    private void neotenet$addLoots(DamageSource p_9035_, CallbackInfo ci, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag")LocalBooleanRef neotenet$flag) {
+    private void neotenet$addLoots(DamageSource p_9035_, CallbackInfo ci, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag") LocalBooleanRef neotenet$flag) {
         // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
         this.dropFromLootTable(p_9035_, this.lastHurtByPlayerTime > 0);
         this.dropCustomDeathLoot(this.serverLevel(), p_9035_, neotenet$flag.get());
@@ -703,13 +873,28 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         this.drops.clear(); // SPIGOT-5188: make sure to clear
     }
 
+    @Redirect(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isSpectator()Z"))
+    private boolean netoent$isSpectator(ServerPlayer instance, @Local(argsOnly = true) DamageSource p_9035_) {
+        // SPIGOT-5478 must be called manually now
+        this.dropExperience(p_9035_.getEntity());
+        // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
+        return event.getKeepInventory();
+    }
+
+    @Redirect(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;dropAllDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;)V"))
+    private void netoent$dropAllDeathLoot(ServerPlayer instance, ServerLevel serverLevel, DamageSource damageSource, @Local(argsOnly = true) DamageSource p_9035_) {
+        this.getInventory().clearContent();
+    }
+
     @Redirect(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;getDeathMessage()Lnet/minecraft/network/chat/Component;"))
-    private Component neotenet$callDeathEvent(CombatTracker instance, @Local(argsOnly = true) DamageSource p_9035_, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag")LocalBooleanRef neotenet$flag) {
+    private Component neotenet$callDeathEvent(CombatTracker instance, @Local(argsOnly = true) DamageSource
+            p_9035_, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag") LocalBooleanRef
+                                                      neotenet$flag) {
         Component defaultMessage = this.getCombatTracker().getDeathMessage();
         String deathmessage = defaultMessage.getString();
         keepLevel = neotenet$flag.get(); // SPIGOT-2222: pre-set keepLevel
         org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(((ServerPlayer) (Object) this), p_9035_, loot.get(), deathmessage, neotenet$flag.get());
-
+        this.event = event;
         // SPIGOT-943 - only call if they have an inventory open
         if (this.containerMenu != this.inventoryMenu) {
             this.closeContainer();
@@ -741,24 +926,28 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Inject(method = "teleportTo(Lnet/minecraft/server/level/ServerLevel;DDDLjava/util/Set;FF)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFFLjava/util/Set;)V"))
-    private void neotenet$forwardReason(ServerLevel level, double x, double y, double z, Set<RelativeMovement> relativeMovements, float yRot, float xRot, CallbackInfoReturnable<Boolean> cir) {
+    private void neotenet$forwardReason(ServerLevel level, double x, double y, double z, Set<
+            RelativeMovement> relativeMovements, float yRot, float xRot, CallbackInfoReturnable<Boolean> cir) {
         this.connection.pushTeleportCause(neotenet$changeDimensionCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN));
     }
 
     @Inject(method = "teleportTo(Lnet/minecraft/server/level/ServerLevel;DDDFF)V", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/level/ServerPlayer;stopRiding()V"))
-    private void neotenet$handleBy(ServerLevel world, double d0, double d1, double d2, float f, float f1, CallbackInfo ci) {
+    private void neotenet$handleBy(ServerLevel world, double d0, double d1, double d2, float f,
+                                   float f1, CallbackInfo ci) {
         this.getBukkitEntity().teleport(new Location(world.getWorld(), d0, d1, d2, f, f1), neotenet$changeDimensionCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN));
         ci.cancel();
     }
 
     @Override
-    public void teleportTo(ServerLevel worldserver, double d0, double d1, double d2, float f, float f1, PlayerTeleportEvent.TeleportCause cause) {
+    public void teleportTo(ServerLevel worldserver, double d0, double d1, double d2, float f,
+                           float f1, PlayerTeleportEvent.TeleportCause cause) {
         pushChangeDimensionCause(cause);
         teleportTo(worldserver, d0, d1, d2, f, f1);
     }
 
     @Override
-    public boolean teleportTo(ServerLevel worldserver, double d0, double d1, double d2, Set<RelativeMovement> pRelativeMovements, float f, float f1, PlayerTeleportEvent.TeleportCause cause) {
+    public boolean teleportTo(ServerLevel worldserver, double d0, double d1, double d2, Set<
+            RelativeMovement> pRelativeMovements, float f, float f1, PlayerTeleportEvent.TeleportCause cause) {
         pushChangeDimensionCause(cause);
         return teleportTo(worldserver, d0, d1, d2, pRelativeMovements, f, f1);
     }
@@ -766,7 +955,8 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     @Inject(method = "stopSleepInBed",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"))
-    private void neotenet$tpCauseExitBed(boolean wakeImmediately, boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
+    private void neotenet$tpCauseExitBed(boolean wakeImmediately,
+                                         boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
         this.connection.pushTeleportCause(PlayerTeleportEvent.TeleportCause.EXIT_BED);
     }
 
@@ -816,7 +1006,8 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
     @Override
-    public CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, Vec3 exitPosition, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
+    public CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, Vec3
+            exitPosition, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
         Location enter = this.getBukkitEntity().getLocation();
         Location exit = new Location(exitWorldServer.getWorld(), exitPosition.x(), exitPosition.y(), exitPosition.z(), this.getYRot(), this.getXRot());
         PlayerPortalEvent event = new PlayerPortalEvent(this.getBukkitEntity(), enter, exit, cause, 128, true, creationRadius);
@@ -834,7 +1025,8 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
 
     // Banner TODO fix mixins
     @Override
-    public Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel worldserver, BlockPos blockposition, boolean flag, WorldBorder worldborder, int searchRadius, boolean canCreatePortal, int createRadius) {
+    public Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel worldserver, BlockPos blockposition,
+                                                            boolean flag, WorldBorder worldborder, int searchRadius, boolean canCreatePortal, int createRadius) {
         /*
         Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(worldserver, blockposition, flag, worldborder);
         if (optional.isPresent() || !canCreatePortal) {

@@ -1,9 +1,14 @@
 package org.teneted.neotenet.injection.server.level;
 
+import net.minecraft.world.level.portal.DimensionTransition;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.event.CraftPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.teneted.neotenet.injection.world.entity.player.InjectionPlayer;
 import com.mojang.datafixers.util.Either;
+
 import java.util.Optional;
+
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -104,6 +109,14 @@ public interface InjectionServerPlayer extends InjectionPlayer {
     }
 
     default void resendItemInHands() {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default DimensionTransition findRespawnPositionAndUseSpawnBlock(boolean p_348590_, DimensionTransition.PostDimensionTransition p_352261_, PlayerRespawnEvent.RespawnReason reason) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default CraftPortalEvent callPortalEvent(Entity entity, Location exit, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
         throw new IllegalStateException("Not implemented");
     }
 }
