@@ -1,15 +1,5 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -38,6 +_,9 @@
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.HitResult;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityKnockbackEvent;
- 
- public class Explosion {
-     private static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new ExplosionDamageCalculator();
 @@ -59,6 +_,10 @@
      private final Holder<SoundEvent> explosionSound;
      private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
@@ -29,22 +19,11 @@
          Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
          for (Entity entity : list) {
-@@ -299,6 +_,18 @@
+@@ -299,6 +_,7 @@
                          d7 *= d10;
                          d9 *= d10;
                          Vec3 vec31 = new Vec3(d5, d7, d9);
 +                        vec31 = net.neoforged.neoforge.event.EventHooks.getExplosionKnockback(this.level, this, entity, vec31);
-+                        // CraftBukkit start - Call EntityKnockbackEvent
-+                        if (entity instanceof LivingEntity) {
-+                            Vec3 result = entity.getDeltaMovement().add(vec31);
-+                            EntityKnockbackEvent event = CraftEventFactory.callEntityKnockbackEvent((CraftLivingEntity) entity.getBukkitEntity(), source, EntityKnockbackEvent.KnockbackCause.EXPLOSION, d13, vec31, result.x, result.y, result.z);
-+
-+                            // SPIGOT-7640: Need to subtract entity movement from the event result,
-+                            // since the code below (the setDeltaMovement call as well as the hitPlayers map)
-+                            // want the vector to be the relative velocity will the event provides the absolute velocity
-+                            vec31 = (event.isCancelled()) ? Vec3.ZERO : new Vec3(event.getFinalKnockback().getX(), event.getFinalKnockback().getY(), event.getFinalKnockback().getZ()).subtract(entity.getDeltaMovement());
-+                        }
-+                        // CraftBukkit end
                          entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
                          if (entity instanceof Player) {
                              Player player = (Player)entity;
