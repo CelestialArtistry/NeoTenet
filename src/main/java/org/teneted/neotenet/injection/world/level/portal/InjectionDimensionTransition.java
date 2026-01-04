@@ -5,7 +5,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public interface InjectionDimensionTransition {
 
 
-
     default void setTeleportCause(PlayerTeleportEvent.TeleportCause cause) {
         throw new RuntimeException("Not implemented");
     }
