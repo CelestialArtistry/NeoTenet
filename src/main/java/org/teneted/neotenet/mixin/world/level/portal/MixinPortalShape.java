@@ -67,7 +67,7 @@ public class MixinPortalShape {
     }
 
     @Inject(method = "hasTopFrame", at = @At("RETURN"))
-    private void neotenet$setBlock2(BlockPos.MutableBlockPos p_77731_, int p_77732_, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) BlockPos.MutableBlockPos blockpos$mutableblockpos) {
+    private void neotenet$setBlock2(BlockPos.MutableBlockPos p_77731_, int p_77732_, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 0) BlockPos.MutableBlockPos blockpos$mutableblockpos) {
         blocks.setBlock(blockpos$mutableblockpos, this.level.getBlockState(blockpos$mutableblockpos), 18); // CraftBukkit - upper row
     }
 
