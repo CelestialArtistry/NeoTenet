@@ -3,68 +3,6 @@
 
  public class EntityPlayer extends EntityHuman {
 
-@@ -1002,19 +1307,17 @@
-         this.containerMenu.broadcastChanges();
-     }
- 
--    @Override
--    public Either<EntityHuman.EnumBedResult, Unit> startSleepInBed(BlockPosition blockposition) {
--        EnumDirection enumdirection = (EnumDirection) this.level().getBlockState(blockposition).getValue(BlockFacingHorizontal.FACING);
--
-+    // CraftBukkit start - moved bed result checks from below into separate method
-+    private Either<EntityHuman.EnumBedResult, Unit> getBedResult(BlockPosition blockposition, EnumDirection enumdirection) {
-         if (!this.isSleeping() && this.isAlive()) {
--            if (!this.level().dimensionType().natural()) {
-+            if (!this.level().dimensionType().natural() || !this.level().dimensionType().bedWorks()) {
-                 return Either.left(EntityHuman.EnumBedResult.NOT_POSSIBLE_HERE);
-             } else if (!this.bedInRange(blockposition, enumdirection)) {
-                 return Either.left(EntityHuman.EnumBedResult.TOO_FAR_AWAY);
-             } else if (this.bedBlocked(blockposition, enumdirection)) {
-                 return Either.left(EntityHuman.EnumBedResult.OBSTRUCTED);
-             } else {
--                this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true);
-+                this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true, PlayerSpawnChangeEvent.Cause.BED); // CraftBukkit
-                 if (this.level().isDay()) {
-                     return Either.left(EntityHuman.EnumBedResult.NOT_POSSIBLE_NOW);
-                 } else {
-@@ -1031,7 +1334,36 @@
-                         }
-                     }
- 
--                    Either<EntityHuman.EnumBedResult, Unit> either = super.startSleepInBed(blockposition).ifRight((unit) -> {
-+                    return Either.right(Unit.INSTANCE);
-+                }
-+            }
-+        } else {
-+            return Either.left(EntityHuman.EnumBedResult.OTHER_PROBLEM);
-+        }
-+    }
-+
-+    @Override
-+    public Either<EntityHuman.EnumBedResult, Unit> startSleepInBed(BlockPosition blockposition, boolean force) {
-+        EnumDirection enumdirection = (EnumDirection) this.level().getBlockState(blockposition).getValue(BlockFacingHorizontal.FACING);
-+        Either<EntityHuman.EnumBedResult, Unit> bedResult = this.getBedResult(blockposition, enumdirection);
-+
-+        if (bedResult.left().orElse(null) == EntityHuman.EnumBedResult.OTHER_PROBLEM) {
-+            return bedResult; // return immediately if the result is not bypassable by plugins
-+        }
-+
-+        if (force) {
-+            bedResult = Either.right(Unit.INSTANCE);
-+        }
-+
-+        bedResult = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBedEnterEvent(this, blockposition, bedResult);
-+        if (bedResult.left().isPresent()) {
-+            return bedResult;
-+        }
-+
-+        {
-+            {
-+                {
-+                    Either<EntityHuman.EnumBedResult, Unit> either = super.startSleepInBed(blockposition, force).ifRight((unit) -> {
-                         this.awardStat(StatisticList.SLEEP_IN_BED);
-                         CriterionTriggers.SLEPT_IN_BED.trigger(this);
-                     });
 @@ -1044,9 +1376,8 @@
                      return either;
                  }

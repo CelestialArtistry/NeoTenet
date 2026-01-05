@@ -37,6 +37,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.stats.ServerRecipeBook;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
@@ -60,6 +61,8 @@ import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.portal.DimensionTransition;
@@ -452,7 +455,6 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
     }
 
 
-
     @Redirect(method = "adjustSpawnLocation", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/storage/ServerLevelData;getGameType()Lnet/minecraft/world/level/GameType;"))
     private GameType neotenet$useWorldGameType(ServerLevelData instance, @Local(argsOnly = true) ServerLevel p_352206_) {
@@ -654,6 +656,40 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
             return Either.right(Unit.INSTANCE);
         }
         return Either.left(BedSleepingProblem.OTHER_PROBLEM);
+    }
+
+    @Override
+    public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos blockposition, boolean force) {
+        Direction enumdirection = (Direction) this.level().getBlockState(blockposition).getValue(BlockStateProperties.HORIZONTAL_FACING);
+        Either<Player.BedSleepingProblem, Unit> bedResult = this.getBedResult(blockposition, enumdirection);
+
+        if (bedResult.left().orElse(null) == Player.BedSleepingProblem.OTHER_PROBLEM) {
+            return bedResult; // return immediately if the result is not bypassable by plugins
+        }
+
+        if (force) {
+            bedResult = Either.right(Unit.INSTANCE);
+        }
+
+        bedResult = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBedEnterEvent(this, blockposition, bedResult);
+        if (bedResult.left().isPresent()) {
+            return bedResult;
+        }
+        {
+            {
+                // Start vanilla code
+                Either<Player.BedSleepingProblem, Unit> either = super.startSleepInBed(blockposition).ifRight(p_9029_ -> {
+                    this.awardStat(Stats.SLEEP_IN_BED);
+                    CriteriaTriggers.SLEPT_IN_BED.trigger((ServerPlayer) (Object) this);
+                });
+                if (!this.serverLevel().canSleepThroughNights()) {
+                    this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
+                }
+
+                ((ServerLevel) this.level()).updateSleepingPlayerList();
+                return either;
+            }
+        }
     }
 
     @Override

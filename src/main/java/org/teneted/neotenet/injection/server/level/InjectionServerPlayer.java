@@ -3,6 +3,7 @@ package org.teneted.neotenet.injection.server.level;
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.event.CraftPortalEvent;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.teneted.neotenet.injection.world.entity.player.InjectionPlayer;
 import com.mojang.datafixers.util.Either;
@@ -117,6 +118,10 @@ public interface InjectionServerPlayer extends InjectionPlayer {
     }
 
     default CraftPortalEvent callPortalEvent(Entity entity, Location exit, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos blockposition, boolean force) {
         throw new IllegalStateException("Not implemented");
     }
 }
