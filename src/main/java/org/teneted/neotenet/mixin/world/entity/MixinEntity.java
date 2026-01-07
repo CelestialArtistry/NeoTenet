@@ -54,6 +54,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.fluids.FluidType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -79,6 +80,8 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityPoseChangeEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
@@ -499,6 +502,13 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
         return p_19946_.directBlock(level, lastLavaContact);
     }
 
+    @Inject(method = "updateFluidHeightAndDoFluidPushing()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;add(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;"))
+    private void neotenet$markLavaType(CallbackInfo ci, @Local(ordinal = 0) net.neoforged.neoforge.fluids.FluidType fluidType, @Local(ordinal = 0) BlockPos.MutableBlockPos blockpos$mutableblockpos) {
+        if (fluidType == net.neoforged.neoforge.common.NeoForgeMod.LAVA_TYPE.value()) {
+            this.lastLavaContact = blockpos$mutableblockpos.immutable();
+        }
+    }
+
     @Inject(method = "getMaxAirSupply", cancellable = true, at = @At("RETURN"))
     private void neotenet$useBukkitMaxAir(CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(this.maxAirTicks);
@@ -910,6 +920,30 @@ public abstract class MixinEntity implements Nameable, EntityAccess, CommandSour
         }
         return this.hurt(this.damageSources().lightningBolt(), amount);
     }
+
+    @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/portal/DimensionTransition;newLevel()Lnet/minecraft/server/level/ServerLevel;"), cancellable = true)
+    private void neotenet$callEntityTeleportEvent(DimensionTransition p_350951_, CallbackInfoReturnable<Entity> cir) {
+        // CraftBukkit start
+        Location to = new Location(p_350951_.newLevel().getWorld(), p_350951_.pos().x, p_350951_.pos().y, p_350951_.pos().z, p_350951_.yRot(), p_350951_.xRot());
+        EntityTeleportEvent teleEvent = CraftEventFactory.callEntityTeleportEvent(((Entity) (Object) this), to);
+        if (teleEvent.isCancelled()) {
+            cir.setReturnValue(null);
+        }
+        to = teleEvent.getTo();
+        p_350951_ = new DimensionTransition(((CraftWorld) to.getWorld()).getHandle(), CraftLocation.toVec3D(to), p_350951_.speed(), to.getYaw(), to.getPitch(), p_350951_.missingRespawnBlock(), p_350951_.postDimensionTransition(), p_350951_.cause());
+        // CraftBukkit end
+    }
+
+    @Inject(method = "removeAfterChangingDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setRemoved(Lnet/minecraft/world/entity/Entity$RemovalReason;)V"))
+    private void neotenet$pushRemoveCause(CallbackInfo ci) {
+        this.pushRemoveCause(null);
+    }
+
+    @Inject(method = "removeAfterChangingDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Leashable;dropLeash(ZZ)V"))
+    private void neotenet$callEntityUnleashEvent(CallbackInfo ci) {
+        this.level().getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.UNKNOWN)); // CraftBukkit
+    }
+
 
     @Nullable
     @Override
