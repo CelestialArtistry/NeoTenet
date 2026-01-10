@@ -2,61 +2,6 @@
 +++ b/net/minecraft/server/level/EntityPlayer.java
 
  public class EntityPlayer extends EntityHuman {
-
-@@ -1044,9 +1376,8 @@
-                     return either;
-                 }
-             }
--        } else {
--            return Either.left(EntityHuman.EnumBedResult.OTHER_PROBLEM);
-         }
-+        // CraftBukkit end
-     }
- 
-     @Override
-@@ -1073,13 +1404,31 @@
- 
-     @Override
-     public void stopSleepInBed(boolean flag, boolean flag1) {
-+        if (!this.isSleeping()) return; // CraftBukkit - Can't leave bed if not in one!
-+        // CraftBukkit start - fire PlayerBedLeaveEvent
-+        CraftPlayer player = this.getBukkitEntity();
-+        BlockPosition bedPosition = this.getSleepingPos().orElse(null);
-+
-+        org.bukkit.block.Block bed;
-+        if (bedPosition != null) {
-+            bed = this.level().getWorld().getBlockAt(bedPosition.getX(), bedPosition.getY(), bedPosition.getZ());
-+        } else {
-+            bed = this.level().getWorld().getBlockAt(player.getLocation());
-+        }
-+
-+        PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed, true);
-+        this.level().getCraftServer().getPluginManager().callEvent(event);
-+        if (event.isCancelled()) {
-+            return;
-+        }
-+        // CraftBukkit end
-         if (this.isSleeping()) {
-             this.serverLevel().getChunkSource().broadcastAndSend(this, new PacketPlayOutAnimation(this, 2));
-         }
- 
-         super.stopSleepInBed(flag, flag1);
-         if (this.connection != null) {
--            this.connection.teleport(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-+            this.connection.teleport(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot(), TeleportCause.EXIT_BED); // CraftBukkit
-         }
- 
-     }
-@@ -1146,8 +1495,9 @@
-         this.connection.send(new PacketPlayOutOpenSignEditor(tileentitysign.getBlockPos(), flag));
-     }
- 
--    public void nextContainerCounter() {
-+    public int nextContainerCounter() { // CraftBukkit - void -> int
-         this.containerCounter = this.containerCounter % 100 + 1;
-+        return containerCounter; // CraftBukkit
-     }
- 
      @Override
 @@ -1155,13 +1505,35 @@
          if (itileinventory == null) {

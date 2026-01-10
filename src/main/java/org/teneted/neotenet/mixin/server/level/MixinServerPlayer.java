@@ -1,5 +1,7 @@
 package org.teneted.neotenet.mixin.server.level;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
@@ -10,6 +12,7 @@ import com.mojang.datafixers.util.Either;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -21,6 +24,7 @@ import net.minecraft.advancements.critereon.DistanceTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
@@ -42,6 +46,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.CombatTracker;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -62,6 +67,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -953,6 +959,32 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         return defaultMessage;
     }
 
+    @Redirect(method = "openMenu(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer;)Ljava/util/OptionalInt;", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;closeContainer()V", ordinal = 0))
+    private void neotenet$cancelOpenMenu(ServerPlayer instance) {}
+
+    @Definition(id = "abstractcontainermenu", local = @Local(type = AbstractContainerMenu.class, ordinal = 0))
+    @Expression("abstractcontainermenu == null")
+    @Inject(method = "openMenu(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer;)Ljava/util/OptionalInt;", at = @At("MIXINEXTRAS:EXPRESSION"), cancellable = true)
+    private void neotenet$callInventoryOpenEvent(MenuProvider p_9033_, Consumer<RegistryFriendlyByteBuf> extraDataWriter, CallbackInfoReturnable<OptionalInt> cir, @Local AbstractContainerMenu abstractcontainermenu) {
+        // CraftBukkit start - Inventory open hook
+        if (abstractcontainermenu != null) {
+            abstractcontainermenu.setTitle(p_9033_.getDisplayName());
+
+            boolean cancelled = false;
+            abstractcontainermenu = CraftEventFactory.callInventoryOpenEvent(((ServerPlayer) (Object) this), abstractcontainermenu, cancelled);
+            if (abstractcontainermenu == null && !cancelled) { // Let pre-cancelled events fall through
+                // SPIGOT-5263 - close chest if cancelled
+                if (p_9033_ instanceof Container) {
+                    ((Container) p_9033_).stopOpen(this);
+                } else if (p_9033_ instanceof ChestBlock.DoubleInventory) {
+                    // SPIGOT-5355 - double chests too :(
+                    ((ChestBlock.DoubleInventory) p_9033_).inventorylargechest.stopOpen(this);
+                }
+                cir.setReturnValue(OptionalInt.empty());
+            }
+        }
+        // CraftBukkit end
+    }
 
     @Override
     public Entity changeDimension(ServerLevel worldserver, PlayerTeleportEvent.TeleportCause cause) {
