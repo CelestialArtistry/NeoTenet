@@ -337,6 +337,7 @@
     "world.level.block.MixinCoralFanBlock",
     "world.level.block.MixinCoralPlantBlock",
     "world.level.block.MixinCoralWallFanBlock",
+    "world.level.block.MixinCrafterBlock",
     "world.level.block.MixinCropBlock",
     "world.level.block.MixinDaylightDetectorBlock",
     "world.level.block.MixinDecoratedPotBlock",
