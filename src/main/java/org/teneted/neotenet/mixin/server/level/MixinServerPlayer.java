@@ -359,10 +359,11 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         if (this.isSleeping()) cir.setReturnValue(null);// CraftBukkit - SPIGOT-3154
     }
 
+    /*
     @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"))
     private void neotenet$changeDimension$teleport(ServerGamePacketListenerImpl instance, double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_, @Local(argsOnly = true) DimensionTransition p_350472_) {
         this.result = instance.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, p_350472_.getTeleportCause());
-    }
+    }*/
 
     @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"), cancellable = true)
     private void neotenet$changeDimension$teleport$if(CallbackInfoReturnable<Entity> cir) {
