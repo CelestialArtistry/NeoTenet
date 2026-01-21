@@ -391,6 +391,7 @@
     "world.level.block.MixinTripWireBlock",
     "world.level.block.MixinTripWireHookBlock",
     "world.level.block.MixinTurtleEggBlock",
+    "world.level.block.MixinVineBlock",
     "world.level.block.MixinWaterlilyBlock",
     "world.level.block.MixinWeightedPressurePlateBlock",
     "world.level.block.MixinWitherRoseBlock",
