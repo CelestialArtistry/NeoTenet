@@ -1,4 +1,4 @@
-package org.teneted.neotenet.mixin.world.entity.boos.enderdragon.phases;
+package org.teneted.neotenet.mixin.world.entity.boss.enderdragon.phases;
 
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonSittingFlamingPhase;
