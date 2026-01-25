@@ -22,8 +22,7 @@ public class MixinRespawnAnchorBlock {
     private void neotenet$cancelSetSpawnPos(ServerPlayer instance, ResourceKey<Level> dimension, BlockPos position, float angle, boolean forced, boolean sendMessage) {
     }
 
-    @Inject(method = "useWithoutItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V",
-            shift = At.Shift.BEFORE))
+    @Inject(method = "useWithoutItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
     private void neotenet$setRespawnPos(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult, CallbackInfoReturnable<InteractionResult> cir) {
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.setRespawnPosition(level.dimension(), blockPos, 0.0F, false, true, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.RESPAWN_ANCHOR); // CraftBukkit
