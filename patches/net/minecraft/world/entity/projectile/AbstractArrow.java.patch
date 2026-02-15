@@ -1,5 +1,26 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -77,6 +_,20 @@
+     }
+ 
+     protected AbstractArrow(
++            EntityType<? extends AbstractArrow> p_36717_,
++            double p_346045_,
++            double p_344855_,
++            double p_345999_,
++            Level p_36719_,
++            ItemStack p_309031_,
++            @Nullable ItemStack p_345487_
++            , @Nullable LivingEntity ownerEntity
++    ) {
++        this(p_36717_, p_346045_, p_344855_, p_345999_, p_36719_, p_309031_, p_345487_);
++        this.setOwner(ownerEntity);
++    }
++
++    protected AbstractArrow(
+         EntityType<? extends AbstractArrow> p_36717_,
+         double p_346045_,
+         double p_344855_,
 @@ -188,7 +_,7 @@
              this.shakeTime--;
          }
