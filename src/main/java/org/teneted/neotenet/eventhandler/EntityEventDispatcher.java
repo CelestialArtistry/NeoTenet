@@ -1,7 +1,9 @@
 package org.teneted.neotenet.eventhandler;
 
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Bogged;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -9,16 +11,46 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
+import net.neoforged.neoforge.event.entity.living.MobSplitEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.internal.versions.neoforge.NeoForgeVersion;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTransformEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 @EventBusSubscriber(modid = NeoForgeVersion.MOD_ID)
 public class EntityEventDispatcher {
+
+    @SubscribeEvent
+    public static void onSlimeSpilt(MobSplitEvent event) {
+        var entity = event.getParent();
+        if (entity instanceof Slime slime) {
+            // CraftBukkit start
+            SlimeSplitEvent bukkitEvent = new SlimeSplitEvent((org.bukkit.entity.Slime) slime.getBukkitEntity(), event.getCount());
+            slime.level().getCraftServer().getPluginManager().callEvent(bukkitEvent);
+
+            if (!bukkitEvent.isCancelled() && bukkitEvent.getCount() > 0) {
+                event.setCount(bukkitEvent.getCount());
+            } else {
+                event.setCanceled(bukkitEvent.isCancelled());
+                slime.pushRemoveCause(null);
+                return;
+            }
+            // CraftBukkit start
+            if (CraftEventFactory.callEntityTransformEvent(slime, event.getParent(), EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
+                slime.pushRemoveCause(null);
+                return;
+            }
+            for (LivingEntity living : event.getChildren()) {
+                slime.level().addFreshEntity(living, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
+            }
+            // CraftBukkit end
+        }
+    }
 
     @SubscribeEvent
     public static void onEntityShear(PlayerInteractEvent.EntityInteract event) {

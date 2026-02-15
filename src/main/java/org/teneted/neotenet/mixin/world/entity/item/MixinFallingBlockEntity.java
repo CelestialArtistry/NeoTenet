@@ -9,6 +9,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.event.entity.EntityRemoveEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,5 +52,35 @@ public abstract class MixinFallingBlockEntity extends Entity {
             this.setOrigin(new org.bukkit.Location(this.level().getWorld(), srcX, srcY, srcZ));
         }
         // Paper end
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V", ordinal = 0))
+    private void neotenet$discard0(CallbackInfo ci) {
+        this.pushRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V", ordinal = 1))
+    private void neotenet$discard1(CallbackInfo ci) {
+        this.pushRemoveCause(EntityRemoveEvent.Cause.DROP);
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V", ordinal = 2))
+    private void neotenet$discard2(CallbackInfo ci) {
+        this.pushRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V", ordinal = 3))
+    private void neotenet$discard3(CallbackInfo ci) {
+        this.pushRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V", ordinal = 4))
+    private void neotenet$discard4(CallbackInfo ci) {
+        this.pushRemoveCause(EntityRemoveEvent.Cause.DROP);
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V", ordinal = 5))
+    private void neotenet$discard5(CallbackInfo ci) {
+        this.pushRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
     }
 }

@@ -25,6 +25,16 @@ public class MobSplitEvent extends Event implements ICancellableEvent {
     protected final Mob parent;
     protected final List<Mob> children;
 
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    protected int count;
+
     /**
      * @param parent   The parent mob, currently being removed
      * @param children The list of children.
@@ -34,6 +44,11 @@ public class MobSplitEvent extends Event implements ICancellableEvent {
     public MobSplitEvent(Mob parent, List<Mob> children) {
         this.parent = parent;
         this.children = children;
+    }
+
+    public MobSplitEvent(Mob parent, List<Mob> children, int count) {
+        this(parent, children);
+        this.count = count;
     }
 
     /**

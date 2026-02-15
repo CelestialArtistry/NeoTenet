@@ -1136,8 +1136,8 @@ public class EventHooks {
      * @param children All child mobs that would have normally spawned.
      * @return The event object.
      */
-    public static MobSplitEvent onMobSplit(Mob parent, List<Mob> children) {
-        var event = new MobSplitEvent(parent, children);
+    public static MobSplitEvent onMobSplit(Mob parent, List<Mob> children, int count) {
+        var event = new MobSplitEvent(parent, children, count);
         NeoForge.EVENT_BUS.post(event);
         return event;
     }
