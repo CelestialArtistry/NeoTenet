@@ -1,15 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Monster.java
 +++ b/net/minecraft/world/entity/monster/Monster.java
-@@ -32,6 +_,9 @@
-         this.xpReward = 5;
-     }
- 
-+    protected Monster() {
-+    }
-+
-     @Override
-     public SoundSource getSoundSource() {
-         return SoundSource.HOSTILE;
 @@ -136,11 +_,11 @@
      @Override
      public ItemStack getProjectile(ItemStack p_33038_) {

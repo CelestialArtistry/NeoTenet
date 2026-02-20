@@ -41,7 +41,7 @@ public class MixinBasePressurePlateBlock {
     }
 
     @SuppressWarnings("unchecked")
-    protected static <T extends Entity> List<T> getEntities(Level p_289656_, AABB p_289647_, Class<? extends Entity> p_289686_) {
+    private static <T extends Entity> List<T> getEntities(Level p_289656_, AABB p_289647_, Class<? extends Entity> p_289686_) {
         return (List<T>) p_289656_.getEntitiesOfClass(p_289686_, p_289647_, EntitySelector.NO_SPECTATORS.and(p_289691_ -> !p_289691_.isIgnoringBlockTriggers()));
     }
 }

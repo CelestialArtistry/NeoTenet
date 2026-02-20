@@ -224,6 +224,7 @@
     "world.entity.projectile.MixinEyeOfEnder",
     "world.entity.projectile.MixinFireball",
     "world.entity.projectile.MixinFireworkRocketEntity",
+    "world.entity.projectile.MixinLargeFireball",
     "world.entity.projectile.MixinProjectile",
     "world.entity.projectile.MixinSmallFireball",
     "world.entity.projectile.MixinSnowball",

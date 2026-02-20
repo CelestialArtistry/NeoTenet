@@ -7,6 +7,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Explosion;
@@ -26,6 +27,10 @@ import java.util.List;
 
 @Mixin(WitherBoss.class)
 public abstract class MixinWitherBoss extends Monster {
+
+    protected MixinWitherBoss(EntityType<? extends Monster> p_33002_, Level p_33003_) {
+        super(p_33002_, p_33003_);
+    }
 
     @Redirect(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;"))
     private Explosion neotenet$callExplosionPrimeEvent(Level instance, Entity entity, double x, double y, double z, float v, boolean b, Level.ExplosionInteraction explosionInteraction) {
