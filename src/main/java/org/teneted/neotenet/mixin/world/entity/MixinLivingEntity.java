@@ -2,6 +2,7 @@ package org.teneted.neotenet.mixin.world.entity;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
 
@@ -9,7 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -28,6 +31,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
@@ -245,6 +249,12 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
 
     @Shadow
     public abstract boolean removeEffect(Holder<MobEffect> p_316570_);
+
+    @Shadow
+    protected boolean dead;
+
+    @Shadow
+    public Set<UUID> collidableExemptions;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void neotenet$init(EntityType<? extends LivingEntity> type, Level worldIn, CallbackInfo ci) {
@@ -662,85 +672,25 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
         }
     }
 
-    // CraftBukkit start
-    private EntityDamageEvent handleEntityDamage(final DamageSource damagesource, float f) {
-        float originalDamage = f;
-
-        Function<Double, Double> freezing = new Function<Double, Double>() {
-            @Override
-            public Double apply(Double f) {
-                if (damagesource.is(DamageTypeTags.IS_FREEZING) && getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
-                    return -(f - (f * 5.0F));
-                }
-                return -0.0;
-            }
-        };
-        float freezingModifier = freezing.apply((double) f).floatValue();
-        f += freezingModifier;
-
-        Function<Double, Double> hardHat = new Function<Double, Double>() {
-            @Override
-            public Double apply(Double f) {
-                if (damagesource.is(DamageTypeTags.DAMAGES_HELMET) && !((LivingEntity) (Object) this).getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
-                    return -(f - (f * 0.75F));
-                }
-                return -0.0;
-            }
-        };
-        float hardHatModifier = hardHat.apply((double) f).floatValue();
-        f += hardHatModifier;
-
-        Function<Double, Double> blocking = new Function<Double, Double>() {
-            @Override
-            public Double apply(Double f) {
-                return -((((LivingEntity) (Object) this).isDamageSourceBlocked(damagesource)) ? f : 0.0);
-            }
-        };
-        float blockingModifier = blocking.apply((double) f).floatValue();
-        f += blockingModifier;
-
-        Function<Double, Double> armor = new Function<Double, Double>() {
-            @Override
-            public Double apply(Double f) {
-                return -(f - getDamageAfterArmorAbsorb(damagesource, f.floatValue()));
-            }
-        };
-        float armorModifier = armor.apply((double) f).floatValue();
-        f += armorModifier;
-
-        Function<Double, Double> resistance = new Function<Double, Double>() {
-            @Override
-            public Double apply(Double f) {
-                if (!damagesource.is(DamageTypeTags.BYPASSES_EFFECTS) && ((LivingEntity) (Object) this).hasEffect(MobEffects.DAMAGE_RESISTANCE) && !damagesource.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
-                    int i = (((LivingEntity) (Object) this).getEffect(MobEffects.DAMAGE_RESISTANCE).getAmplifier() + 1) * 5;
-                    int j = 25 - i;
-                    float f1 = f.floatValue() * (float) j;
-                    return -(f - (f1 / 25.0F));
-                }
-                return -0.0;
-            }
-        };
-        float resistanceModifier = resistance.apply((double) f).floatValue();
-        f += resistanceModifier;
-
-        Function<Double, Double> magic = new Function<Double, Double>() {
-            @Override
-            public Double apply(Double f) {
-                return -(f - getDamageAfterMagicAbsorb(damagesource, f.floatValue()));
-            }
-        };
-        float magicModifier = magic.apply((double) f).floatValue();
-        f += magicModifier;
-
-        Function<Double, Double> absorption = new Function<Double, Double>() {
-            @Override
-            public Double apply(Double f) {
-                return -(Math.max(f - Math.max(f - ((LivingEntity) (Object) this).getAbsorptionAmount(), 0.0F), 0.0F));
-            }
-        };
-        float absorptionModifier = absorption.apply((double) f).floatValue();
-
-        return CraftEventFactory.handleLivingEntityDamageEvent(this, damagesource, originalDamage, freezingModifier, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, freezing, hardHat, blocking, armor, resistance, magic, absorption);
+    @ModifyExpressionValue(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isDeadOrDying()Z"))
+    private boolean neotenet$fixDeadStatusCheck(boolean original) {
+        return this.isRemoved() || this.dead || this.getHealth() <= 0.0F;
     }
 
+    @Inject(method = "addEatEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
+    private void neotenet$pushEffectCause(FoodProperties p_335472_, CallbackInfo ci) {
+        this.pushEffectCause(EntityPotionEffectEvent.Cause.FOOD);
+    }
+
+    @Override
+    public boolean actuallyHurtBukkit(final DamageSource damagesource, float f, final EntityDamageEvent event) { // void -> boolean, add final
+        return false; // CraftBukkit
+    }
+
+    // CraftBukkit start - collidable API
+    @Override
+    public boolean canCollideWithBukkit(Entity entity) {
+        return isPushable() && this.collides != this.collidableExemptions.contains(entity.getUUID());
+    }
+    // CraftBukkit end
 }
