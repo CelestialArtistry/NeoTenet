@@ -6,11 +6,11 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 
 public interface InjectionChunkGenerator {
 
-    default void addDecorations(WorldGenLevel region, ChunkAccess chunk, StructureManager structureManager) {
+    default void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunkAccess, StructureManager structureFeatureManager, boolean vanilla) {
         throw new IllegalStateException("Not implemented");
     }
 
-    default void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunkAccess, StructureManager structureFeatureManager, boolean vanilla) {
+    default void addVanillaDecorations(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
         throw new IllegalStateException("Not implemented");
     }
 }
