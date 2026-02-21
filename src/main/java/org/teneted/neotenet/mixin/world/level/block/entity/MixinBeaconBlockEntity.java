@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @Mixin(BeaconBlockEntity.class)
-public class MixinBeaconBlockEntity implements InjectionBeaconBlockEntity {
+public abstract class MixinBeaconBlockEntity implements InjectionBeaconBlockEntity {
 
     @Shadow
     @Nullable
@@ -44,6 +44,11 @@ public class MixinBeaconBlockEntity implements InjectionBeaconBlockEntity {
     @Shadow
     @Nullable
     private Holder<MobEffect> secondaryPower;
+
+    @Shadow
+    public static List getHumansInRange(Level par1, BlockPos par2, int par3) {
+        return null;
+    }
 
     // CraftBukkit start - add fields and methods
     @Override
@@ -70,15 +75,6 @@ public class MixinBeaconBlockEntity implements InjectionBeaconBlockEntity {
     private static int getLevel(int i) {
         int j = (9 + i * 2) * 20;
         return j;
-    }
-
-    public static List getHumansInRange(Level world, BlockPos blockposition, int i) {
-        double d0 = (double) (i * 10 + 10);
-
-        AABB axisalignedbb = (new AABB(blockposition)).inflate(d0).expandTowards(0.0D, (double) world.getHeight(), 0.0D);
-        List<Player> list = world.getEntitiesOfClass(Player.class, axisalignedbb);
-
-        return list;
     }
 
     private static boolean hasSecondaryEffect(int i, @Nullable Holder<MobEffect> holder, @Nullable Holder<MobEffect> holder1) {
