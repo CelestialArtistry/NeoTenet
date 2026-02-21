@@ -465,6 +465,7 @@
     "world.level.chunk.MixinLevelChunk",
     "world.level.chunk.status.MixinChunkStatusTasks",
     "world.level.chunk.storage.MixinChunkSerializer",
+    "world.level.chunk.storage.MixinChunkStorage",
     "world.level.chunk.storage.MixinRegionFileStorage",
     "world.level.dimension.end.MixinDragonRespawnAnimation",
     "world.level.dimension.end.MixinDragonRespawnAnimation_4",

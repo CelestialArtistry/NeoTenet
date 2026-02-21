@@ -2,6 +2,8 @@ package org.teneted.neotenet.mixin.server.level;
 
 import java.io.IOException;
 import javax.annotation.Nullable;
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkLevel;
 import net.minecraft.server.level.ChunkMap;
@@ -111,5 +113,10 @@ public abstract class MixinServerChunkCache implements InjectionServerChunkCache
     @Redirect(method = "chunkAbsent", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ChunkHolder;getTicketLevel()I"), require = 0)
     public int neotenet$useOldTicketLevel(ChunkHolder chunkHolder) {
         return chunkHolder.oldTicketLevel;
+    }
+
+    @ModifyExpressionValue(method = "tick", at = @At(value="INVOKE",target="Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
+    private boolean neotenet$configUnloadFrozenChunks(boolean original) {
+        return original || this.level.spigotConfig.unloadFrozenChunks;
     }
 }
