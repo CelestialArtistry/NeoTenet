@@ -36,7 +36,26 @@
  
      public boolean isFull() {
 -        return this.stored.size() == 3;
-+        return this.stored.size() == this.maxBees; // CraftBukkit
++        return this.stored.size() == 3; // CraftBukkit
      }
  
      public void emptyAllLivingFromHive(@Nullable Player p_58749_, BlockState p_58750_, BeehiveBlockEntity.BeeReleaseStatus p_58751_) {
+@@ -367,6 +_,18 @@
+ 
+         public boolean hasNectar() {
+             return this.occupant.entityData.getUnsafe().getBoolean("HasNectar");
++        }
++
++        public int getTicksInHive() {
++            return ticksInHive;
++        }
++
++        public void setTicksInHive(int ticksInHive) {
++            this.ticksInHive = ticksInHive;
++        }
++
++        public Occupant getOccupant() {
++            return occupant;
+         }
+     }
+ 
