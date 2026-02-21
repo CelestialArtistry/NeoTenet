@@ -43,11 +43,12 @@
  import net.minecraft.world.item.ElytraItem;
  import net.minecraft.world.item.Equipable;
  import net.minecraft.world.item.Item;
-@@ -130,9 +_,11 @@
+@@ -130,9 +_,12 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
  import org.slf4j.Logger;
 +import org.teneted.neotenet.injection.world.entity.InjectionLivingEntity;
  
@@ -148,6 +149,52 @@
 +        if (this.isAlive() && (this.isInWaterRainOrBubble() || this.isInPowderSnow || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
              this.extinguishFire();
          }
+ 
+@@ -764,6 +_,45 @@
+         }
+     }
+ 
++    // CraftBukkit start
++    public static class ProcessableEffect {
++
++        private Holder<MobEffect> type;
++        private MobEffectInstance effect;
++        private final EntityPotionEffectEvent.Cause cause;
++
++        public ProcessableEffect(MobEffectInstance effect, EntityPotionEffectEvent.Cause cause) {
++            this.effect = effect;
++            this.cause = cause;
++        }
++
++        public ProcessableEffect(Holder<MobEffect> type, EntityPotionEffectEvent.Cause cause) {
++            this.type = type;
++            this.cause = cause;
++        }
++
++        public Holder<MobEffect> getType() {
++            return type;
++        }
++
++        public void setType(Holder<MobEffect> type) {
++            this.type = type;
++        }
++
++        public MobEffectInstance getEffect() {
++            return effect;
++        }
++
++        public void setEffect(MobEffectInstance effect) {
++            this.effect = effect;
++        }
++
++        public EntityPotionEffectEvent.Cause getCause() {
++            return cause;
++        }
++    }
++    // CraftBukkit end
++
+     protected void tickEffects() {
+         Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
  
 @@ -772,7 +_,7 @@
                  Holder<MobEffect> holder = iterator.next();

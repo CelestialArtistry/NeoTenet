@@ -1,13 +1,20 @@
 package org.teneted.neotenet.mixin.world.entity;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -21,7 +28,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.stats.Stats;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
@@ -41,7 +47,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
@@ -49,7 +54,6 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
@@ -57,6 +61,7 @@ import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRemoveEvent;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -66,8 +71,10 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.teneted.neotenet.injection.world.entity.InjectionLivingEntity;
 
 @Mixin(value = LivingEntity.class, priority = 199)
@@ -225,6 +232,20 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
     @Shadow
     protected abstract void blockUsingShield(LivingEntity p_21200_);
 
+    @Shadow
+    public abstract void remove(RemovalReason p_276115_);
+
+    @Shadow
+    @Final
+    private Map<Holder<MobEffect>, MobEffectInstance> activeEffects;
+
+    @Shadow
+    @javax.annotation.Nullable
+    public abstract MobEffectInstance removeEffectNoUpdate(Holder<MobEffect> p_316233_);
+
+    @Shadow
+    public abstract boolean removeEffect(Holder<MobEffect> p_316570_);
+
     @Inject(method = "<init>", at = @At("RETURN"))
     private void neotenet$init(EntityType<? extends LivingEntity> type, Level worldIn, CallbackInfo ci) {
         this.collides = true;
@@ -255,6 +276,17 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
         return !this.level().isClientSide() && !this.isSilent() && !neotenet$silent.getAndSet(false);
     }
 
+    @Override
+    public void remove(Entity.RemovalReason entity_removalreason, EntityRemoveEvent.Cause cause) {
+        this.pushRemoveCause(cause);
+        this.remove(entity_removalreason);
+    }
+
+    @Inject(method = "triggerOnDeathMobEffects", at = @At(value = "INVOKE", target = "Ljava/util/Map;clear()V"))
+    private void neotenet$removeAllEffects(RemovalReason p_350496_, CallbackInfo ci) {
+        this.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DEATH); // CraftBukkit
+    }
+
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
     public void neotenet$readMaxHealth(CompoundTag compound, CallbackInfo ci) {
         if (compound.contains("Bukkit.MaxHealth")) {
@@ -265,6 +297,52 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
                 this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(((IntTag) nbtbase).getAsDouble());
             }
         }
+    }
+
+    private boolean isTickingEffects = false;
+    private List<LivingEntity.ProcessableEffect> effectsToProcess = Lists.newArrayList();
+
+    @Inject(method = "tickEffects", at = @At(value = "INVOKE", target = "Ljava/util/Set;iterator()Ljava/util/Iterator;", shift = At.Shift.AFTER))
+    private void neotenet$markTickingEffects(CallbackInfo ci) {
+        isTickingEffects = true; // CraftBukkit
+    }
+
+    @Inject(method = "tickEffects", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;remove()V"), cancellable = true)
+    private void neotenet$callEntityPotionEffectChangeEvent(CallbackInfo ci, @Local MobEffectInstance mobeffectinstance) {
+        // CraftBukkit start
+        EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(((LivingEntity) (Object) this), mobeffectinstance, null, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.EXPIRATION);
+        if (!event.isCancelled()) {
+            ci.cancel();
+            return;
+        }
+        // CraftBukkit end
+    }
+
+    @ModifyArg(method = "removeAllEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;onEffectRemoved(Lnet/minecraft/world/effect/MobEffectInstance;)V"), index = 0)
+    private MobEffectInstance neotenet$callEntityPotionEffectChangeEvent(MobEffectInstance p_21126_, @Local Iterator<MobEffectInstance> iterator, @Cancellable CallbackInfoReturnable<Boolean> cir) {
+        // CraftBukkit start
+        MobEffectInstance effect = (MobEffectInstance) iterator.next();
+        EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(((LivingEntity) (Object) this), effect, null, cause, EntityPotionEffectEvent.Action.CLEARED);
+        if (!event.isCancelled()) {
+            cir.setReturnValue(false);
+            return effect;
+        }
+        return effect;
+    }
+
+    @Inject(method = "tickEffects", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity;effectsDirty:Z", ordinal = 0))
+    private void neotenet$removeEffect(CallbackInfo ci) {
+        // CraftBukkit start
+        isTickingEffects = false;
+        for (LivingEntity.ProcessableEffect e : effectsToProcess) {
+            if (e.getEffect() != null) {
+                addEffect(e.getEffect(), e.getCause());
+            } else {
+                removeEffect(e.getType(), e.getCause());
+            }
+        }
+        effectsToProcess.clear();
+        // CraftBukkit end
     }
 
     @Override
@@ -284,6 +362,27 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
     @Overwrite
     public boolean isAlive() {
         return !this.isRemoved() && this.entityData.get(DATA_HEALTH_ID) > 0.0F;
+    }
+
+    @Inject(method = "heal", at = @At("HEAD"))
+    private void neotenet$healReason(float p_21116_, CallbackInfo ci) {
+        pushHealReason(EntityRegainHealthEvent.RegainReason.CUSTOM);
+    }
+
+    @ModifyArg(method = "heal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setHealth(F)V"), index = 0)
+    private float neotenet$callEntityRegainHealthEvent(float p_21154_, @Cancellable CallbackInfo ci) {
+        EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), p_21154_, neotenet$regainReason == null ? EntityRegainHealthEvent.RegainReason.CUSTOM : neotenet$regainReason);
+        // Suppress during worldgen
+        if (this.valid) {
+            this.level().getCraftServer().getPluginManager().callEvent(event);
+        }
+        if (event.isCancelled()) {
+            ci.cancel();
+        }else {
+            return (float) (this.getHealth() + event.getAmount());
+        }
+        // CraftBukkit end
+        return 0;
     }
 
     @Override
@@ -318,6 +417,36 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
         neotenet$regainReason = null;
     }
 
+    @Inject(method = "getHealth", at = @At("HEAD"), cancellable = true)
+    private void neotenet$useUnscaledHealth(CallbackInfoReturnable<Float> cir) {
+        // CraftBukkit start - Use unscaled health
+        if (((LivingEntity) (Object) this) instanceof ServerPlayer) {
+            cir.setReturnValue((float) ((ServerPlayer) (Object) this).getBukkitEntity().getHealth());
+        }
+        // CraftBukkit end
+    }
+
+    @Inject(method = "setHealth", at = @At("HEAD"), cancellable = true)
+    private void neotenet$handleScaledHealth(float p_21154_, CallbackInfo ci) {
+        // CraftBukkit start - Handle scaled health
+        if (((LivingEntity) (Object) this) instanceof ServerPlayer) {
+            org.bukkit.craftbukkit.entity.CraftPlayer player = ((ServerPlayer) (Object) this).getBukkitEntity();
+            // Squeeze
+            if (p_21154_ < 0.0F) {
+                player.setRealHealth(0.0D);
+            } else if (p_21154_ > player.getMaxHealth()) {
+                player.setRealHealth(player.getMaxHealth());
+            } else {
+                player.setRealHealth(p_21154_);
+            }
+
+            player.updateScaledHealth(false);
+            ci.cancel();
+            return;
+        }
+        // CraftBukkit end
+    }
+
     @Redirect(method = "die",
             at = @At(value = "INVOKE",
                     target = "Lorg/slf4j/Logger;info(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V",
@@ -325,6 +454,72 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
     private void neotenet$logNamedDeaths(Logger instance, String s, Object o1, Object o2) {
         if (org.spigotmc.SpigotConfig.logNamedDeaths)
             LOGGER.info("Named entity {} died: {}", (Object) this, this.getCombatTracker().getDeathMessage().getString()); // Spigot
+    }
+
+    @Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At("HEAD"))
+    private void neotenet$setIsTickingEffects(MobEffectInstance p_147208_, Entity p_147209_, CallbackInfoReturnable<Boolean> cir) {
+        if (isTickingEffects) {
+            effectsToProcess.add(new LivingEntity.ProcessableEffect(p_147208_, cause));
+            cir.setReturnValue(true);
+        }
+        // CraftBukkit end
+    }
+
+    @Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "INVOKE", target = "Lnet/neoforged/bus/api/IEventBus;post(Lnet/neoforged/bus/api/Event;)Lnet/neoforged/bus/api/Event;", shift = At.Shift.AFTER), cancellable = true)
+    private void neotenet$callEntityPotionEffectChangeEvent(MobEffectInstance p_147208_, Entity p_147209_, CallbackInfoReturnable<Boolean> cir,
+                                                            @Local(ordinal = 1) MobEffectInstance mobeffectinstance,
+                                                            @Share("bukkitEvent") LocalRef<EntityPotionEffectEvent> bukkitEvent) {
+        // CraftBukkit start
+        boolean override = false;
+        if (mobeffectinstance != null) {
+            override = new MobEffectInstance(mobeffectinstance).update(p_147208_);
+        }
+
+        EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(((LivingEntity) (Object) this), mobeffectinstance, p_147208_, cause, override);
+        bukkitEvent.set(event);
+        if (event.isCancelled()) {
+            cir.setReturnValue(false);
+        }
+        // CraftBukkit end
+    }
+
+    @Redirect(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;update(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
+    private boolean neotenet$resetOverride(MobEffectInstance instance, MobEffectInstance mobEffectInstance, @Share("bukkitEvent") LocalRef<EntityPotionEffectEvent> bukkitEvent) {
+        boolean flag = bukkitEvent.get().isOverride();
+        if (flag) {
+            instance.update(mobEffectInstance);
+        }
+        return flag;
+    }
+
+    @Override
+    public MobEffectInstance removeEffectNoUpdate(Holder<MobEffect> holder, EntityPotionEffectEvent.Cause cause) {
+        pushEffectCause(cause);
+        return removeEffectNoUpdate(holder);
+    }
+
+    @Override
+    public boolean removeEffect(Holder<MobEffect> holder, EntityPotionEffectEvent.Cause cause) {
+        pushEffectCause(EntityPotionEffectEvent.Cause.UNKNOWN);
+        return removeEffect(holder);
+    }
+
+    @Inject(method = "removeEffectNoUpdate", at = @At("HEAD"), cancellable = true)
+    private void neotenet$callEntityPotionEffectChangeEvent(Holder<MobEffect> p_316233_, CallbackInfoReturnable<MobEffectInstance> cir) {
+        if (isTickingEffects) {
+            effectsToProcess.add(new LivingEntity.ProcessableEffect(p_316233_, cause == null ? EntityPotionEffectEvent.Cause.UNKNOWN : cause));
+            cir.setReturnValue(null);
+        }
+
+        MobEffectInstance effect = this.activeEffects.get(p_316233_);
+        if (effect == null) {
+            cir.setReturnValue(null);
+        }
+
+        EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(((LivingEntity) (Object) this), effect, null, cause);
+        if (event.isCancelled()) {
+            cir.setReturnValue(null);
+        }
     }
 
     @Override

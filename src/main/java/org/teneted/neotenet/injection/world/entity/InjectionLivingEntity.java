@@ -96,4 +96,8 @@ public interface InjectionLivingEntity extends InjectionEntity {
     default boolean actuallyHurtBukkit(DamageSource p_21240_, float p_21241_, EntityDamageEvent event) {
         throw new IllegalStateException("Not implemented");
     }
+
+    default MobEffectInstance removeEffectNoUpdate(Holder<MobEffect> holder, EntityPotionEffectEvent.Cause cause) {
+        throw new IllegalStateException("Not implemented");
+    }
 }

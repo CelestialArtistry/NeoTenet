@@ -83,7 +83,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         ItemStack nms = CraftItemStack.asNMSCopy(record);
 
         JukeboxBlockEntity snapshot = this.getSnapshot();
-        snapshot.setSongItemWithoutPlaying(nms/*, snapshot.getSongPlayer().getTicksSinceSongStarted()*/);// NeoTaiyitist TODO - fixme
+        snapshot.setSongItemWithoutPlaying(nms, snapshot.getSongPlayer().getTicksSinceSongStarted());
 
         this.data = this.data.setValue(JukeboxBlock.HAS_RECORD, !nms.isEmpty());
     }
