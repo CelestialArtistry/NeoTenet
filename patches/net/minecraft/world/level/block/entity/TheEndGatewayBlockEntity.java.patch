@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
+@@ -22,6 +_,7 @@
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.chunk.LevelChunk;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.levelgen.feature.Feature;
+ import net.minecraft.world.level.levelgen.feature.configurations.EndGatewayConfiguration;
+ import net.minecraft.world.phys.Vec3;
+@@ -132,7 +_,7 @@
+ 
+     @Nullable
+     public Vec3 getPortalPosition(ServerLevel p_350561_, BlockPos p_350271_) {
+-        if (this.exitPortal == null && p_350561_.dimension() == Level.END) {
++        if (this.exitPortal == null && p_350561_.getTypeKey() == LevelStem.END) {
+             BlockPos blockpos = findOrCreateValidTeleportPos(p_350561_, p_350271_);
+             blockpos = blockpos.above(10);
+             LOGGER.debug("Creating portal at {}", blockpos);
