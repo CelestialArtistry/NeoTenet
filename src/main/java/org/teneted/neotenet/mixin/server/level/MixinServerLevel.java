@@ -1,6 +1,7 @@
 package org.teneted.neotenet.mixin.server.level;
 
 import com.google.common.collect.Lists;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -502,5 +503,10 @@ public abstract class MixinServerLevel extends Level implements WorldGenLevel, I
     @Override
     public boolean addEntitySerialized(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
         return addWithUUID(entity, reason);
+    }
+
+    @ModifyExpressionValue(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isThundering()Z"))
+    private boolean neotenet$configThunderChance(boolean original) {
+        return original && this.spigotConfig.thunderChance > 0;
     }
 }

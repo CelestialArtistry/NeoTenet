@@ -1,8 +1,8 @@
 package org.teneted.neotenet.mixin.world.entity;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
 
@@ -31,16 +31,12 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.stats.Stats;
-import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.CombatTracker;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Attackable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -457,13 +453,12 @@ public abstract class MixinLivingEntity extends Entity implements Attackable, ne
         // CraftBukkit end
     }
 
-    @Redirect(method = "die",
+    @WrapWithCondition(method = "die",
             at = @At(value = "INVOKE",
                     target = "Lorg/slf4j/Logger;info(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V",
                     remap = false))
-    private void neotenet$logNamedDeaths(Logger instance, String s, Object o1, Object o2) {
-        if (org.spigotmc.SpigotConfig.logNamedDeaths)
-            LOGGER.info("Named entity {} died: {}", (Object) this, this.getCombatTracker().getDeathMessage().getString()); // Spigot
+    private boolean neotenet$logNamedDeaths(Logger instance, String s, Object o1, Object o2) {
+        return org.spigotmc.SpigotConfig.logNamedDeaths;
     }
 
     @Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At("HEAD"))

@@ -1,5 +1,8 @@
 package org.teneted.neotenet.mixin.world.entity.item;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
@@ -14,8 +17,10 @@ import org.bukkit.event.entity.EntityRemoveEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(ItemEntity.class)
 public abstract class MixinItemEntity extends Entity {
@@ -66,5 +71,22 @@ public abstract class MixinItemEntity extends Entity {
     @Inject(method = "playerTouch", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;discard()V"))
     private void neotenet$discardCause3(Player p_32040_, CallbackInfo ci) {
         this.pushRemoveCause(EntityRemoveEvent.Cause.PICKUP);
+    }
+
+    @ModifyArgs(method = "mergeWithNeighbours", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+    private void neotenet$configItemMerge(Args args) {
+        double radius = this.level().spigotConfig.itemMerge;
+        args.set(0, radius);
+        args.set(1, radius - 0.5D);
+        args.set(2, radius);
+    }
+
+    @Definition(id = "itemstack1", local = @Local(type = ItemStack.class, ordinal = 1))
+    @Definition(id = "getCount", method = "Lnet/minecraft/world/item/ItemStack;getCount()I")
+    @Definition(id = "itemstack", local = @Local(type = ItemStack.class, ordinal = 0))
+    @Expression("itemstack1.getCount() < itemstack.getCount()")
+    @ModifyExpressionValue(method = "tryToMerge", at = @At("MIXINEXTRAS:EXPRESSION"))
+    private boolean neotenet$checkIfTrue(boolean original) {
+        return true || original; // Spigot
     }
 }

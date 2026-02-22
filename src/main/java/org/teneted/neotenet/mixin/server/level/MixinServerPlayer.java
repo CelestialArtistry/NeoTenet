@@ -51,6 +51,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -923,6 +924,11 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
         this.getInventory().clearContent();
     }
 
+    @Override
+    public ItemEntity drop(ItemStack p_9085_, boolean p_9086_, boolean p_9087_, boolean callEvent) {
+        return drop(p_9085_, p_9086_, p_9087_, p_9086_);
+    }
+
     @Redirect(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;getDeathMessage()Lnet/minecraft/network/chat/Component;"))
     private Component neotenet$callDeathEvent(CombatTracker instance, @Local(argsOnly = true) DamageSource
             p_9035_, @Share("loot") LocalRef<java.util.List<org.bukkit.inventory.ItemStack>> loot, @Share("neotenet$flag") LocalBooleanRef
@@ -979,6 +985,15 @@ public abstract class MixinServerPlayer extends Player implements InjectionServe
             }
         }
         // CraftBukkit end
+    }
+
+    @Redirect(method = "openMenu(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer;)Ljava/util/OptionalInt;", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;closeContainer()V"))
+    private void neotenet$cancelClose(ServerPlayer instance) {
+    }
+
+    @Inject(method = "closeContainer", at = @At("HEAD"))
+    private void neotenet$handleInventoryCloseEvent(CallbackInfo ci) {
+        CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
     }
 
     @ModifyArg(method = "openMenu(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer;)Ljava/util/OptionalInt;", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundOpenScreenPacket;<init>(ILnet/minecraft/world/inventory/MenuType;Lnet/minecraft/network/chat/Component;)V"), index = 2)
