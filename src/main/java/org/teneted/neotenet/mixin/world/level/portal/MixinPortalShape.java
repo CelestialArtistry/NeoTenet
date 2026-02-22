@@ -44,6 +44,7 @@ public class MixinPortalShape {
     @Shadow
     @Final
     private int width;
+    @Shadow
     org.bukkit.craftbukkit.util.BlockStateListPopulator blocks; // CraftBukkit - add field
 
     @Unique
@@ -96,29 +97,4 @@ public class MixinPortalShape {
         createPortalBlocksBoolean.set(true);
         neotenet$entity.getAndSet(null);
     }
-
-    public boolean createPortalBlocks(Entity entity) {
-        neotenet$entity.set(entity);
-        org.bukkit.World bworld = this.level.getMinecraftWorld().getWorld();
-
-        // Copy below for loop
-        BlockState blockstate = Blocks.NETHER_PORTAL.defaultBlockState().setValue(NetherPortalBlock.AXIS, this.axis);
-        BlockPos.betweenClosed(this.bottomLeft, this.bottomLeft.relative(Direction.UP, this.height - 1).relative(this.rightDir, this.width - 1)).forEach((blockposition) -> {
-            blocks.setBlock(blockposition, blockstate, 18);
-        });
-        PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), PortalCreateEvent.CreateReason.FIRE);
-        this.level.getMinecraftWorld().getServer().server.getPluginManager().callEvent(event);
-
-        if (event.isCancelled()) {
-            createPortalBlocksBoolean.set(false);
-            return false;
-        }
-        // CraftBukkit end
-        BlockPos.betweenClosed(this.bottomLeft, this.bottomLeft.relative(Direction.UP, this.height - 1).relative(this.rightDir, this.width - 1)).forEach((blockposition) -> {
-            this.level.setBlock(blockposition, blockstate, 18);
-        });
-        createPortalBlocksBoolean.set(true);
-        return true;
-    }
-
 }

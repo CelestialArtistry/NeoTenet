@@ -71,3 +71,23 @@
          @Override
          public int getContainerSize() {
              return 1;
+@@ -77,11 +_,18 @@
+ 
+         @Override
+         public void setItem(int p_59585_, ItemStack p_59586_) {
++            if (p_59585_ == 0) {
++                LecternBlockEntity.this.setBook(p_59586_);
++                if (LecternBlockEntity.this.getLevel() != null) {
++                    LecternBlock.resetBookState(null, LecternBlockEntity.this.getLevel(), LecternBlockEntity.this.getBlockPos(), LecternBlockEntity.this.getBlockState(), LecternBlockEntity.this.hasBook());
++                }
++            }
+         }
++        // CraftBukkit end
+ 
+         @Override
+         public int getMaxStackSize() {
+-            return 1;
++            return maxStack; // CraftBukkit
+         }
+ 
+         @Override

@@ -1,5 +1,6 @@
 package org.teneted.neotenet.mixin.world.level.block;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -36,4 +37,9 @@ public class MixinBaseFireBlock implements InjectionBaseFireBlock {
         }
     }
     // CraftBukkit end
+
+    @ModifyReturnValue(method = "inPortalDimension", at = @At("RETURN"))
+    private static boolean neotenet$useLevelStem(boolean original, @Local(argsOnly = true) Level world) {
+        return world.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.OVERWORLD || world.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER; // CraftBukkit - getTypeKey()
+    }
 }
