@@ -496,6 +496,7 @@
     "world.level.levelgen.MixinPatrolSpawner",
     "world.level.levelgen.MixinPhantomSpawner",
     "world.level.levelgen.structure.MixinStructurePiece",
+    "world.level.levelgen.structure.stuctures.MixinDesertPyramidStructure",
     "world.level.levelgen.structure.templatesystem.MixinStructurePlaceSettings",
     "world.level.levelgen.structure.templatesystem.MixinStructureTemplate",
     "world.level.material.MixinFlowingFluid",

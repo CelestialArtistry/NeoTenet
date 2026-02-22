@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/FireBlock.java
 +++ b/net/minecraft/world/level/block/FireBlock.java
+@@ -15,6 +_,7 @@
+ import net.minecraft.tags.BiomeTags;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.item.context.BlockPlaceContext;
++import net.minecraft.world.item.context.UseOnContext;
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
 @@ -132,13 +_,13 @@
      protected BlockState getStateForPlacement(BlockGetter p_53471_, BlockPos p_53472_) {
          BlockPos blockpos = p_53472_.below();
@@ -111,7 +119,7 @@
              }
  
              return i;
-@@ -301,12 +_,13 @@
+@@ -301,16 +_,23 @@
      }
  
      @Override
@@ -125,6 +133,16 @@
 +    public void onPlace(BlockState p_53479_, Level p_53480_, BlockPos p_53481_, BlockState p_53482_, boolean p_53483_) {
          super.onPlace(p_53479_, p_53480_, p_53481_, p_53482_, p_53483_);
          p_53480_.scheduleTick(p_53481_, this, getFireTickDelay(p_53480_.random));
+     }
+ 
++    @Override
++    public void onPlace(BlockState p_53479_, Level p_53480_, BlockPos p_53481_, BlockState p_53482_, boolean p_53483_, UseOnContext context) {
++        super.onPlace(p_53479_, p_53480_, p_53481_, p_53482_, p_53483_, context);
++        p_53480_.scheduleTick(p_53481_, this, getFireTickDelay(p_53480_.random));
++    }
++
+     private static int getFireTickDelay(RandomSource p_221149_) {
+         return 30 + p_221149_.nextInt(10);
      }
 @@ -321,8 +_,21 @@
      }
