@@ -13,11 +13,15 @@ import net.minecraft.world.phys.Vec3;
 
 public interface InjectionAbstractFurnaceBlockEntity {
 
+    default void awardUsedRecipesAndPopExperience(ServerPlayer serverPlayer, ItemStack itemstack, int amount) {
+        throw new IllegalStateException("Not implemented");
+    }
+
     default Object2IntOpenHashMap<ResourceLocation> getRecipesUsed() {
         throw new IllegalStateException("Not implemented");
     }
 
-    default List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel world, Vec3 vec, BlockPos pos, Player entity, ItemStack itemStack, int amount) {
+    default List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel world, Vec3 vec, BlockPos pos, ServerPlayer entity, ItemStack itemStack, int amount) {
         throw new IllegalStateException("Not implemented");
     }
 

@@ -171,7 +171,7 @@
                  }
              }
          } else {
-@@ -336,15 +_,15 @@
+@@ -336,16 +_,17 @@
          }
      }
  
@@ -183,14 +183,17 @@
 -            ItemStack itemstack1 = p_300910_.value().getResultItem(p_266740_);
 +            ItemStack itemstack1 = ((RecipeHolder<? extends AbstractCookingRecipe>) p_300910_).value().assemble(new SingleRecipeInput(furnace.getItem(0)), p_266740_);
              ItemStack itemstack2 = p_267073_.get(2);
++            /*
              if (itemstack2.isEmpty()) {
                  p_267073_.set(2, itemstack1.copy());
              } else if (ItemStack.isSameItemSameComponents(itemstack2, itemstack1)) {
 -                itemstack2.grow(1);
+-            }
 +                itemstack2.grow(itemstack1.getCount());
-             }
++            }*/
  
              if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !p_267073_.get(1).isEmpty() && p_267073_.get(1).is(Items.BUCKET)) {
+                 p_267073_.set(1, new ItemStack(Items.WATER_BUCKET));
 @@ -362,8 +_,7 @@
          if (p_58343_.isEmpty()) {
              return 0;
@@ -210,6 +213,17 @@
      }
  
      @Override
+@@ -405,6 +_,10 @@
+         return this.items;
+     }
+ 
++    public NonNullList<ItemStack> getItemsPublic() {// NeoTenet - PAIL public
++        return this.items;
++    }
++
+     @Override
+     protected void setItems(NonNullList<ItemStack> p_332808_) {
+         this.items = p_332808_;
 @@ -431,7 +_,7 @@
              return true;
          } else {
