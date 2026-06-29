@@ -1,0 +1,3 @@
+# Modified Class list,check it when migrate
+net/minecraft/commands/Commands # add inner class
+net/minecraft/world/level/block/ChestBlock # add inner class
