@@ -154,6 +154,7 @@ dependencies {
     libraries 'org.apache.logging.log4j:log4j-iostreams:2.26.0'
     libraries 'org.apache.logging.log4j:log4j-core:2.26.0'
     libraries 'org.apache.logging.log4j:log4j-slf4j2-impl:2.26.0'
+    libraries 'org.jline:jline:3.30.4'
     // spigot
     libraries 'commons-codec:commons-codec:1.22.0'
     libraries 'commons-lang:commons-lang:2.6'
@@ -167,8 +168,8 @@ dependencies {
     libraries 'org.checkerframework:checker-qual:3.49.2'
     libraries 'org.eclipse.sisu:org.eclipse.sisu.inject:0.9.0.M2'
     libraries 'org.codehaus.plexus:plexus-interpolation:1.26'
-    libraries 'org.codehaus.plexus:plexus-utils:3.5.1'
-    libraries 'com.google.protobuf:protobuf-java:3.25.1'
+    libraries 'org.codehaus.plexus:plexus-utils:4.0.3'
+    libraries 'com.google.protobuf:protobuf-java:4.28.2'
     libraries "org.apache.maven:maven-artifact:3.9.9"
     libraries 'org.apache.maven:maven-builder-support:3.9.6'
     libraries 'org.apache.maven:maven-model:3.9.6'
