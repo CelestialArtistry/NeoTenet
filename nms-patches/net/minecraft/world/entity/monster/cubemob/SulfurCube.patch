@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
++++ b/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
+@@ -79,6 +79,10 @@
+ import net.minecraft.world.phys.Vec3;
+ import org.jspecify.annotations.Nullable;
+ 
++// CraftBukkit start
++import org.bukkit.event.entity.EntityRemoveEvent;
++// CraftBukkit end
++
+ public class SulfurCube extends AbstractCubeMob implements Bucketable, Shearable {
+ 
+     public static final int SPLIT_COUNT = 2;
+@@ -330,7 +334,7 @@
+                     this.triggerOnDeathMobEffects(serverlevel, Entity.RemovalReason.KILLED);
+                 }
+ 
+-                this.discard();
++                this.discard(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit
+             }
+ 
+         }
