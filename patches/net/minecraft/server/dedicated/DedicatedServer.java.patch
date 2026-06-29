@@ -1,7 +1,7 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -88,6 +_,7 @@
-     private final ServerLinks serverLinks;
+     public ServerLinks serverLinks;
      private final Map<String, String> codeOfConductTexts;
      private final @Nullable ManagementServer jsonRpcServer;
 +    private net.neoforged.neoforge.server.dedicated.@Nullable DedicatedLanServerPinger dediLanPinger;
