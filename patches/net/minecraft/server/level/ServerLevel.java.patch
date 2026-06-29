@@ -1,6 +1,17 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -216,11 +_,17 @@
+@@ -181,8 +_,9 @@
+ import net.minecraft.world.waypoints.WaypointTransmitter;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
++import org.teneted.neotenet.injection.server.level.ServerLevelInjection;
+ 
+-public class ServerLevel extends Level implements WorldGenLevel, ServerEntityGetter {
++public class ServerLevel extends Level implements WorldGenLevel, ServerEntityGetter, ServerLevelInjection {
+     public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
+     public static final IntProvider RAIN_DELAY = UniformInt.of(12000, 180000);
+     public static final IntProvider RAIN_DURATION = UniformInt.of(12000, 24000);
+@@ -216,11 +_,20 @@
      private boolean handlingTick;
      private final List<CustomSpawner> customSpawners;
      private @Nullable EnderDragonFight dragonFight;
@@ -16,6 +27,9 @@
 +    public java.util.OptionalLong getSeedOverride() {
 +        return this.seedOverride;
 +    }
++    // CraftBukkit start
++    public LevelStorageSource.LevelStorageAccess storageSource;
++    public UUID uuid;
  
      public ServerLevel(
          MinecraftServer server,
@@ -225,7 +239,7 @@
          this.neighborUpdater.updateNeighborsAtExceptFromFacing(pos, blockObject, skipDirection, orientation);
      }
  
-@@ -1206,7 +_,7 @@
+@@ -1206,14 +_,17 @@
          Explosion.BlockInteraction blockInteraction = switch (interactionType) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.BLOCK_EXPLOSION_DROP_DECAY);
@@ -234,7 +248,9 @@
                  ? this.getDestroyType(GameRules.MOB_EXPLOSION_DROP_DECAY)
                  : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.TNT_EXPLOSION_DROP_DECAY);
-@@ -1214,6 +_,7 @@
+             case TRIGGER -> Explosion.BlockInteraction.TRIGGER_BLOCK;
++            // CraftBukkit start - handle custom explosion type
++            case STANDARD -> Explosion.BlockInteraction.DESTROY;
          };
          Vec3 center = new Vec3(x, y, z);
          ServerExplosion explosion = new ServerExplosion(this, source, damageSource, damageCalculator, center, r, fire, blockInteraction);

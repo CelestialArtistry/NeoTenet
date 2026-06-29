@@ -1,13 +1,39 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -158,6 +_,7 @@
+@@ -123,6 +_,7 @@
+ import net.minecraft.world.level.entity.EntityInLevelCallback;
+ import net.minecraft.world.level.gameevent.DynamicGameEventListener;
+ import net.minecraft.world.level.gameevent.GameEvent;
++import net.minecraft.world.level.gamerules.GameRules;
+ import net.minecraft.world.level.levelgen.Heightmap;
+ import net.minecraft.world.level.material.Fluid;
+ import net.minecraft.world.level.material.FluidState;
+@@ -151,13 +_,16 @@
+ import net.minecraft.world.scores.Scoreboard;
+ import net.minecraft.world.scores.Team;
+ import net.minecraft.world.waypoints.WaypointTransmitter;
++import org.bukkit.command.CommandSender;
+ import org.jetbrains.annotations.Contract;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
+ 
  import net.neoforged.neoforge.common.extensions.IEntityExtension;
++import org.teneted.neotenet.injection.world.entity.EntityInjection;
  
  public abstract class Entity
 +    extends net.neoforged.neoforge.attachment.AttachmentHolder
      implements Nameable,
      EntityAccess,
      ScoreHolder,
+@@ -166,7 +_,7 @@
+     ItemOwner,
+     SlotProvider,
+     DebugValueSource,
+-    TypedInstance<EntityType<?>>, IEntityExtension {
++    TypedInstance<EntityType<?>>, IEntityExtension, EntityInjection {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     public static final String TAG_ID = "id";
+     public static final String TAG_UUID = "UUID";
 @@ -207,6 +_,8 @@
      private static final int MAX_BLOCK_ITERATIONS_ALONG_TRAVEL_PER_TICK = 16;
      private static final double MAX_MOVEMENT_RESETTING_TRACE_DISTANCE = 8.0;
@@ -17,6 +43,28 @@
      private final EntityType<?> type;
      private boolean requiresPrecisePosition;
      private int id = 0;
+@@ -302,6 +_,21 @@
+     private final LongSet visitedBlocks = new LongOpenHashSet();
+     private final InsideBlockEffectApplier.StepBasedCollector insideEffectCollector = new InsideBlockEffectApplier.StepBasedCollector();
+     private CustomData customData = CustomData.EMPTY;
++    // CraftBukkit start
++    public boolean forceDrops;
++    public boolean persist = true;
++    public boolean visibleByDefault = true;
++    public boolean valid;
++    public boolean inWorld = false;
++    public boolean generation;
++    public int maxAirTicks = getDefaultMaxAirSupply(); // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++    public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
++    public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
++    public boolean persistentInvisibility = false;
++    public BlockPos lastLavaContact;
++    // Marks an entity, that it was removed by a plugin via Entity#remove
++    // Main use case currently is for SPIGOT-7487, preventing dropping of leash when leash is removed
++    public boolean pluginRemoved = false;
+ 
+     public Entity(EntityType<?> type, Level level) {
+         this.type = type;
 @@ -323,7 +_,10 @@
          this.defineSynchedData(entityDataBuilder);
          this.entityData = entityDataBuilder.build();
@@ -274,6 +322,42 @@
          this.dimensions = newDim;
          this.eyeHeight = newDim.eyeHeight();
          this.reapplyPosition();
+@@ -3615,6 +_,35 @@
+         return 0;
+     }
+ 
++    // CraftBukkit start
++    private final CommandSource commandSource = new CommandSource() {
++
++        @Override
++        public void sendSystemMessage(Component component) {
++        }
++
++        @Override
++        public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++            return Entity.this.getBukkitEntity();
++        }
++
++        @Override
++        public boolean acceptsSuccess() {
++            return ((ServerLevel) Entity.this.level()).getGameRules().get(GameRules.SEND_COMMAND_FEEDBACK);
++        }
++
++        @Override
++        public boolean acceptsFailure() {
++            return true;
++        }
++
++        @Override
++        public boolean shouldInformAdmins() {
++            return true;
++        }
++    };
++    // CraftBukkit end
++
+     public CommandSourceStack createCommandSourceStackForNameResolution(ServerLevel level) {
+         return new CommandSourceStack(
+             CommandSource.NULL,
 @@ -3810,6 +_,10 @@
                  }
              }
