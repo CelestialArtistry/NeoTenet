@@ -1,5 +1,45 @@
 --- a/net/minecraft/world/level/block/ChestBlock.java
 +++ b/net/minecraft/world/level/block/ChestBlock.java
+@@ -90,10 +_,27 @@
+             return Optional.empty();
+         }
+     };
+-    public static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER = new DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>>() {
++    public static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER = new DoubleChestCombiner();
++
++    public static class DoubleChestCombiner implements DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> {
+         public Optional<MenuProvider> acceptDouble(ChestBlockEntity first, ChestBlockEntity second) {
+-            final Container container = new CompoundContainer(first, second);
+-            return Optional.of(new MenuProvider() {
++            final CompoundContainer container = new CompoundContainer(first, second);
++            return Optional.of(new Dummy.DoubleInventory(first, second, container));
++        }
++
++        public static class Dummy {
++            public static class DoubleInventory implements MenuProvider {
++
++                private final ChestBlockEntity first;
++                private final ChestBlockEntity second;
++                public final CompoundContainer container;
++
++                public DoubleInventory(ChestBlockEntity first, ChestBlockEntity second, CompoundContainer container) {
++                    this.first = first;
++                    this.second = second;
++                    this.container = container;
++                }
++                // CraftBukkit end
+                 @Override
+                 public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+                     if (first.canOpen(player) && second.canOpen(player)) {
+@@ -117,7 +_,7 @@
+                         return second.hasCustomName() ? second.getDisplayName() : Component.translatable("container.chestDouble");
+                     }
+                 }
+-            });
++            };
+         }
+ 
+         public Optional<MenuProvider> acceptSingle(ChestBlockEntity single) {
 @@ -364,7 +_,8 @@
  
      @Override
