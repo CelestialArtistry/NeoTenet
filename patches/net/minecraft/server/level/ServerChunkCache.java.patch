@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
+@@ -55,8 +_,9 @@
+ import org.slf4j.Logger;
+ 
+ import net.neoforged.neoforge.common.extensions.IServerChunkCacheExtension;
++import org.teneted.neotenet.injection.server.level.ServerChunkCacheInjection;
+ 
+-public class ServerChunkCache extends ChunkSource implements IServerChunkCacheExtension {
++public class ServerChunkCache extends ChunkSource implements IServerChunkCacheExtension, ServerChunkCacheInjection {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final DistanceManager distanceManager;
+     public final ServerLevel level;
 @@ -101,7 +_,7 @@
              LOGGER.error("Failed to create dimension data storage directory", e);
          }

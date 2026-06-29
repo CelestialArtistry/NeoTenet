@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
+@@ -28,8 +_,9 @@
+ import net.minecraft.world.level.chunk.status.ChunkStatus;
+ import net.minecraft.world.level.lighting.LevelLightEngine;
+ import org.jspecify.annotations.Nullable;
++import org.teneted.neotenet.injection.server.level.ChunkHolderInjection;
+ 
+-public class ChunkHolder extends GenerationChunkHolder {
++public class ChunkHolder extends GenerationChunkHolder implements ChunkHolderInjection {
+     public static final ChunkResult<LevelChunk> UNLOADED_LEVEL_CHUNK = ChunkResult.error("Unloaded level chunk");
+     private static final CompletableFuture<ChunkResult<LevelChunk>> UNLOADED_LEVEL_CHUNK_FUTURE = CompletableFuture.completedFuture(UNLOADED_LEVEL_CHUNK);
+     private final LevelHeightAccessor levelHeightAccessor;
 @@ -230,6 +_,7 @@
              if (packet != null) {
                  this.broadcast(players, packet);

@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/protocol/common/custom/DiscardedPayload.java
++++ b/net/minecraft/network/protocol/common/custom/DiscardedPayload.java
+@@ -3,8 +_,17 @@
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.resources.Identifier;
+-
+-public record DiscardedPayload(Identifier id) implements CustomPacketPayload {
++import org.teneted.neotenet.injection.network.network.protocol.common.custom.DiscardedPayloadInjection;
++
++public record DiscardedPayload(Identifier id) implements CustomPacketPayload, DiscardedPayloadInjection {
++
++    private static io.netty.buffer.ByteBuf data;
++
++    public DiscardedPayload(Identifier id, io.netty.buffer.ByteBuf data) {
++        this(id);
++        DiscardedPayload.data = data;
++    }
++
+     public static <T extends FriendlyByteBuf> StreamCodec<T, DiscardedPayload> codec(Identifier id, int maxPayloadSize) {
+         return CustomPacketPayload.codec((payload, buf) -> {}, buf -> {
+             int length = buf.readableBytes();
