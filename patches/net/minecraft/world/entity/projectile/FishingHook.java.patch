@@ -1,74 +1,56 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -65,6 +_,17 @@
-     public FishingHook.FishHookState currentState = FishingHook.FishHookState.FLYING;
-     private final int luck;
-     private final int lureSpeed;
-+    // CraftBukkit start - Extra variables to enable modification of fishing wait time, values are minecraft defaults
-+    public int minWaitTime = 100;
-+    public int maxWaitTime = 600;
-+    public int minLureTime = 20;
-+    public int maxLureTime = 80;
-+    public float minLureAngle = 0.0F;
-+    public float maxLureAngle = 360.0F;
-+    public boolean applyLure = true;
-+    public boolean rainInfluenced = true;
-+    public boolean skyInfluenced = true;
-+    // CraftBukkit end
- 
-     private FishingHook(EntityType<? extends FishingHook> p_150141_, Level p_150142_, int p_150143_, int p_150144_) {
-         super(p_150141_, p_150142_);
-@@ -240,8 +_,8 @@
-     private boolean shouldStopFishing(Player p_37137_) {
-         ItemStack itemstack = p_37137_.getMainHandItem();
-         ItemStack itemstack1 = p_37137_.getOffhandItem();
--        boolean flag = itemstack.is(Items.FISHING_ROD);
--        boolean flag1 = itemstack1.is(Items.FISHING_ROD);
-+        boolean flag = itemstack.canPerformAction(net.neoforged.neoforge.common.ItemAbilities.FISHING_ROD_CAST);
-+        boolean flag1 = itemstack1.canPerformAction(net.neoforged.neoforge.common.ItemAbilities.FISHING_ROD_CAST);
-         if (!p_37137_.isRemoved() && p_37137_.isAlive() && (flag || flag1) && !(this.distanceToSqr(p_37137_) > 1024.0)) {
-             return false;
-         } else {
-@@ -252,7 +_,7 @@
+@@ -254,8 +_,8 @@
+         if (owner.canInteractWithLevel()) {
+             ItemStack selectedItem = owner.getMainHandItem();
+             ItemStack selectedItemOffHand = owner.getOffhandItem();
+-            boolean mainHandIsFishing = selectedItem.is(Items.FISHING_ROD);
+-            boolean offHandIsFishing = selectedItemOffHand.is(Items.FISHING_ROD);
++            boolean mainHandIsFishing = selectedItem.canPerformAction(net.neoforged.neoforge.common.ItemAbilities.FISHING_ROD_CAST);
++            boolean offHandIsFishing = selectedItemOffHand.canPerformAction(net.neoforged.neoforge.common.ItemAbilities.FISHING_ROD_CAST);
+             if ((mainHandIsFishing || offHandIsFishing) && this.distanceToSqr(owner) <= 1024.0) {
+                 return false;
+             }
+@@ -267,7 +_,7 @@
  
      private void checkCollision() {
-         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
--        this.hitTargetOrDeflectSelf(hitresult);
-+        if (hitresult.getType() == HitResult.Type.MISS || !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitresult)) this.onHit(hitresult);
+         HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+-        this.hitTargetOrDeflectSelf(hitResult);
++        if (hitResult.getType() == HitResult.Type.MISS || !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitResult)) this.onHit(hitResult);
      }
  
      @Override
-@@ -441,6 +_,7 @@
-         Player player = this.getPlayerOwner();
-         if (!this.level().isClientSide && player != null && !this.shouldStopFishing(player)) {
-             int i = 0;
+@@ -448,6 +_,7 @@
+         Player owner = this.getPlayerOwner();
+         if (!this.level().isClientSide() && owner != null && !this.shouldStopFishing(owner)) {
+             int dmg = 0;
 +            net.neoforged.neoforge.event.entity.player.ItemFishedEvent event = null;
              if (this.hookedIn != null) {
                  this.pullEntity(this.hookedIn);
-                 CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, Collections.emptyList());
-@@ -451,10 +_,17 @@
+                 CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)owner, rod, this, Collections.emptyList());
+@@ -458,10 +_,17 @@
                      .withParameter(LootContextParams.ORIGIN, this.position())
-                     .withParameter(LootContextParams.TOOL, p_37157_)
+                     .withParameter(LootContextParams.TOOL, rod)
                      .withParameter(LootContextParams.THIS_ENTITY, this)
 +                    .withParameter(LootContextParams.ATTACKING_ENTITY, this.getOwner())
-                     .withLuck((float)this.luck + player.getLuck())
+                     .withLuck(this.luck + owner.getLuck())
                      .create(LootContextParamSets.FISHING);
-                 LootTable loottable = this.level().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
-                 List<ItemStack> list = loottable.getRandomItems(lootparams);
-+                event = new net.neoforged.neoforge.event.entity.player.ItemFishedEvent(list, this.onGround() ? 2 : 1, this);
+                 LootTable lootTable = this.level().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
+                 List<ItemStack> items = lootTable.getRandomItems(params);
++                event = new net.neoforged.neoforge.event.entity.player.ItemFishedEvent(items, this.onGround() ? 2 : 1, this);
 +                net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(event);
 +                if (event.isCanceled()) {
 +                    this.discard();
 +                    return event.getRodDamage();
 +                }
-                 CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, list);
+                 CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)owner, rod, this, items);
  
-                 for (ItemStack itemstack : list) {
-@@ -480,6 +_,7 @@
+                 for (ItemStack itemStack : items) {
+@@ -487,6 +_,7 @@
              }
  
              this.discard();
 +            if (event != null) return event.getRodDamage();
-             return i;
+             return dmg;
          } else {
              return 0;

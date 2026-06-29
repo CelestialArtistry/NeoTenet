@@ -1,39 +1,11 @@
 --- a/net/minecraft/commands/arguments/EntityArgument.java
 +++ b/net/minecraft/commands/arguments/EntityArgument.java
-@@ -13,6 +_,8 @@
- import java.util.Collection;
- import java.util.List;
- import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.atomic.AtomicBoolean;
-+
- import net.minecraft.commands.CommandBuildContext;
- import net.minecraft.commands.CommandSourceStack;
- import net.minecraft.commands.SharedSuggestionProvider;
-@@ -23,8 +_,9 @@
- import net.minecraft.network.chat.Component;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.world.entity.Entity;
-+import org.teneted.neotenet.injection.commands.arguments.InjectionEntityArgument;
- 
--public class EntityArgument implements ArgumentType<EntitySelector> {
-+public class EntityArgument implements ArgumentType<EntitySelector>, InjectionEntityArgument {
-     private static final Collection<String> EXAMPLES = Arrays.asList("Player", "0123", "@e", "@e[type=foo]", "dd12be42-52a9-4a91-a8a1-11c01849e498");
-     public static final SimpleCommandExceptionType ERROR_NOT_SINGLE_ENTITY = new SimpleCommandExceptionType(Component.translatable("argument.entity.toomany"));
-     public static final SimpleCommandExceptionType ERROR_NOT_SINGLE_PLAYER = new SimpleCommandExceptionType(Component.translatable("argument.player.toomany"));
-@@ -38,6 +_,7 @@
-     );
-     final boolean single;
-     final boolean playersOnly;
-+    public AtomicBoolean parse$overridePermissions = new AtomicBoolean(false);
- 
-     protected EntityArgument(boolean p_91447_, boolean p_91448_) {
-         this.single = p_91447_;
-@@ -127,7 +_,7 @@
-         if (p_91482_.getSource() instanceof SharedSuggestionProvider sharedsuggestionprovider) {
-             StringReader stringreader = new StringReader(p_91483_.getInput());
-             stringreader.setCursor(p_91483_.getStart());
--            EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, EntitySelectorParser.allowSelectors(sharedsuggestionprovider));
-+            EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, net.neoforged.neoforge.common.CommonHooks.canUseEntitySelectors(sharedsuggestionprovider));
+@@ -128,7 +_,7 @@
+         if (contextBuilder.getSource() instanceof SharedSuggestionProvider source) {
+             StringReader reader = new StringReader(builder.getInput());
+             reader.setCursor(builder.getStart());
+-            EntitySelectorParser parser = new EntitySelectorParser(reader, source.permissions().hasPermission(Permissions.COMMANDS_ENTITY_SELECTORS));
++            EntitySelectorParser parser = new EntitySelectorParser(reader, net.neoforged.neoforge.common.CommonHooks.canUseEntitySelectors(source));
  
              try {
-                 entityselectorparser.parse();
+                 parser.parse();

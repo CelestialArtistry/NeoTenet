@@ -5,10 +5,12 @@
 
 package net.neoforged.neoforge.common.damagesource;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -47,7 +49,9 @@ public class DamageContainer {
         /** Damage reduced from active mob effects. */
         MOB_EFFECTS,
         /** Damage absorbed by absorption. */
-        ABSORPTION
+        ABSORPTION,
+        /** Damage reduced from innate entity resistances or immunities. */
+        INNATE_RESISTANCE
     }
 
     private final EnumMap<Reduction, List<IReductionFunction>> reductionFunctions = new EnumMap<>(Reduction.class);
@@ -58,6 +62,7 @@ public class DamageContainer {
     private float blockedDamage = 0f;
     private float shieldDamage = 0;
     private int invulnerabilityTicksAfterAttack = 20;
+    private float inflictedDamage = 0;
 
     public DamageContainer(DamageSource source, float originalDamage) {
         this.source = source;
@@ -83,6 +88,7 @@ public class DamageContainer {
      * @param damage the amount to harm this entity at the end of the damage sequence
      */
     public void setNewDamage(float damage) {
+        Preconditions.checkArgument(damage >= 0.0F, "Damage cannot be negative.");
         this.newDamage = damage;
     }
 
@@ -95,7 +101,7 @@ public class DamageContainer {
      * Adds a callback modifier to the vanilla damage reductions. Each function will be performed in sequence
      * on the vanilla value at the time the {@link DamageContainer.Reduction} type is set by vanilla.
      * <ul>
-     * <li>only the {@link LivingIncomingDamageEvent EntityPreDamageEvent}
+     * <li>only the {@link LivingIncomingDamageEvent}
      * happens early enough in the sequence for this method to have any effect.</li>
      * <li>if the vanilla reduction is not triggered, the reduction function will not execute.</li>
      * </ul>
@@ -126,6 +132,7 @@ public class DamageContainer {
      * @param ticks Ticks of invulnerability after this damage sequence
      */
     public void setPostAttackInvulnerabilityTicks(int ticks) {
+        Preconditions.checkArgument(ticks > 0, "Ticks cannot be negative.");
         this.invulnerabilityTicksAfterAttack = ticks;
     }
 
@@ -153,7 +160,7 @@ public class DamageContainer {
         if (event.getBlocked()) {
             this.blockedDamage = event.getBlockedDamage();
             this.shieldDamage = event.shieldDamage();
-            this.newDamage -= this.blockedDamage;
+            this.newDamage = Math.max(this.newDamage - this.blockedDamage, 0);
         }
     }
 
@@ -161,7 +168,27 @@ public class DamageContainer {
     public void setReduction(Reduction reduction, float amount) {
         float modifiedReduction = modifyReduction(reduction, amount);
         this.reductions.put(reduction, modifiedReduction);
-        this.newDamage -= modifiedReduction;
+        this.newDamage = Math.max(this.newDamage - modifiedReduction, 0);
+    }
+
+    /**
+     * Captures the "true" inflicted damage, which is the authoritative amount of damage dealt after {@link LivingDamageEvent.Pre}.
+     * <p>
+     * This will never be called if the entity is invulnerable to the damage, which leaves the inflicted damage (correctly) at zero.
+     */
+    @ApiStatus.Internal
+    public void captureInflictedDamage() {
+        this.inflictedDamage = this.getNewDamage();
+    }
+
+    /**
+     * Returns the "true" inflicted damage so we can bubble it back up to {@link LivingEntity#lastHurt} after actuallyHurt() completes.
+     * <p>
+     * Not doing a capture of the value means we have to try and reverse engineer the value from the new damage and the amount that was soaked by absorption hearts.
+     */
+    @ApiStatus.Internal
+    public float getInflictedDamage() {
+        return this.inflictedDamage;
     }
 
     private float modifyReduction(Reduction type, float reduction) {

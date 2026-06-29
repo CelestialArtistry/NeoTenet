@@ -1,23 +1,29 @@
 --- a/net/minecraft/world/level/levelgen/FlatLevelSource.java
 +++ b/net/minecraft/world/level/levelgen/FlatLevelSource.java
-@@ -16,6 +_,7 @@
- import net.minecraft.world.level.NoiseColumn;
- import net.minecraft.world.level.StructureManager;
- import net.minecraft.world.level.biome.BiomeManager;
-+import net.minecraft.world.level.biome.BiomeSource;
- import net.minecraft.world.level.biome.FixedBiomeSource;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.state.BlockState;
-@@ -32,6 +_,12 @@
-                 .apply(p_255577_, p_255577_.stable(FlatLevelSource::new))
+@@ -30,9 +_,11 @@
+         i -> i.group(FlatLevelGeneratorSettings.CODEC.fieldOf("settings").forGetter(FlatLevelSource::settings)).apply(i, i.stable(FlatLevelSource::new))
      );
      private final FlatLevelGeneratorSettings settings;
-+
-+    public FlatLevelSource(FlatLevelGeneratorSettings p_256337_, BiomeSource biomeSource) {
-+        super(biomeSource, Util.memoize(p_256337_::adjustGenerationSettings));
-+        this.settings = p_256337_;
-+        // CraftBukkit end
-+    }
++    // Neo: Store the memoized generation settings getter, so the cache can be cleared later
++    private final net.neoforged.neoforge.common.util.MemoizedFunction<Holder<net.minecraft.world.level.biome.Biome>, net.minecraft.world.level.biome.BiomeGenerationSettings> generationSettingsGetter;
  
-     public FlatLevelSource(FlatLevelGeneratorSettings p_256337_) {
-         super(new FixedBiomeSource(p_256337_.getBiome()), Util.memoize(p_256337_::adjustGenerationSettings));
+     public FlatLevelSource(FlatLevelGeneratorSettings generatorSettings) {
+-        super(new FixedBiomeSource(generatorSettings.getBiome()), Util.memoize(generatorSettings::adjustGenerationSettings));
++        super(new FixedBiomeSource(generatorSettings.getBiome()), this.generationSettingsGetter = net.neoforged.neoforge.common.util.MemoizedFunction.of(generatorSettings::adjustGenerationSettings));
+         this.settings = generatorSettings;
+     }
+ 
+@@ -142,5 +_,13 @@
+     @Override
+     public int getSeaLevel() {
+         return -63;
++    }
++
++    // Neo: clear the cache for the generation settings getter on refresh
++    @Override
++    public void refreshFeaturesPerStep() {
++        super.refreshFeaturesPerStep();
++        this.generationSettingsGetter.clear();
++        this.settings.updateLayers();
+     }
+ }

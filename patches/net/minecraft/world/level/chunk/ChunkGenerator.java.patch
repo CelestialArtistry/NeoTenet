@@ -1,35 +1,12 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -1,6 +_,5 @@
- package net.minecraft.world.level.chunk;
- 
--import com.google.common.base.Suppliers;
- import com.mojang.datafixers.util.Pair;
- import com.mojang.serialization.Codec;
- import com.mojang.serialization.MapCodec;
-@@ -76,12 +_,13 @@
- import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
- import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
- import org.apache.commons.lang3.mutable.MutableBoolean;
-+import org.teneted.neotenet.injection.world.level.chunk.InjectionChunkGenerator;
- 
--public abstract class ChunkGenerator {
-+public abstract class ChunkGenerator implements InjectionChunkGenerator {
-     public static final Codec<ChunkGenerator> CODEC = BuiltInRegistries.CHUNK_GENERATOR
-         .byNameCodec()
-         .dispatchStable(ChunkGenerator::codec, Function.identity());
--    protected final BiomeSource biomeSource;
-+    public BiomeSource biomeSource;
-     private final Supplier<List<FeatureSorter.StepFeatureData>> featuresPerStep;
-     public final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
- 
-@@ -92,9 +_,14 @@
-     public ChunkGenerator(BiomeSource p_255838_, Function<Holder<Biome>, BiomeGenerationSettings> p_256216_) {
-         this.biomeSource = p_255838_;
-         this.generationSettingsGetter = p_256216_;
+@@ -94,9 +_,14 @@
+     public ChunkGenerator(BiomeSource biomeSource, Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter) {
+         this.biomeSource = biomeSource;
+         this.generationSettingsGetter = generationSettingsGetter;
 -        this.featuresPerStep = Suppliers.memoize(
 +        this.featuresPerStep = net.neoforged.neoforge.common.util.Lazy.of(
-             () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(p_255838_.possibleBiomes()), p_223216_ -> p_256216_.apply(p_223216_).features(), true)
+             () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(biomeSource.possibleBiomes()), b -> generationSettingsGetter.apply(b).features(), true)
          );
 +    }
 +

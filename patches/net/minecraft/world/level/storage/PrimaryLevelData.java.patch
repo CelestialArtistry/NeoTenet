@@ -1,95 +1,55 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -6,7 +_,7 @@
- import com.mojang.serialization.Dynamic;
- import com.mojang.serialization.DynamicOps;
- import com.mojang.serialization.Lifecycle;
--import com.mojang.serialization.DataResult.Error;
-+
- import java.util.HashSet;
- import java.util.Set;
- import java.util.UUID;
-@@ -16,6 +_,7 @@
- import net.minecraft.SharedConstants;
- import net.minecraft.Util;
- import net.minecraft.core.BlockPos;
-+import net.minecraft.core.Registry;
- import net.minecraft.core.RegistryAccess;
- import net.minecraft.core.UUIDUtil;
- import net.minecraft.nbt.CompoundTag;
-@@ -25,6 +_,7 @@
- import net.minecraft.nbt.StringTag;
- import net.minecraft.nbt.Tag;
- import net.minecraft.server.MinecraftServer;
-+import net.minecraft.server.level.ServerLevel;
- import net.minecraft.world.Difficulty;
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.GameType;
-@@ -32,14 +_,16 @@
- import net.minecraft.world.level.LevelSettings;
- import net.minecraft.world.level.WorldDataConfiguration;
- import net.minecraft.world.level.border.WorldBorder;
-+import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.dimension.end.EndDragonFight;
- import net.minecraft.world.level.levelgen.WorldGenSettings;
- import net.minecraft.world.level.levelgen.WorldOptions;
- import net.minecraft.world.level.timers.TimerCallbacks;
- import net.minecraft.world.level.timers.TimerQueue;
- import org.slf4j.Logger;
-+import org.teneted.neotenet.injection.world.level.storage.InjectionPrimaryLevelData;
- 
--public class PrimaryLevelData implements ServerLevelData, WorldData {
-+public class PrimaryLevelData implements ServerLevelData, WorldData, InjectionPrimaryLevelData {
-     private static final Logger LOGGER = LogUtils.getLogger();
-     public static final String LEVEL_NAME = "LevelName";
-     protected static final String PLAYER = "Player";
-@@ -74,6 +_,11 @@
+@@ -42,6 +_,7 @@
+     private final Set<String> knownServerBrands;
      private boolean wasModded;
      private final Set<String> removedFeatureFlags;
-     private final TimerQueue<MinecraftServer> scheduledEvents;
 +    private boolean confirmedExperimentalWarning = false;
-+    // CraftBukkit start - Add world and pdc
-+    public Registry<LevelStem> customDimensions;
-+    private ServerLevel world;
-+    protected Tag pdc;
  
      private PrimaryLevelData(
-         @Nullable CompoundTag p_277888_,
-@@ -169,7 +_,7 @@
-         Dynamic<T> p_78531_, LevelSettings p_78535_, PrimaryLevelData.SpecialWorldProperty p_250651_, WorldOptions p_251864_, Lifecycle p_78538_
+         @Nullable UUID singlePlayerUUID,
+@@ -90,7 +_,7 @@
      ) {
-         long i = p_78531_.get("Time").asLong(0L);
+         long gameTime = input.get("Time").asLong(0L);
+         LevelVersion levelVersion = LevelVersion.parse(input);
 -        return new PrimaryLevelData(
-+        PrimaryLevelData result = new PrimaryLevelData(
-             p_78531_.get("Player").flatMap(CompoundTag.CODEC::parse).result().orElse(null),
-             p_78531_.get("WasModded").asBoolean(false),
-             new BlockPos(p_78531_.get("SpawnX").asInt(0), p_78531_.get("SpawnY").asInt(0), p_78531_.get("SpawnZ").asInt(0)),
-@@ -200,7 +_,11 @@
-             p_251864_,
-             p_250651_,
-             p_78538_
++        var result = new PrimaryLevelData(
+             input.get("singleplayer_uuid").flatMap(UUIDUtil.CODEC::parse).result().orElse(null),
+             input.get("WasModded").asBoolean(false),
+             input.get("spawn").read(LevelData.RespawnData.CODEC).result().orElse(LevelData.RespawnData.DEFAULT),
+@@ -98,11 +_,16 @@
+             levelVersion.levelDataVersion(),
+             input.get("initialized").asBoolean(true),
+             input.get("ServerBrands").asStream().flatMap(b -> b.asString().result().stream()).collect(Collectors.toCollection(Sets::newLinkedHashSet)),
+-            input.get("removed_features").asStream().flatMap(b -> b.asString().result().stream()).collect(Collectors.toSet()),
++            // Neo: Append removed modded feature flags
++            updateRemovedFeatureFlags(input.get("removed_features").asStream().flatMap(b -> b.asString().result().stream()), input.get("enabled_features").asStream().flatMap(features -> features.asString().result().stream())).collect(Collectors.toSet()),
+             settings,
+             specialWorldProperty,
+             worldGenSettingsLifecycle
 -        );
-+        ).withConfirmedWarning(p_78538_ != Lifecycle.stable() && p_78531_.get("confirmedExperimentalSettings").asBoolean(false));
++        ).withConfirmedWarning(worldGenSettingsLifecycle != Lifecycle.stable() && input.get("confirmedExperimentalSettings").asBoolean(false));
 +        // Neo:
-+        result.setDayTimeFraction(p_78531_.get("neoDayTimeFraction").asFloat(0f));
-+        result.setDayTimePerTick(p_78531_.get("neoDayTimePerTick").asFloat(-1f));
++        result.setDayTimeFraction(input.get("neoDayTimeFraction").asFloat(0f));
++        result.setDayTimePerTick(input.get("neoDayTimePerTick").asFloat(-1f));
 +        return result;
      }
  
      @Override
-@@ -273,6 +_,11 @@
-         if (this.wanderingTraderId != null) {
-             p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
+@@ -139,6 +_,12 @@
          }
-+        p_78547_.putString("forgeLifecycle", net.neoforged.neoforge.common.CommonHooks.encodeLifecycle(this.settings.getLifecycle()));
-+        p_78547_.putBoolean("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
+ 
+         tag.store(WorldDataConfiguration.MAP_CODEC, this.settings.dataConfiguration());
++
 +        // Neo:
-+        p_78547_.putFloat("neoDayTimeFraction", dayTimeFraction);
-+        p_78547_.putFloat("neoDayTimePerTick", dayTimePerTick);
++        tag.putString("forgeLifecycle", net.neoforged.neoforge.common.CommonHooks.encodeLifecycle(this.settings.getLifecycle()));
++        tag.putBoolean("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
++        tag.putFloat("neoDayTimeFraction", dayTimeFraction);
++        tag.putFloat("neoDayTimePerTick", dayTimePerTick);
      }
  
-     private static ListTag stringCollectionToTag(Set<String> p_277880_) {
-@@ -572,10 +_,44 @@
+     public static void writeLastPlayed(CompoundTag tag) {
+@@ -325,10 +_,58 @@
          return this.settings.copy();
      }
  
@@ -103,7 +63,7 @@
 +    }
 +
      @Deprecated
-     public static enum SpecialWorldProperty {
+     public enum SpecialWorldProperty {
          NONE,
          FLAT,
          DEBUG;
@@ -132,5 +92,19 @@
 +    @Override
 +    public void setDayTimePerTick(float dayTimePerTick) {
 +        this.dayTimePerTick = dayTimePerTick;
++    }
++
++    private static java.util.stream.Stream<String> updateRemovedFeatureFlags(java.util.stream.Stream<String> removedFeatures, java.util.stream.Stream<String> enabledFeatures) {
++        var unknownFeatureFlags = new HashSet<net.minecraft.resources.Identifier>();
++        // parses the incoming Stream<String> and spits out unknown flag names (Identifier)
++        // we do not care about the returned FeatureFlagSet, only the flags which do not exist
++        net.minecraft.world.flag.FeatureFlags.REGISTRY.fromNames(enabledFeatures.map(net.minecraft.resources.Identifier::parse).collect(Collectors.toSet()), unknownFeatureFlags::add);
++        // concat the received removed flags with our new additions
++        return java.util.stream.Stream.concat(removedFeatures, unknownFeatureFlags.stream()
++                // we only want modded flags, mojang has datafixers for vanilla flags
++                .filter(java.util.function.Predicate.not(name -> name.getNamespace().equals(net.minecraft.resources.Identifier.DEFAULT_NAMESPACE)))
++                .map(net.minecraft.resources.Identifier::toString))
++                // no duplicates should exist in this stream
++                .distinct();
      }
  }

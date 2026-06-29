@@ -29,7 +29,7 @@ class GenerateCommand {
     private static GenerationBar generationBar;
 
     static ArgumentBuilder<CommandSourceStack, ?> register() {
-        LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("generate").requires(cs -> cs.hasPermission(4)); //permission
+        LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("generate").requires(Commands.hasPermission(Commands.LEVEL_OWNERS)); //permission
 
         builder.then(Commands.literal("start")
                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -64,13 +64,13 @@ class GenerateCommand {
             return Command.SINGLE_SUCCESS;
         }
 
-        ChunkPos origin = new ChunkPos(pos);
+        ChunkPos origin = ChunkPos.containing(pos);
 
-        activeTask = new GenerationTask(source.getLevel(), origin.x, origin.z, chunkRadius);
+        activeTask = new GenerationTask(source.getLevel(), origin.x(), origin.z(), chunkRadius);
         int diameter = chunkRadius * 2 + 1;
 
         if (progressBar) {
-            generationBar = new GenerationBar();
+            generationBar = new GenerationBar(source.getLevel());
 
             if (source.getEntity() instanceof ServerPlayer) {
                 generationBar.addPlayer(source.getPlayer());

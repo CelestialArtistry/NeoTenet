@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "#": {
-      "tag": "c:gems/amethyst"
-    },
-    "X": {
-      "tag": "c:ingots/copper"
-    }
+    "#": "#c:gems/amethyst",
+    "X": "#c:ingots/copper"
   },
   "pattern": [
     " # ",
@@ -15,7 +11,6 @@
     " X "
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:spyglass"
   }
 }

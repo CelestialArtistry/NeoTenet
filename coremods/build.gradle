@@ -28,6 +28,11 @@ dependencies {
     compileOnly "net.neoforged.fancymodloader:loader:${project.fancy_mod_loader_version}"
 }
 
+license {
+    header = rootProject.file('codeformat/HEADER.txt')
+    include '**/*.java'
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }

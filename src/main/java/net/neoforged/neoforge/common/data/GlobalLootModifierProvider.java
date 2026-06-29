@@ -6,9 +6,6 @@
 package net.neoforged.neoforge.common.data;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,42 +14,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.WithConditions;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 
 /**
- * Provider for forge's GlobalLootModifier system. See {@link LootModifier}
+ * Data Provider for the GlobalLootModifier system. See {@link LootModifier}
  *
  * This provider only requires implementing {@link #start()} and calling {@link #add} from it.
  */
 public abstract class GlobalLootModifierProvider implements DataProvider {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final PackOutput output;
     private final CompletableFuture<HolderLookup.Provider> registriesLookup;
     protected HolderLookup.Provider registries;
     private final String modid;
     private final Map<String, WithConditions<IGlobalLootModifier>> toSerialize = new LinkedHashMap<>();
-    private boolean replace = false;
 
     public GlobalLootModifierProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String modid) {
         this.output = output;
         this.registriesLookup = registries;
         this.modid = modid;
-    }
-
-    /**
-     * Sets the "replace" key in global_loot_modifiers to true.
-     */
-    protected void replacing() {
-        this.replace = true;
     }
 
     /**
@@ -69,25 +56,18 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
         this.registries = registries;
         start();
 
-        Path forgePath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("neoforge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
         Path modifierFolderPath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
-        List<ResourceLocation> entries = new ArrayList<>();
+        List<Identifier> entries = new ArrayList<>();
 
         ImmutableList.Builder<CompletableFuture<?>> futuresBuilder = new ImmutableList.Builder<>();
 
         for (var entry : toSerialize.entrySet()) {
             var name = entry.getKey();
             var lootModifier = entry.getValue();
-            entries.add(ResourceLocation.fromNamespaceAndPath(modid, name));
+            entries.add(Identifier.fromNamespaceAndPath(modid, name));
             Path modifierPath = modifierFolderPath.resolve(name + ".json");
             futuresBuilder.add(DataProvider.saveStable(cache, registries, IGlobalLootModifier.CONDITIONAL_CODEC, Optional.of(lootModifier), modifierPath));
         }
-
-        JsonObject forgeJson = new JsonObject();
-        forgeJson.addProperty("replace", this.replace);
-        forgeJson.add("entries", GSON.toJsonTree(entries.stream().map(ResourceLocation::toString).collect(Collectors.toList())));
-
-        futuresBuilder.add(DataProvider.saveStable(cache, forgeJson, forgePath));
 
         return CompletableFuture.allOf(futuresBuilder.build().toArray(CompletableFuture[]::new));
     }

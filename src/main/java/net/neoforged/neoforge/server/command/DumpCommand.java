@@ -25,8 +25,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import org.slf4j.Logger;
 
@@ -36,7 +37,7 @@ import org.slf4j.Logger;
 class DumpCommand {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private static final ResourceKey<Registry<Registry<?>>> ROOT_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.withDefaultNamespace("root"));
+    private static final ResourceKey<Registry<Registry<?>>> ROOT_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.withDefaultNamespace("root"));
     private static final String ALPHABETICAL_SORT_PARAM = "alphabetical_sort";
     private static final String PRINT_NUMERIC_ID_PARAM = "print_numeric_ids";
 
@@ -47,7 +48,7 @@ class DumpCommand {
          * /neoforge dump registry <registry> <alphabetical_sort> <print_numeric_ids>
          */
         return Commands.literal("dump")
-                .requires(cs -> cs.hasPermission(Commands.LEVEL_OWNERS))
+                .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                 .then(Commands.literal("registry")
                         .then(Commands.argument("registry", ResourceKeyArgument.key(ROOT_REGISTRY_KEY))
                                 .suggests(CommandUtils::suggestRegistries)
@@ -62,23 +63,23 @@ class DumpCommand {
         final ResourceKey<? extends Registry<?>> registryKey = CommandUtils.getResourceKey(ctx, "registry", ROOT_REGISTRY_KEY)
                 .orElseThrow(); // Expect to always retrieve a resource key for the root registry (registry key)
 
-        final Registry<?> registry = ctx.getSource().getServer().registryAccess().registry(registryKey)
-                .orElseThrow(() -> UNKNOWN_REGISTRY.create(registryKey.location()));
+        final Registry<?> registry = ctx.getSource().getServer().registryAccess().lookup(registryKey)
+                .orElseThrow(() -> UNKNOWN_REGISTRY.create(registryKey.identifier()));
 
         String fileLocationForErrorReporting = "";
         try {
-            Path registryDumpDirectory = FMLLoader.getGamePath().resolve("dumps").resolve("registry");
-            Path registryNamespaceDirectory = registryDumpDirectory.resolve(registryKey.location().getNamespace().replaceAll("[/:.]", "_"));
+            Path registryDumpDirectory = FMLLoader.getCurrent().getGameDir().resolve("dumps").resolve("registry");
+            Path registryNamespaceDirectory = registryDumpDirectory.resolve(registryKey.identifier().getNamespace().replaceAll("[/:.]", "_"));
             Files.createDirectories(registryNamespaceDirectory);
 
-            String fileName = registryKey.location().getPath().replaceAll("[/:.]", "_") + ".txt";
+            String fileName = registryKey.identifier().getPath().replaceAll("[/:.]", "_") + ".txt";
             Path registryDumpFile = registryNamespaceDirectory.resolve(fileName);
             fileLocationForErrorReporting = registryDumpFile.toString();
 
             try (var outputStream = Files.newOutputStream(registryDumpFile)) {
-                List<ResourceLocation> sortedRegistryKeys = getSortedRegistryKeys(alphabeticalSort, printNumericIds, registry);
+                List<Identifier> sortedRegistryKeys = getSortedRegistryKeys(alphabeticalSort, printNumericIds, registry);
 
-                for (ResourceLocation registryKeys : sortedRegistryKeys) {
+                for (Identifier registryKeys : sortedRegistryKeys) {
                     String results = registryKeys.toString();
                     if (printNumericIds) {
                         results = registry.getId(registryKeys) + " - " + results;
@@ -87,18 +88,18 @@ class DumpCommand {
                 }
             }
 
-            MutableComponent filePathComponent = Component.literal("..." + FMLLoader.getGamePath().relativize(registryDumpFile))
+            MutableComponent filePathComponent = Component.literal("..." + FMLLoader.getCurrent().getGameDir().relativize(registryDumpFile))
                     .withStyle(ChatFormatting.UNDERLINE)
                     .withStyle(ChatFormatting.GOLD);
 
             // Click action not allow on dedicated servers as client cannot click link to a server's file path.
-            if (!FMLLoader.getDist().isDedicatedServer()) {
-                filePathComponent.withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, registryDumpFile.toString())));
+            if (!FMLEnvironment.getDist().isDedicatedServer()) {
+                filePathComponent.withStyle((style) -> style.withClickEvent(new ClickEvent.OpenFile(registryDumpFile)));
             }
 
             ctx.getSource().sendSuccess(() -> CommandUtils.makeTranslatableWithFallback(
                     "commands.neoforge.dump.success",
-                    Component.literal(registryKey.location().toString()).withStyle(ChatFormatting.YELLOW),
+                    Component.literal(registryKey.identifier().toString()).withStyle(ChatFormatting.YELLOW),
                     filePathComponent),
                     false);
 
@@ -108,7 +109,7 @@ class DumpCommand {
             ctx.getSource().sendFailure(
                     CommandUtils.makeTranslatableWithFallback(
                             "commands.neoforge.dump.failure",
-                            Component.literal(registryKey.location().toString()).withStyle(ChatFormatting.YELLOW),
+                            Component.literal(registryKey.identifier().toString()).withStyle(ChatFormatting.YELLOW),
                             Component.literal(fileLocationForErrorReporting).withStyle(ChatFormatting.GOLD)));
 
             LOGGER.error("Failed to create new file with " + registryKey + " registry's contents at " + fileLocationForErrorReporting, e);
@@ -117,11 +118,11 @@ class DumpCommand {
         }
     }
 
-    private static List<ResourceLocation> getSortedRegistryKeys(boolean alphabeticalSort, boolean printNumericIds, Registry<?> registry) {
-        List<ResourceLocation> sortedRegistryNames = new ArrayList<>(registry.keySet());
+    private static List<Identifier> getSortedRegistryKeys(boolean alphabeticalSort, boolean printNumericIds, Registry<?> registry) {
+        List<Identifier> sortedRegistryNames = new ArrayList<>(registry.keySet());
 
         if (alphabeticalSort) {
-            sortedRegistryNames.sort(ResourceLocation::compareNamespaced);
+            sortedRegistryNames.sort(Identifier::compareNamespaced);
         } else if (printNumericIds) {
             sortedRegistryNames = sortedRegistryNames.stream().sorted(Comparator.comparingInt(registry::getId)).toList();
         }

@@ -1,76 +1,15 @@
 --- a/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
-@@ -152,10 +_,8 @@
-                         BlockPos blockpos1 = p_155416_.offset(j1, k1, l1);
-                         BlockState blockstate = p_155415_.getBlockState(blockpos1);
+@@ -150,10 +_,8 @@
+                         BlockPos testPos = worldPosition.offset(ox, oy, oz);
+                         BlockState testBlock = level.getBlockState(testPos);
  
--                        for (Block block : VALID_BLOCKS) {
--                            if (blockstate.is(block)) {
--                                p_155417_.add(blockpos1);
+-                        for (Block type : VALID_BLOCKS) {
+-                            if (testBlock.is(type)) {
+-                                effectBlocks.add(testPos);
 -                            }
-+                        if (blockstate.isConduitFrame(p_155415_, blockpos1, p_155416_)) {
-+                            p_155417_.add(blockpos1);
++                        if (testBlock.isConduitFrame(level, testPos, worldPosition)) {
++                            effectBlocks.add(testPos);
                          }
                      }
                  }
-@@ -165,6 +_,14 @@
-         return p_155417_.size() >= 16;
-     }
- 
-+    public static int getRange(List<BlockPos> list) {
-+        // CraftBukkit end
-+        int i = list.size();
-+        int j = i / 7 * 16;
-+        // CraftBukkit start
-+        return j;
-+    }
-+
-     private static void applyEffects(Level p_155444_, BlockPos p_155445_, List<BlockPos> p_155446_) {
-         int i = p_155446_.size();
-         int j = i / 7 * 16;
-@@ -215,6 +_,45 @@
-                 1.0F
-             );
-             p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic(), 4.0F);
-+        }
-+
-+        if (livingentity != p_155413_.destroyTarget) {
-+            p_155409_.sendBlockUpdated(p_155410_, p_155411_, p_155411_, 2);
-+        }
-+    }
-+
-+    public static void updateDestroyTarget(Level p_155409_, BlockPos p_155410_, BlockState p_155411_, List<BlockPos> p_155412_, ConduitBlockEntity p_155413_, boolean damageTarget) {
-+        LivingEntity livingentity = p_155413_.destroyTarget;
-+        int i = p_155412_.size();
-+        if (i < 42) {
-+            p_155413_.destroyTarget = null;
-+        } else if (p_155413_.destroyTarget == null && p_155413_.destroyTargetUUID != null) {
-+            p_155413_.destroyTarget = findDestroyTarget(p_155409_, p_155410_, p_155413_.destroyTargetUUID);
-+            p_155413_.destroyTargetUUID = null;
-+        } else if (p_155413_.destroyTarget == null) {
-+            List<LivingEntity> list = p_155409_.getEntitiesOfClass(
-+                    LivingEntity.class, getDestroyRangeAABB(p_155410_), p_350210_ -> p_350210_ instanceof Enemy && p_350210_.isInWaterOrRain()
-+            );
-+            if (!list.isEmpty()) {
-+                p_155413_.destroyTarget = list.get(p_155409_.random.nextInt(list.size()));
-+            }
-+        } else if (!p_155413_.destroyTarget.isAlive() || !p_155410_.closerThan(p_155413_.destroyTarget.blockPosition(), 8.0)) {
-+            p_155413_.destroyTarget = null;
-+        }
-+
-+        if (damageTarget && p_155413_.destroyTarget != null) {
-+            if (p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic().directBlock(p_155409_, p_155410_), 4.0F)) {
-+                p_155409_.playSound(
-+                        null,
-+                        p_155413_.destroyTarget.getX(),
-+                        p_155413_.destroyTarget.getY(),
-+                        p_155413_.destroyTarget.getZ(),
-+                        SoundEvents.CONDUIT_ATTACK_TARGET,
-+                        SoundSource.BLOCKS,
-+                        1.0F,
-+                        1.0F
-+                );
-+            }
-         }
- 
-         if (livingentity != p_155413_.destroyTarget) {

@@ -1,38 +1,11 @@
 --- a/net/minecraft/world/entity/decoration/ItemFrame.java
 +++ b/net/minecraft/world/entity/decoration/ItemFrame.java
-@@ -38,8 +_,9 @@
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
- import org.apache.commons.lang3.Validate;
-+import org.teneted.neotenet.injection.world.entity.decoration.InjectionItemFrame;
- 
--public class ItemFrame extends HangingEntity {
-+public class ItemFrame extends HangingEntity implements InjectionItemFrame {
-     public static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.ITEM_STACK);
-     public static final EntityDataAccessor<Integer> DATA_ROTATION = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.INT);
-     public static final int NUM_ROTATIONS = 8;
-@@ -84,6 +_,15 @@
-         this.yRotO = this.getYRot();
-         this.recalculateBoundingBox();
-     }
-+    public static AABB calculateBoundingBoxStatic(BlockPos p_345363_, Direction p_344892_) {
-+        float f = 0.46875F;
-+        Vec3 vec3 = Vec3.atCenterOf(p_345363_).relative(p_344892_, -0.46875);
-+        Direction.Axis direction$axis = p_344892_.getAxis();
-+        double d0 = direction$axis == Direction.Axis.X ? 0.0625 : 0.75;
-+        double d1 = direction$axis == Direction.Axis.Y ? 0.0625 : 0.75;
-+        double d2 = direction$axis == Direction.Axis.Z ? 0.0625 : 0.75;
-+        return AABB.ofSize(vec3, d0, d1, d2);
-+    }
- 
-     @Override
-     protected AABB calculateBoundingBox(BlockPos p_345363_, Direction p_344892_) {
-@@ -212,7 +_,7 @@
-     private void removeFramedMap(ItemStack p_31811_) {
-         MapId mapid = this.getFramedMapId(p_31811_);
-         if (mapid != null) {
--            MapItemSavedData mapitemsaveddata = MapItem.getSavedData(mapid, this.level());
-+            MapItemSavedData mapitemsaveddata = MapItem.getSavedData(p_31811_, this.level());
-             if (mapitemsaveddata != null) {
-                 mapitemsaveddata.removedFromFrame(this.pos, this.getId());
-                 mapitemsaveddata.setDirty(true);
+@@ -248,7 +_,7 @@
+     private void removeFramedMap(ItemStack itemStack) {
+         MapId mapId = this.getFramedMapId(itemStack);
+         if (mapId != null) {
+-            MapItemSavedData mapItemSavedData = MapItem.getSavedData(mapId, this.level());
++            MapItemSavedData mapItemSavedData = MapItem.getSavedData(itemStack, this.level());
+             if (mapItemSavedData != null) {
+                 mapItemSavedData.removedFromFrame(this.pos, this.getId());
+             }

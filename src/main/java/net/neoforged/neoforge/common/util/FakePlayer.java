@@ -6,14 +6,12 @@
 package net.neoforged.neoforge.common.util;
 
 import com.mojang.authlib.GameProfile;
+import io.netty.channel.ChannelFutureListener;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.function.Consumer;
-import javax.annotation.ParametersAreNonnullByDefault;
-import net.minecraft.network.Connection;
 import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.PacketListener;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
@@ -44,7 +42,6 @@ import net.minecraft.network.protocol.game.ServerboundLockDifficultyPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundMoveVehiclePacket;
 import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
-import net.minecraft.network.protocol.game.ServerboundPickItemPacket;
 import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -67,6 +64,7 @@ import net.minecraft.network.protocol.game.ServerboundSwingPacket;
 import net.minecraft.network.protocol.game.ServerboundTeleportToEntityPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
@@ -78,11 +76,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.RelativeMovement;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A basic fake server player implementation that can be used to simulate player actions.
@@ -91,18 +89,14 @@ public class FakePlayer extends ServerPlayer {
     public FakePlayer(ServerLevel level, GameProfile name) {
         super(level.getServer(), level, name, ClientInformation.createDefault());
         this.connection = new FakePlayerNetHandler(level.getServer(), this);
+        this.setInvulnerable(true);
     }
 
     @Override
-    public void displayClientMessage(Component chatComponent, boolean actionBar) {}
+    public void sendSystemMessage(Component chatComponent, boolean actionBar) {}
 
     @Override
     public void awardStat(Stat<?> stat, int amount) {}
-
-    @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        return true;
-    }
 
     @Override
     public boolean canHarmPlayer(Player player) {
@@ -116,7 +110,7 @@ public class FakePlayer extends ServerPlayer {
     public void tick() {}
 
     @Override
-    public void updateOptions(ClientInformation p_301998_) {}
+    public void updateOptions(ClientInformation information) {}
 
     @Override
     public OptionalInt openMenu(@Nullable MenuProvider menuProvider, @Nullable Consumer<RegistryFriendlyByteBuf> extraDataWriter) {
@@ -127,14 +121,8 @@ public class FakePlayer extends ServerPlayer {
     public void openHorseInventory(AbstractHorse horse, Container container) {}
 
     @Override
-    public boolean startRiding(Entity entity, boolean force) {
+    public boolean startRiding(Entity entityToRide, boolean force, boolean sendEventAndTriggers) {
         return false;
-    }
-
-    @Override
-    @Nullable
-    public MinecraftServer getServer() {
-        return ServerLifecycleHooks.getCurrentServer();
     }
 
     @Override
@@ -142,9 +130,8 @@ public class FakePlayer extends ServerPlayer {
         return true;
     }
 
-    @ParametersAreNonnullByDefault
     private static class FakePlayerNetHandler extends ServerGamePacketListenerImpl {
-        private static final Connection DUMMY_CONNECTION = new FakeConnection();
+        private static final net.minecraft.network.Connection DUMMY_CONNECTION = new FakeConnection();
 
         public FakePlayerNetHandler(MinecraftServer server, ServerPlayer player) {
             super(server, DUMMY_CONNECTION, player, CommonListenerCookie.createInitial(player.getGameProfile(), false));
@@ -185,9 +172,6 @@ public class FakePlayer extends ServerPlayer {
 
         @Override
         public void handleSetCommandMinecart(ServerboundSetCommandMinecartPacket packet) {}
-
-        @Override
-        public void handlePickItem(ServerboundPickItemPacket packet) {}
 
         @Override
         public void handleRenameItem(ServerboundRenameItemPacket packet) {}
@@ -235,7 +219,7 @@ public class FakePlayer extends ServerPlayer {
         public void handleTeleportToEntityPacket(ServerboundTeleportToEntityPacket packet) {}
 
         @Override
-        public void handleResourcePackResponse(ServerboundResourcePackPacket p_295695_) {}
+        public void handleResourcePackResponse(ServerboundResourcePackPacket packet) {}
 
         @Override
         public void handlePaddleBoat(ServerboundPaddleBoatPacket packet) {}
@@ -247,7 +231,7 @@ public class FakePlayer extends ServerPlayer {
         public void send(Packet<?> packet) {}
 
         @Override
-        public void send(Packet<?> packet, @Nullable PacketSendListener sendListener) {}
+        public void send(Packet<?> packet, @Nullable ChannelFutureListener sendListener) {}
 
         @Override
         public void handleSetCarriedItem(ServerboundSetCarriedItemPacket packet) {}
@@ -286,13 +270,13 @@ public class FakePlayer extends ServerPlayer {
         public void handleSignUpdate(ServerboundSignUpdatePacket packet) {}
 
         @Override
-        public void handleKeepAlive(ServerboundKeepAlivePacket p_294627_) {}
+        public void handleKeepAlive(ServerboundKeepAlivePacket packet) {}
 
         @Override
-        public void handleCustomPayload(ServerboundCustomPayloadPacket p_294276_) {}
+        public void handleCustomPayload(ServerboundCustomPayloadPacket packet) {}
 
         @Override
-        public void handleClientInformation(ServerboundClientInformationPacket p_301979_) {}
+        public void handleClientInformation(ServerboundClientInformationPacket packet) {}
 
         @Override
         public void handlePlayerAbilities(ServerboundPlayerAbilitiesPacket packet) {}
@@ -304,7 +288,7 @@ public class FakePlayer extends ServerPlayer {
         public void handleLockDifficulty(ServerboundLockDifficultyPacket packet) {}
 
         @Override
-        public void teleport(double x, double y, double z, float yaw, float pitch, Set<RelativeMovement> relativeSet) {}
+        public void teleport(PositionMoveRotation posMoveRot, Set<Relative> relatives) {}
 
         @Override
         public void ackBlockChangesUpTo(int sequence) {}
@@ -316,9 +300,6 @@ public class FakePlayer extends ServerPlayer {
         public void handleChatAck(ServerboundChatAckPacket packet) {}
 
         @Override
-        public void addPendingMessage(PlayerChatMessage message) {}
-
-        @Override
         public void sendPlayerChatMessage(PlayerChatMessage message, ChatType.Bound boundChatType) {}
 
         @Override
@@ -326,9 +307,14 @@ public class FakePlayer extends ServerPlayer {
 
         @Override
         public void handleChatSessionUpdate(ServerboundChatSessionUpdatePacket packet) {}
+
+        @Override
+        public boolean hasChannel(Identifier payloadId) {
+            return false;
+        }
     }
 
-    private static final class FakeConnection extends Connection {
+    private static final class FakeConnection extends net.minecraft.network.Connection {
         public FakeConnection() {
             super(PacketFlow.SERVERBOUND);
         }

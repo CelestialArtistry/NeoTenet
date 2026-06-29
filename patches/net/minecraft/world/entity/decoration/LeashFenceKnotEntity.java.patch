@@ -1,71 +1,11 @@
 --- a/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
 +++ b/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
-@@ -7,8 +_,10 @@
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.game.ClientGamePacketListener;
- import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-+import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
- import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.server.level.ServerEntity;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.tags.BlockTags;
- import net.minecraft.world.InteractionHand;
-@@ -24,6 +_,8 @@
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityRemoveEvent;
+@@ -77,7 +_,7 @@
+             return InteractionResult.SUCCESS;
+         }
  
- public class LeashFenceKnotEntity extends BlockAttachedEntity {
-     public static final double OFFSET_Y = 0.375;
-@@ -80,6 +_,15 @@
- 
-             for (Leashable leashable : list) {
-                 if (leashable.getLeashHolder() == p_31842_) {
-+                    // CraftBukkit start
-+                    if (leashable instanceof Entity leashed) {
-+                        if (CraftEventFactory.callPlayerLeashEntityEvent(leashed, this, p_31842_, p_31843_).isCancelled()) {
-+                            ((ServerPlayer) p_31842_).connection.send(new ClientboundSetEntityLinkPacket(leashed, leashable.getLeashHolder()));
-+                            flag = true; // Also set true when the event is cancelled otherwise it tries to unleash the entities
-+                            continue;
-+                        }
-+                    }
-+                    // CraftBukkit end
-                     leashable.setLeashedTo(this, true);
-                     flag = true;
-                 }
-@@ -87,14 +_,30 @@
- 
-             boolean flag1 = false;
-             if (!flag) {
--                this.discard();
-+                // CraftBukkit start - Move below
-+                // this.discard();
-+                boolean die = true;
-+                // CraftBukkit end
-                 if (p_31842_.getAbilities().instabuild) {
-                     for (Leashable leashable1 : list) {
-                         if (leashable1.isLeashed() && leashable1.getLeashHolder() == this) {
--                            leashable1.dropLeash(true, false);
-+                            // CraftBukkit start
-+                            if (leashable1 instanceof Entity leashed) {
-+                                if (CraftEventFactory.callPlayerUnleashEntityEvent(leashed, p_31842_, p_31843_).isCancelled()) {
-+                                    die = false;
-+                                    continue;
-+                                }
-+                            }
-+                            leashable1.dropLeash(true, !p_31842_.getAbilities().instabuild); // false -> survival mode boolean
-+                            // CraftBukkit end
-                             flag1 = true;
-                         }
-                     }
-+                    // CraftBukkit start
-+                    if (die) {
-+                        this.discard(EntityRemoveEvent.Cause.DROP); // CraftBukkit - add Bukkit remove cause
-+                    }
-+                    // CraftBukkit end
-                 }
-             }
- 
+-        if (player.getItemInHand(hand).is(Items.SHEARS)) {
++        if (player.getItemInHand(hand).canPerformAction(net.neoforged.neoforge.common.ItemAbilities.SHEARS_HARVEST)) {
+             InteractionResult result = super.interact(player, hand, location);
+             if (result instanceof InteractionResult.Success success && success.wasItemInteraction()) {
+                 return result;

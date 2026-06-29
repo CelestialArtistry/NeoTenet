@@ -1,0 +1,6 @@
+[submodule "projects/craftbukkit"]
+	path = projects/craftbukkit
+	url = https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git
+[submodule "projects/bukkit"]
+	path = projects/bukkit
+	url = https://hub.spigotmc.org/stash/scm/spigot/bukkit.git

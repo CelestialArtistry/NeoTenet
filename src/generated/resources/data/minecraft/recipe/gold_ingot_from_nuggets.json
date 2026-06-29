@@ -1,11 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "gold_ingot",
   "key": {
-    "#": {
-      "tag": "c:nuggets/gold"
-    }
+    "#": "#c:nuggets/gold"
   },
   "pattern": [
     "###",
@@ -13,7 +10,6 @@
     "###"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:gold_ingot"
   }
 }

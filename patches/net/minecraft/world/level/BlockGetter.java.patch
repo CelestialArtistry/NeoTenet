@@ -1,22 +1,11 @@
 --- a/net/minecraft/world/level/BlockGetter.java
 +++ b/net/minecraft/world/level/BlockGetter.java
-@@ -17,8 +_,9 @@
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.teneted.neotenet.injection.world.level.InjectionBlockGetter;
+@@ -36,7 +_,7 @@
+     FluidState getFluidState(BlockPos pos);
  
--public interface BlockGetter extends LevelHeightAccessor, net.neoforged.neoforge.common.extensions.IBlockGetterExtension {
-+public interface BlockGetter extends LevelHeightAccessor, net.neoforged.neoforge.common.extensions.IBlockGetterExtension, InjectionBlockGetter {
-     @Nullable
-     BlockEntity getBlockEntity(BlockPos p_45570_);
- 
-@@ -32,7 +_,7 @@
-     FluidState getFluidState(BlockPos p_45569_);
- 
-     default int getLightEmission(BlockPos p_45572_) {
--        return this.getBlockState(p_45572_).getLightEmission();
-+        return this.getBlockState(p_45572_).getLightEmission(this, p_45572_);
+     default int getLightEmission(BlockPos pos) {
+-        return this.getBlockState(pos).getLightEmission();
++        return this.getBlockState(pos).getLightEmission(this, pos);
      }
  
-     default int getMaxLightLevel() {
+     default Stream<BlockState> getBlockStates(AABB box) {

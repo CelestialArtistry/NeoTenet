@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.DamageTypeTagsProvider;
+import net.minecraft.data.tags.TagAppender;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
@@ -22,20 +24,19 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public final class NeoForgeDamageTypeTagsProvider extends DamageTypeTagsProvider {
-    public NeoForgeDamageTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, "neoforge", existingFileHelper);
+    public NeoForgeDamageTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(output, lookupProvider, "neoforge");
     }
 
-    private final Map<ResourceLocation, TagBuilder> vanillaBuilders = Maps.newLinkedHashMap();
+    private final Map<Identifier, TagBuilder> vanillaBuilders = Maps.newLinkedHashMap();
     private boolean inVanilla;
 
     @Override
     protected TagAppender<DamageType> tag(TagKey<DamageType> tag) {
         if (inVanilla) {
-            return new TagAppender<>(this.vanillaBuilders.computeIfAbsent(tag.location(), location -> TagBuilder.create()), "minecraft") {};
+            return TagAppender.forBuilder(this.vanillaBuilders.computeIfAbsent(tag.location(), location -> TagBuilder.create()));
         }
         return super.tag(tag);
     }
@@ -48,7 +49,7 @@ public final class NeoForgeDamageTypeTagsProvider extends DamageTypeTagsProvider
         super.addTags(lookupProvider);
         inVanilla = false;
 
-        tag(NeoForgeMod.POISON_DAMAGE, Tags.DamageTypes.IS_POISON);
+        tag(Tags.DamageTypes.IS_POISON).addOptional(NeoForgeMod.POISON_DAMAGE);
 
         tag(DamageTypes.WITHER, Tags.DamageTypes.IS_WITHER);
         tag(DamageTypes.WITHER_SKULL, Tags.DamageTypes.IS_WITHER);
@@ -60,7 +61,7 @@ public final class NeoForgeDamageTypeTagsProvider extends DamageTypeTagsProvider
         tag(Tags.DamageTypes.IS_MAGIC).addTags(Tags.DamageTypes.IS_POISON, Tags.DamageTypes.IS_WITHER);
 
         // Poisons should have the same behaviour as in vanilla
-        addAsVanilla(DamageTypes.MAGIC).addTags(Tags.DamageTypes.IS_POISON);
+        addAsVanilla(DamageTypes.MAGIC).addTag(Tags.DamageTypes.IS_POISON);
 
         tag(DamageTypes.IN_FIRE, Tags.DamageTypes.IS_ENVIRONMENT);
         tag(DamageTypes.ON_FIRE, Tags.DamageTypes.IS_ENVIRONMENT);
@@ -106,33 +107,23 @@ public final class NeoForgeDamageTypeTagsProvider extends DamageTypeTagsProvider
         tag(DamageTypes.OUTSIDE_BORDER, Tags.DamageTypes.IS_TECHNICAL);
         tag(DamageTypes.FELL_OUT_OF_WORLD, Tags.DamageTypes.IS_TECHNICAL);
         tag(Tags.DamageTypes.NO_FLINCH);
-
-        // Backwards compat with pre-1.21 tags. Done after so optional tag is last for better readability.
-        // TODO: Remove backwards compat tag entries in 1.22
-        tagWithOptionalLegacy(Tags.DamageTypes.IS_POISON);
-        tagWithOptionalLegacy(Tags.DamageTypes.IS_WITHER);
-        tagWithOptionalLegacy(Tags.DamageTypes.IS_MAGIC);
-        tagWithOptionalLegacy(Tags.DamageTypes.IS_ENVIRONMENT);
-        tagWithOptionalLegacy(Tags.DamageTypes.IS_PHYSICAL);
-        tagWithOptionalLegacy(Tags.DamageTypes.IS_TECHNICAL);
-        tagWithOptionalLegacy(Tags.DamageTypes.NO_FLINCH);
     }
 
     /** {@return an appender for vanilla tags that contain the given entry directly} */
     private TagAppender<DamageType> addAsVanilla(ResourceKey<DamageType> entry) {
         final List<TagBuilder> builders = new ArrayList<>();
         vanillaBuilders.forEach((location, tagBuilder) -> {
-            if (tagBuilder.build().stream().anyMatch(tagEntry -> tagEntry.verifyIfPresent(element -> element.equals(entry.location()), tag -> false))) {
+            if (tagBuilder.build().stream().anyMatch(tagEntry -> tagEntry.verifyIfPresent(element -> element.equals(entry.identifier()), tag -> false))) {
                 builders.add(getOrCreateRawBuilder(TagKey.create(registryKey, location)));
             }
         });
-        return new TagAppender<>(new TagBuilder() {
+        return TagAppender.forBuilder(new TagBuilder() {
             @Override
             public TagBuilder add(TagEntry entry) {
                 builders.forEach(builder -> builder.add(entry));
                 return super.add(entry);
             }
-        }, modId) {};
+        });
     }
 
     @SafeVarargs
@@ -144,7 +135,7 @@ public final class NeoForgeDamageTypeTagsProvider extends DamageTypeTagsProvider
 
     private TagAppender<DamageType> tagWithOptionalLegacy(TagKey<DamageType> tag) {
         TagAppender<DamageType> tagAppender = tag(tag);
-        tagAppender.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", tag.location().getPath()));
+        tagAppender.addOptionalTag(TagKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("forge", tag.location().getPath())));
         return tagAppender;
     }
 

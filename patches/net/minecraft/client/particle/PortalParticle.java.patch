@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/particle/PortalParticle.java
 +++ b/net/minecraft/client/particle/PortalParticle.java
-@@ -80,6 +_,7 @@
-             this.x = this.xStart + this.xd * (double)f2;
-             this.y = this.yStart + this.yd * (double)f2 + (double)(1.0F - f);
-             this.z = this.zStart + this.zd * (double)f2;
+@@ -76,6 +_,7 @@
+             this.x = this.xStart + this.xd * pos;
+             this.y = this.yStart + this.yd * pos + (1.0F - a);
+             this.z = this.zStart + this.zd * pos;
 +            this.setPos(this.x, this.y, this.z); // FORGE: update the particle's bounding box
          }
      }

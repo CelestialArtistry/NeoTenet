@@ -1,84 +1,21 @@
 --- a/net/minecraft/world/level/block/DetectorRailBlock.java
 +++ b/net/minecraft/world/level/block/DetectorRailBlock.java
-@@ -11,7 +_,7 @@
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntitySelector;
- import net.minecraft.world.entity.vehicle.AbstractMinecart;
--import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
-+import net.minecraft.world.entity.vehicle.MinecartCommandBlockCommandSource;
- import net.minecraft.world.inventory.AbstractContainerMenu;
- import net.minecraft.world.level.BlockGetter;
- import net.minecraft.world.level.Level;
-@@ -24,6 +_,7 @@
- import net.minecraft.world.level.block.state.properties.Property;
- import net.minecraft.world.level.block.state.properties.RailShape;
- import net.minecraft.world.phys.AABB;
-+import org.bukkit.event.block.BlockRedstoneEvent;
+@@ -39,6 +_,10 @@
  
- public class DetectorRailBlock extends BaseRailBlock {
-     public static final MapCodec<DetectorRailBlock> CODEC = simpleCodec(DetectorRailBlock::new);
-@@ -38,6 +_,10 @@
- 
-     public DetectorRailBlock(BlockBehaviour.Properties p_52431_) {
-         super(true, p_52431_);
+     public DetectorRailBlock(BlockBehaviour.Properties properties) {
+         super(true, properties);
 +        this.registerDefaultState();
 +    }
 +
 +    protected void registerDefaultState() {
-         this.registerDefaultState(
-             this.stateDefinition
-                 .any()
-@@ -91,6 +_,17 @@
-                 flag1 = true;
-             }
- 
-+            // CraftBukkit start
-+            if (flag != flag1) {
-+                org.bukkit.block.Block block = p_52433_.getWorld().getBlockAt(p_52434_.getX(), p_52434_.getY(), p_52434_.getZ());
-+
-+                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 15 : 0, flag1 ? 15 : 0);
-+                p_52433_.getCraftServer().getPluginManager().callEvent(eventRedstone);
-+
-+                flag1 = eventRedstone.getNewCurrent() > 0;
-+            }
-+            // CraftBukkit end
-+
-             if (flag1 && !flag) {
-                 BlockState blockstate = p_52435_.setValue(POWERED, Boolean.valueOf(true));
-                 p_52433_.setBlock(p_52434_, blockstate, 3);
-@@ -127,7 +_,7 @@
+         this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false).setValue(SHAPE, RailShape.NORTH_SOUTH).setValue(WATERLOGGED, false));
      }
  
-     @Override
--    protected void onPlace(BlockState p_52483_, Level p_52484_, BlockPos p_52485_, BlockState p_52486_, boolean p_52487_) {
-+    public void onPlace(BlockState p_52483_, Level p_52484_, BlockPos p_52485_, BlockState p_52486_, boolean p_52487_) {
-         if (!p_52486_.is(p_52483_.getBlock())) {
-             BlockState blockstate = this.updateState(p_52483_, p_52484_, p_52485_, p_52487_);
-             this.checkPressed(p_52484_, p_52485_, blockstate);
-@@ -147,14 +_,14 @@
-     @Override
-     protected int getAnalogOutputSignal(BlockState p_52454_, Level p_52455_, BlockPos p_52456_) {
-         if (p_52454_.getValue(POWERED)) {
--            List<MinecartCommandBlock> list = this.getInteractingMinecartOfType(p_52455_, p_52456_, MinecartCommandBlock.class, p_153123_ -> true);
-+            List<MinecartCommandBlockCommandSource> list = this.getInteractingMinecartOfType(p_52455_, p_52456_, MinecartCommandBlockCommandSource.class, p_153123_ -> true);
-             if (!list.isEmpty()) {
-                 return list.get(0).getCommandBlock().getSuccessCount();
-             }
- 
--            List<AbstractMinecart> list1 = this.getInteractingMinecartOfType(
--                p_52455_, p_52456_, AbstractMinecart.class, EntitySelector.CONTAINER_ENTITY_SELECTOR
--            );
-+            List<AbstractMinecart> carts = this.getInteractingMinecartOfType(p_52455_, p_52456_, AbstractMinecart.class, e -> e.isAlive());
-+            if (!carts.isEmpty() && carts.get(0).getComparatorLevel() > -1) return carts.get(0).getComparatorLevel();
-+            List<AbstractMinecart> list1 = carts.stream().filter(EntitySelector.CONTAINER_ENTITY_SELECTOR).collect(java.util.stream.Collectors.toList());
-             if (!list1.isEmpty()) {
-                 return AbstractContainerMenu.getRedstoneSignalFromContainer((Container)list1.get(0));
-             }
-@@ -299,6 +_,6 @@
+@@ -183,6 +_,6 @@
  
      @Override
-     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_52469_) {
--        p_52469_.add(SHAPE, POWERED, WATERLOGGED);
-+        p_52469_.add(getShapeProperty(), POWERED, WATERLOGGED);
+     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+-        builder.add(SHAPE, POWERED, WATERLOGGED);
++        builder.add(getShapeProperty(), POWERED, WATERLOGGED);
      }
  }

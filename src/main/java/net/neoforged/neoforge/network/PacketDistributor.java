@@ -5,12 +5,9 @@
 
 package net.neoforged.neoforge.network;
 
-import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -22,27 +19,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Means to distribute packets in various ways
+ * Means to distribute packets in various ways.
+ * <p>
+ * Serverbound payloads can be sent via {@code ClientPacketDistributor#sendToServer()}.
  */
 public final class PacketDistributor {
     private PacketDistributor() {}
-
-    /**
-     * Send the given payload(s) to the server
-     */
-    public static void sendToServer(CustomPacketPayload payload, CustomPacketPayload... payloads) {
-        Preconditions.checkState(FMLEnvironment.dist.isClient(), "Cannot send serverbound payloads on the server");
-        ClientPacketListener listener = Objects.requireNonNull(Minecraft.getInstance().getConnection());
-        listener.send(payload);
-        for (CustomPacketPayload otherPayload : payloads) {
-            listener.send(otherPayload);
-        }
-    }
 
     /**
      * Send the given payload(s) to the given player
@@ -90,7 +76,7 @@ public final class PacketDistributor {
         if (entity.level().isClientSide()) {
             throw new IllegalStateException("Cannot send clientbound payloads on the client");
         } else if (entity.level().getChunkSource() instanceof ServerChunkCache chunkCache) {
-            chunkCache.broadcast(entity, makeClientboundPacket(payload, payloads));
+            chunkCache.sendToTrackingPlayers(entity, makeClientboundPacket(payload, payloads));
         }
         // Silently ignore custom Level implementations which may not return ServerChunkCache.
     }
@@ -102,7 +88,7 @@ public final class PacketDistributor {
         if (entity.level().isClientSide()) {
             throw new IllegalStateException("Cannot send clientbound payloads on the client");
         } else if (entity.level().getChunkSource() instanceof ServerChunkCache chunkCache) {
-            chunkCache.broadcastAndSend(entity, makeClientboundPacket(payload, payloads));
+            chunkCache.sendToTrackingPlayersAndSelf(entity, makeClientboundPacket(payload, payloads));
         }
         // Silently ignore custom Level implementations which may not return ServerChunkCache.
     }
@@ -117,11 +103,13 @@ public final class PacketDistributor {
         }
     }
 
-    private static Packet<?> makeClientboundPacket(CustomPacketPayload payload, CustomPacketPayload... payloads) {
+    private static Packet<? super ClientGamePacketListener> makeClientboundPacket(CustomPacketPayload payload, CustomPacketPayload... payloads) {
+        Objects.requireNonNull(payload, "Cannot send null payload");
         if (payloads.length > 0) {
             final List<Packet<? super ClientGamePacketListener>> packets = new ArrayList<>();
             packets.add(new ClientboundCustomPayloadPacket(payload));
             for (CustomPacketPayload otherPayload : payloads) {
+                Objects.requireNonNull(otherPayload, "Cannot send null payload");
                 packets.add(new ClientboundCustomPayloadPacket(otherPayload));
             }
             return new ClientboundBundlePacket(packets);

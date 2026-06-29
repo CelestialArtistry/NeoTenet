@@ -5,10 +5,14 @@
 
 package net.neoforged.neoforge.event.entity;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.Event;
@@ -16,7 +20,7 @@ import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * EntityTeleportEvent is fired when an event involving any teleportation of an Entity occurs.<br>
@@ -29,15 +33,21 @@ import org.jetbrains.annotations.Nullable;
  * All children of this event are fired on the {@link NeoForge#EVENT_BUS}.<br>
  **/
 public class EntityTeleportEvent extends EntityEvent implements ICancellableEvent {
+    protected final ServerLevel targetLevel;
     protected double targetX;
     protected double targetY;
     protected double targetZ;
 
-    public EntityTeleportEvent(Entity entity, double targetX, double targetY, double targetZ) {
+    public EntityTeleportEvent(Entity entity, ServerLevel targetLevel, double targetX, double targetY, double targetZ) {
         super(entity);
+        this.targetLevel = targetLevel;
         this.targetX = targetX;
         this.targetY = targetY;
         this.targetZ = targetZ;
+    }
+
+    public ServerLevel getTargetLevel() {
+        return targetLevel;
     }
 
     public double getTargetX() {
@@ -91,8 +101,6 @@ public class EntityTeleportEvent extends EntityEvent implements ICancellableEven
      * This event is {@link ICancellableEvent}.<br>
      * If the event is not canceled, the entity will be teleported.
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
      * This event is fired on the {@link NeoForge#EVENT_BUS}.<br>
      * <br>
      * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
@@ -100,8 +108,8 @@ public class EntityTeleportEvent extends EntityEvent implements ICancellableEven
      * If this event is canceled, the entity will not be teleported.
      */
     public static class TeleportCommand extends EntityTeleportEvent implements ICancellableEvent {
-        public TeleportCommand(Entity entity, double targetX, double targetY, double targetZ) {
-            super(entity, targetX, targetY, targetZ);
+        public TeleportCommand(Entity entity, ServerLevel targetLevel, double targetX, double targetY, double targetZ) {
+            super(entity, targetLevel, targetX, targetY, targetZ);
         }
     }
 
@@ -112,8 +120,6 @@ public class EntityTeleportEvent extends EntityEvent implements ICancellableEven
      * This event is {@link ICancellableEvent}.<br>
      * If the event is not canceled, the entity will be teleported.
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
      * This event is fired on the {@link NeoForge#EVENT_BUS}.<br>
      * <br>
      * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
@@ -121,30 +127,24 @@ public class EntityTeleportEvent extends EntityEvent implements ICancellableEven
      * If this event is canceled, the entity will not be teleported.
      */
     public static class SpreadPlayersCommand extends EntityTeleportEvent implements ICancellableEvent {
-        public SpreadPlayersCommand(Entity entity, double targetX, double targetY, double targetZ) {
-            super(entity, targetX, targetY, targetZ);
+        public SpreadPlayersCommand(Entity entity, ServerLevel targetLevel, double targetX, double targetY, double targetZ) {
+            super(entity, targetLevel, targetX, targetY, targetZ);
         }
     }
 
-    /**
-     * EntityTeleportEvent.EnderEntity is fired before an Enderman or Shulker randomly teleports.
-     * <br>
-     * This event is {@link ICancellableEvent}.<br>
-     * If the event is not canceled, the entity will be teleported.
-     * <br>
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
-     * This event is fired on the {@link NeoForge#EVENT_BUS}.<br>
-     * <br>
-     * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
-     * <br>
-     * If this event is canceled, the entity will not be teleported.
-     */
+    /// Fired before an [EnderMan] or [Shulker] randomly teleports.
+    ///
+    /// For [EnderMan] entities: if the target position is modified to a location where it could not
+    /// normally teleport to, such as by reason of being obstructed with blocks, it will not teleport there even if this event is not canceled.
+    ///
+    /// This event is fired on the [game event bus][NeoForge#EVENT_BUS], only on the [logical server][LogicalSide#SERVER].
+    ///
+    /// This event is [cancellable][ICancellableEvent]. If this event is canceled, the entity will not be teleported.
     public static class EnderEntity extends EntityTeleportEvent implements ICancellableEvent {
         private final LivingEntity entityLiving;
 
         public EnderEntity(LivingEntity entity, double targetX, double targetY, double targetZ) {
-            super(entity, targetX, targetY, targetZ);
+            super(entity, (ServerLevel) entity.level(), targetX, targetY, targetZ);
             this.entityLiving = entity;
         }
 
@@ -158,8 +158,6 @@ public class EntityTeleportEvent extends EntityEvent implements ICancellableEven
      * <br>
      * This event is {@link ICancellableEvent}.<br>
      * If the event is not canceled, the entity will be teleported.
-     * <br>
-     * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link NeoForge#EVENT_BUS}.<br>
      * <br>
@@ -175,7 +173,7 @@ public class EntityTeleportEvent extends EntityEvent implements ICancellableEven
 
         @ApiStatus.Internal
         public EnderPearl(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, HitResult hitResult) {
-            super(entity, targetX, targetY, targetZ);
+            super(entity, (ServerLevel) pearlEntity.level(), targetX, targetY, targetZ);
             this.pearlEntity = pearlEntity;
             this.player = entity;
             this.attackDamage = attackDamage;
@@ -210,24 +208,28 @@ public class EntityTeleportEvent extends EntityEvent implements ICancellableEven
      * This event is {@link ICancellableEvent}.<br>
      * If the event is not canceled, the entity will be teleported.
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
      * This event is fired on the {@link NeoForge#EVENT_BUS}.<br>
      * <br>
      * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
-    public static class ChorusFruit extends EntityTeleportEvent implements ICancellableEvent {
+    public static class ItemConsumption extends EntityTeleportEvent implements ICancellableEvent {
         private final LivingEntity entityLiving;
+        private final ItemStack itemStack;
 
-        public ChorusFruit(LivingEntity entity, double targetX, double targetY, double targetZ) {
-            super(entity, targetX, targetY, targetZ);
+        public ItemConsumption(LivingEntity entity, ItemStack itemStack, double targetX, double targetY, double targetZ) {
+            super(entity, (ServerLevel) entity.level(), targetX, targetY, targetZ);
             this.entityLiving = entity;
+            this.itemStack = itemStack;
         }
 
         public LivingEntity getEntityLiving() {
             return entityLiving;
+        }
+
+        public ItemStack getConsumedItem() {
+            return itemStack;
         }
     }
 }

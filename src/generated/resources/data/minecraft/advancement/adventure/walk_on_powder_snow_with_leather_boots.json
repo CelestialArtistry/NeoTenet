@@ -8,14 +8,12 @@
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
-              "stepping_on": {
+              "minecraft:stepping_on": {
                 "block": {
                   "blocks": "minecraft:powder_snow"
                 }
               },
-              "type_specific": {
-                "type": "neoforge:snow_boots"
-              }
+              "neoforge:snow_boots": {}
             }
           }
         ]
@@ -28,7 +26,6 @@
       "translate": "advancements.adventure.walk_on_powder_snow_with_leather_boots.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:leather_boots"
     },
     "title": {

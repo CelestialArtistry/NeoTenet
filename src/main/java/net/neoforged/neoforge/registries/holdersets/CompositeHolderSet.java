@@ -17,7 +17,7 @@ import net.minecraft.core.HolderOwner;
 import net.minecraft.core.HolderSet;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Composite holdersets have component holdersets and possibly owner holdersets
@@ -39,6 +39,11 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T> {
         for (HolderSet<T> holderset : components) {
             holderset.addInvalidationListener(this::invalidate);
         }
+    }
+
+    @Override
+    public boolean isImmediatelyResolvable() {
+        return getComponents().stream().allMatch(HolderSet::isImmediatelyResolvable);
     }
 
     /**
@@ -203,5 +208,10 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T> {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isBound() {
+        return getComponents().stream().allMatch(HolderSet::isBound);
     }
 }

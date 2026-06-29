@@ -1,10 +1,11 @@
 --- a/net/minecraft/client/player/AbstractClientPlayer.java
 +++ b/net/minecraft/client/player/AbstractClientPlayer.java
-@@ -96,6 +_,6 @@
+@@ -113,7 +_,7 @@
              }
          }
  
--        return Mth.lerp(Minecraft.getInstance().options.fovEffectScale().get().floatValue(), 1.0F, f);
-+        return net.neoforged.neoforge.client.ClientHooks.getFieldOfViewModifier(this, f);
+-        return Mth.lerp(effectScale, 1.0F, modifier);
++        return net.neoforged.neoforge.client.ClientHooks.getFieldOfViewModifier(this, modifier, effectScale);
      }
- }
+ 
+     @Override

@@ -5,8 +5,6 @@
 
 package net.neoforged.neoforge.event.entity.player;
 
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -19,7 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.EventHooks;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>
@@ -30,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * {@link Player#attack(Entity)},
  * {@code Player#hurtCurrentlyUsedShield(float)},
  * {@link Player#interactOn(Entity, InteractionHand)},
- * {@link CommonHooks#getCraftingRemainingItem(ItemStack)},
+ * {@link CommonHooks#getCraftingRemainder(ItemStack)},
  * {@link ServerPlayerGameMode#useItem(ServerPlayer, Level, ItemStack, InteractionHand)} ,
  * {@link ServerPlayerGameMode#useItemOn(ServerPlayer, Level, ItemStack, InteractionHand, BlockHitResult)}
  * and {@link ServerPlayerGameMode#destroyBlock(BlockPos)}.<br>
@@ -39,8 +37,6 @@ import org.jetbrains.annotations.Nullable;
  * (@link #hand) contains the hand that the current item was held in.<br>
  * <br>
  * This event is not {@link ICancellableEvent}.<br>
- * <br>
- * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired from {@link EventHooks#onPlayerDestroyItem(Player, ItemStack, InteractionHand)}.<br>
  * This event is fired on the {@link NeoForge#EVENT_BUS}.

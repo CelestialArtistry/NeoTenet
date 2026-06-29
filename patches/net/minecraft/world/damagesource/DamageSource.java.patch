@@ -1,34 +1,6 @@
 --- a/net/minecraft/world/damagesource/DamageSource.java
 +++ b/net/minecraft/world/damagesource/DamageSource.java
-@@ -11,8 +_,9 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.phys.Vec3;
-+import org.teneted.neotenet.injection.world.damagesource.InjectionDamageSource;
- 
--public class DamageSource {
-+public class DamageSource implements InjectionDamageSource {
-     private final Holder<DamageType> type;
-     @Nullable
-     private final Entity causingEntity;
-@@ -20,6 +_,16 @@
-     private final Entity directEntity;
-     @Nullable
-     private final Vec3 damageSourcePosition;
-+    // CraftBukkit start
-+    @Nullable
-+    public org.bukkit.block.Block directBlock; // The block that caused the damage. damageSourcePosition is not used for all block damages
-+    @Nullable
-+    public org.bukkit.block.BlockState directBlockState; // The block state of the block relevant to this damage source
-+    public boolean sweep = false;
-+    public boolean melting = false;
-+    public boolean poison = false;
-+    public Entity customEntityDamager = null; // This field is a helper for when direct entity damage is not set by vanilla
-+    public Entity customCausingEntityDamager = null; // This field is a helper for when causing entity damage is not set by vanilla
- 
-     @Override
-     public String toString() {
-@@ -93,6 +_,10 @@
+@@ -87,6 +_,10 @@
          return this.type().msgId();
      }
  

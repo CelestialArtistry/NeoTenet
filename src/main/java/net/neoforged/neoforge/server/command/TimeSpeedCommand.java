@@ -12,21 +12,19 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.GameRules.BooleanValue;
+import net.minecraft.world.level.gamerules.GameRules;
 
 class TimeSpeedCommand {
     static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("day")
                 .then(Commands.literal("speed")
-                        .then(Commands.literal("set").requires(cs -> cs.hasPermission(Commands.LEVEL_GAMEMASTERS)) // same as /gamerule
+                        .then(Commands.literal("set").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS)) // same as /gamerule
                                 .then(Commands.literal("default").executes(context -> setDefault(context.getSource())))
                                 .then(Commands.literal("realtime").executes(context -> setDaylength(context.getSource(), 1440)))
                                 .then(Commands.argument("speed", FloatArgumentType.floatArg(0f, 1000f)).executes(context -> setSpeed(context.getSource(), FloatArgumentType.getFloat(context, "speed")))))
                         .executes(context -> query(context.getSource())))
                 .then(Commands.literal("length")
-                        .then(Commands.literal("set").requires(cs -> cs.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .then(Commands.literal("set").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                                 .then(Commands.literal("default").executes(context -> setDefault(context.getSource())))
                                 .then(Commands.literal("realtime").executes(context -> setDaylength(context.getSource(), 1440)))
                                 .then(Commands.argument("minutes", IntegerArgumentType.integer(1, 1440)).executes(context -> setDaylength(context.getSource(), IntegerArgumentType.getInteger(context, "minutes")))))
@@ -35,8 +33,15 @@ class TimeSpeedCommand {
     }
 
     private static int query(CommandSourceStack source) {
-        final float speed = source.getLevel().getDayTimePerTick();
-        if (speed < 0) {
+        var clockManager = source.getLevel().clockManager();
+        var defaultClock = source.getLevel().dimensionType().defaultClock().orElse(null);
+        if (defaultClock == null) {
+            source.sendFailure(CommandUtils.makeTranslatableWithFallback("commands.neoforge.timespeed.query.no_default_clock", levelName(source)));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        final float speed = clockManager.getRate(defaultClock);
+        if (speed == 1) {
             source.sendSuccess(() -> CommandUtils.makeTranslatableWithFallback("commands.neoforge.timespeed.query.default", levelName(source)), true);
         } else {
             source.sendSuccess(() -> CommandUtils.makeTranslatableWithFallback("commands.neoforge.timespeed.query", levelName(source), speed, minutes(speed)), true);
@@ -53,16 +58,25 @@ class TimeSpeedCommand {
     }
 
     private static int setSpeed(CommandSourceStack source, float speed) {
-        final BooleanValue rule = source.getLevel().getGameRules().getRule(GameRules.RULE_DAYLIGHT);
-        if (!rule.get() && speed > 0) {
-            rule.set(true, (ServerLevel) null);
-            source.sendSuccess(() -> CommandUtils.makeTranslatableWithFallback("commands.gamerule.set", GameRules.RULE_DAYLIGHT.getId(), rule.toString()), true);
-        } else if (rule.get() && speed == 0) {
-            rule.set(false, (ServerLevel) null);
-            source.sendSuccess(() -> CommandUtils.makeTranslatableWithFallback("commands.gamerule.set", GameRules.RULE_DAYLIGHT.getId(), rule.toString()), true);
+        var gameRules = source.getLevel().getGameRules();
+        final var advanceTime = gameRules.get(GameRules.ADVANCE_TIME);
+        if (!advanceTime && speed > 0) {
+            gameRules.set(GameRules.ADVANCE_TIME, true, null);
+            source.sendSuccess(() -> CommandUtils.makeTranslatableWithFallback("commands.gamerule.set", GameRules.ADVANCE_TIME.id(), gameRules.getAsString(GameRules.ADVANCE_TIME)), true);
+        } else if (advanceTime && speed == 0) {
+            gameRules.set(GameRules.ADVANCE_TIME, false, null);
+            source.sendSuccess(() -> CommandUtils.makeTranslatableWithFallback("commands.gamerule.set", GameRules.ADVANCE_TIME.id(), gameRules.getAsString(GameRules.ADVANCE_TIME)), true);
             return Command.SINGLE_SUCCESS;
         }
-        source.getLevel().setDayTimePerTick(speed);
+
+        var clockManager = source.getLevel().clockManager();
+        var defaultClock = source.getLevel().dimensionType().defaultClock().orElse(null);
+        if (defaultClock == null) {
+            source.sendFailure(CommandUtils.makeTranslatableWithFallback("commands.neoforge.timespeed.query.no_default_clock", levelName(source)));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        clockManager.setRate(defaultClock, speed);
         source.sendSuccess(() -> CommandUtils.makeTranslatableWithFallback("commands.neoforge.timespeed.set", levelName(source), speed, minutes(speed)), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -75,7 +89,14 @@ class TimeSpeedCommand {
     }
 
     private static int setDefault(CommandSourceStack source) {
-        source.getLevel().setDayTimePerTick(-1f);
+        var clockManager = source.getLevel().clockManager();
+        var defaultClock = source.getLevel().dimensionType().defaultClock().orElse(null);
+        if (defaultClock == null) {
+            source.sendFailure(CommandUtils.makeTranslatableWithFallback("commands.neoforge.timespeed.query.no_default_clock", levelName(source)));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        clockManager.setRate(defaultClock, 1);
         source.sendSuccess(() -> CommandUtils.makeTranslatableWithFallback("commands.neoforge.timespeed.set.default", levelName(source)), true);
         return Command.SINGLE_SUCCESS;
     }

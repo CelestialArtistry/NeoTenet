@@ -7,7 +7,6 @@ package net.neoforged.neoforge.common.extensions;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +15,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,14 +25,14 @@ import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
-import net.minecraft.world.entity.projectile.WitherSkull;
+import net.minecraft.world.entity.projectile.hurtingprojectile.WitherSkull;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Explosion;
@@ -40,6 +40,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.SignalGetter;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.BeaconBeamBlock;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
@@ -47,7 +48,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.CandleCakeBlock;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.GrowingPlantHeadBlock;
@@ -73,20 +74,16 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
-import net.neoforged.neoforge.client.ClientHooks;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.DataMapHooks;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.enums.BubbleColumnDirection;
-import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.common.world.AuxiliaryLightManager;
 import net.neoforged.neoforge.event.EventHooks;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.model.data.ModelData;
+import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
 public interface IBlockExtension {
@@ -231,13 +228,14 @@ public interface IBlockExtension {
      *
      * @param state       The current state.
      * @param level       The current level
-     * @param player      The player damaging the block, may be null
      * @param pos         Block position in level
+     * @param player      The player damaging the block, may be null
+     * @param toolStack   The players main-hand prior to destroying the block and applying damage to the tool.
      * @param willHarvest The result of {@link #canHarvestBlock}, if called on the server by a non-creative player, otherwise always false.
      * @param fluid       The current fluid state at current position
      * @return True if the block is actually destroyed.
      */
-    default boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    default boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, ItemStack toolStack, boolean willHarvest, FluidState fluid) {
         if (level.isClientSide()) {
             // On the client, vanilla calls Level#setBlock, per MultiPlayerGameMode#destroyBlock
             return level.setBlock(pos, fluid.createLegacyBlock(), 11);
@@ -337,14 +335,12 @@ public interface IBlockExtension {
     }
 
     /**
-     *
      * Called when A user uses the creative pick block button on this block
      *
-     * @param target The full target the player is looking at
      * @return A ItemStack to add to the player's inventory, empty itemstack if nothing should be added.
      */
-    default ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
-        return self().getCloneItemStack(level, pos, state);
+    default ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
+        return state.getCloneItemStack(level, pos, includeData);
     }
 
     /**
@@ -377,6 +373,41 @@ public interface IBlockExtension {
      */
     default boolean addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
         return false;
+    }
+
+    /**
+     * Allows a block to override the standard fall sound played in {@link LivingEntity#playBlockFallSound()}.
+     *
+     * @param state  The block being fallen onto
+     * @param level  The level which the block is in
+     * @param pos    The position of the block in the level
+     * @param entity The entity falling onto the block
+     */
+    default void playFallSound(BlockState state, Level level, BlockPos pos, LivingEntity entity) {
+        SoundType soundType = state.getSoundType(level, pos, entity);
+        entity.playSound(soundType.getFallSound(), soundType.getVolume() * .5F, soundType.getPitch() * .75F);
+    }
+
+    /**
+     * Allows a block to override the standard step sound played in:
+     * <ul>
+     * <li>{@link Entity#playCombinationStepSounds(BlockState, BlockState, BlockPos, BlockPos)} (primary step sound only)</li>
+     * <li>{@link Entity#playMuffledStepSound(BlockState, BlockPos)} (usually the secondary sound in a call to the above method)</li>
+     * <li>{@link Entity#playStepSound(BlockPos, BlockState)} (simple step sound)</li>
+     * </ul>
+     * The volume and pitch of any sound played in this method should be multiplied with the provided multipliers to
+     * replicate the behaviour of the callers.
+     *
+     * @param state            The block being stepped on
+     * @param level            The level which the block is in
+     * @param pos              The position of the block in the level
+     * @param entity           The entity stepping on the block
+     * @param volumeMultiplier The volume multiplier to apply to the step sound being played
+     * @param pitchMultiplier  The pitch multiplier to apply to the step sound being played
+     */
+    default void playStepSound(BlockState state, Level level, BlockPos pos, Entity entity, float volumeMultiplier, float pitchMultiplier) {
+        SoundType soundType = state.getSoundType(level, pos, entity);
+        entity.playSound(soundType.getStepSound(), soundType.getVolume() * volumeMultiplier, soundType.getPitch() * pitchMultiplier);
     }
 
     /**
@@ -413,7 +444,7 @@ public interface IBlockExtension {
      * @param config        Configuration of the trunk placer. Consider azalea trees, which should place rooted dirt instead of regular dirt.
      * @return True to ignore vanilla behaviour
      */
-    default boolean onTreeGrow(BlockState state, LevelReader level, BiConsumer<BlockPos, BlockState> placeFunction, RandomSource randomSource, BlockPos pos, TreeConfiguration config) {
+    default boolean onTreeGrow(BlockState state, WorldGenLevel level, BiConsumer<BlockPos, BlockState> placeFunction, RandomSource randomSource, BlockPos pos, TreeConfiguration config) {
         return false;
     }
 
@@ -427,8 +458,8 @@ public interface IBlockExtension {
      * @return True if the soil should be considered fertile.
      */
     default boolean isFertile(BlockState state, BlockGetter level, BlockPos pos) {
-        if (state.getBlock() instanceof FarmBlock)
-            return state.getValue(FarmBlock.MOISTURE) > 0;
+        if (state.getBlock() instanceof FarmlandBlock)
+            return state.getValue(FarmlandBlock.MOISTURE) > 0;
 
         return false;
     }
@@ -486,7 +517,7 @@ public interface IBlockExtension {
      * @param pos   Block position in level
      * @return The amount of enchanting power this block produces.
      */
-    default float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
+    default float getEnchantPowerBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(BlockTags.ENCHANTMENT_POWER_PROVIDER) ? 1 : 0;
     }
 
@@ -581,7 +612,7 @@ public interface IBlockExtension {
      */
     @Nullable
     default PathType getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob) {
-        return state.getBlock() == Blocks.LAVA ? PathType.LAVA : state.isBurning(level, pos) ? PathType.DAMAGE_FIRE : null;
+        return state.getBlock() == Blocks.LAVA ? PathType.LAVA : state.isBurning(level, pos) ? PathType.FIRE : null;
     }
 
     /**
@@ -599,8 +630,8 @@ public interface IBlockExtension {
      */
     @Nullable
     default PathType getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, PathType originalType) {
-        if (state.is(Blocks.SWEET_BERRY_BUSH)) return PathType.DANGER_OTHER;
-        else if (WalkNodeEvaluator.isBurningBlock(state)) return PathType.DANGER_FIRE;
+        if (state.is(Blocks.SWEET_BERRY_BUSH)) return PathType.DAMAGING_IN_NEIGHBOR;
+        else if (WalkNodeEvaluator.isBurningBlock(state)) return PathType.FIRE_IN_NEIGHBOR;
         else return null;
     }
 
@@ -663,14 +694,19 @@ public interface IBlockExtension {
 
     /**
      * If the block is flammable, this is called when it gets lit on fire.
+     * <p>
+     * The return value determines whether a flint-and-steel in a dispenser was used successfully and should be damaged
      *
      * @param state     The current state
      * @param level     The current level
      * @param pos       Block position in level
      * @param direction The direction that the fire is coming from
      * @param igniter   The entity that lit the fire
+     * @return whether the block was successfully set on fire (i.e. TNT is allowed to explode and was primed)
      */
-    default void onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {}
+    default boolean onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {
+        return true;
+    }
 
     /**
      * Called when fire is updating on a neighbor block.
@@ -736,7 +772,7 @@ public interface IBlockExtension {
      * @param pos       Block position in level
      * @param explosion The explosion instance affecting the block
      */
-    default void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
+    default void onBlockExploded(BlockState state, ServerLevel level, BlockPos pos, Explosion explosion) {
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
         self().wasExploded(level, pos, explosion);
     }
@@ -758,7 +794,7 @@ public interface IBlockExtension {
      * @param fluidState The state of the fluid
      * @return Whether the fluid overlay texture should be used
      */
-    default boolean shouldDisplayFluidOverlay(BlockState state, BlockAndTintGetter level, BlockPos pos, FluidState fluidState) {
+    default boolean shouldDisplayFluidOverlay(BlockState state, BlockAndLightGetter level, BlockPos pos, FluidState fluidState) {
         return state.getBlock() instanceof HalfTransparentBlock || state.getBlock() instanceof LeavesBlock;
     }
 
@@ -793,7 +829,7 @@ public interface IBlockExtension {
             // Logic copied from HoeItem#TILLABLES; needs to be kept in sync during updating
             Block block = state.getBlock();
             if (block == Blocks.ROOTED_DIRT) {
-                if (!simulate && !context.getLevel().isClientSide) {
+                if (!simulate && !context.getLevel().isClientSide()) {
                     Block.popResourceFromFace(context.getLevel(), context.getClickedPos(), context.getClickedFace(), new ItemStack(Items.HANGING_ROOTS));
                 }
                 return Blocks.DIRT.defaultBlockState();
@@ -906,9 +942,6 @@ public interface IBlockExtension {
      * will be called on the neighboring block.
      */
     default boolean supportsExternalFaceHiding(BlockState state) {
-        if (FMLEnvironment.dist.isClient()) {
-            return !ClientHooks.isBlockInSolidLayer(state);
-        }
         return true;
     }
 
@@ -979,9 +1012,9 @@ public interface IBlockExtension {
      * @param queryState The state of the block that is querying the appearance, or {@code null} if not applicable
      * @param queryPos   The position of the block that is querying the appearance, or {@code null} if not applicable
      * @return The appearance of this block on the given side. By default, the current state
-     * @see IBlockStateExtension#getAppearance(BlockAndTintGetter, BlockPos, Direction, BlockState, BlockPos)
+     * @see IBlockStateExtension#getAppearance(BlockAndLightGetter, BlockPos, Direction, BlockState, BlockPos)
      */
-    default BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
+    default BlockState getAppearance(BlockState state, BlockAndLightGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
         return state;
     }
 
@@ -1017,16 +1050,16 @@ public interface IBlockExtension {
     /**
      * Determines if this block can spawn Bubble Columns and if so, what direction the column flows.
      * <p>
-     * NOTE: The block itself will still need to call {@link net.minecraft.world.level.block.BubbleColumnBlock#updateColumn(LevelAccessor, BlockPos, BlockState)} in their tick method and schedule a block tick in the block's onPlace.
+     * NOTE: The block itself will still need to call {@link net.minecraft.world.level.block.BubbleColumnBlock#updateColumn(Block, LevelAccessor, BlockPos, BlockState)} in their tick method and schedule a block tick in the block's onPlace.
      * Also, schedule a fluid tick in updateShape method if update direction is up. Both are needed in order to get the Bubble Columns to function properly. See {@link net.minecraft.world.level.block.SoulSandBlock} and {@link net.minecraft.world.level.block.MagmaBlock} for example.
      *
      * @param state The current state
      * @return BubbleColumnDirection.NONE for no Bubble Column. Otherwise, will spawn Bubble Column flowing with specified direction
      */
     default BubbleColumnDirection getBubbleColumnDirection(BlockState state) {
-        if (state.is(Blocks.SOUL_SAND)) {
+        if (state.is(BlockTags.ENABLES_BUBBLE_COLUMN_PUSH_UP)) {
             return BubbleColumnDirection.UPWARD;
-        } else if (state.is(Blocks.MAGMA_BLOCK)) {
+        } else if (state.is(BlockTags.ENABLES_BUBBLE_COLUMN_DRAG_DOWN)) {
             return BubbleColumnDirection.DOWNWARD;
         } else {
             return BubbleColumnDirection.NONE;
@@ -1035,7 +1068,7 @@ public interface IBlockExtension {
 
     /**
      * Determines if a fluid adjacent to the block on the given side should not be rendered.
-     *
+     * 
      * @param state         the block state of the block
      * @param selfFace      the face of this block that the fluid is adjacent to
      * @param adjacentFluid the fluid that is touching that face
@@ -1043,5 +1076,16 @@ public interface IBlockExtension {
      */
     default boolean shouldHideAdjacentFluidFace(BlockState state, Direction selfFace, FluidState adjacentFluid) {
         return state.getFluidState().getType().isSame(adjacentFluid.getType());
+    }
+
+    /// Returns this blocks bounce restitution for the given state and position. Normally between 0 and 1
+    ///
+    /// @param level The level this block is in
+    /// @param pos The position this block is located at in the given level
+    /// @param blockState The state of this block
+    /// @param entity The entity currently querying for bounce restitution
+    /// @return This blocks bounce restitution for the given state and position
+    default float getBounceRestitution(Level level, BlockPos pos, BlockState blockState, Entity entity) {
+        return self().getBounceRestitution();
     }
 }

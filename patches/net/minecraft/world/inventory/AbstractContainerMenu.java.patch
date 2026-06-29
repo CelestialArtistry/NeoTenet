@@ -1,53 +1,15 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -17,9 +_,9 @@
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
- import net.minecraft.ReportedException;
--import net.minecraft.core.BlockPos;
- import net.minecraft.core.NonNullList;
- import net.minecraft.core.registries.BuiltInRegistries;
-+import net.minecraft.network.chat.Component;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.util.Mth;
- import net.minecraft.world.Container;
-@@ -28,12 +_,13 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.flag.FeatureFlagSet;
- import net.minecraft.world.item.ItemStack;
--import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.entity.BlockEntity;
-+import org.bukkit.inventory.InventoryView;
- import org.slf4j.Logger;
-+import org.teneted.neotenet.injection.world.inventory.InjectionAbstractContainerMenu;
- 
--public abstract class AbstractContainerMenu {
-+public abstract class AbstractContainerMenu implements InjectionAbstractContainerMenu {
-     private static final Logger LOGGER = LogUtils.getLogger();
-     public static final int SLOT_CLICKED_OUTSIDE = -999;
-     public static final int QUICKCRAFT_TYPE_CHARITABLE = 0;
-@@ -61,6 +_,10 @@
-     @Nullable
-     private ContainerSynchronizer synchronizer;
-     private boolean suppressRemoteUpdates;
-+    // CraftBukkit start
-+    public boolean checkReachable = true;
-+    private Component title;
-+    public InventoryView bukkitView;
- 
-     protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
-         this.menuType = p_38851_;
-@@ -511,6 +_,12 @@
+@@ -558,6 +_,12 @@
      }
  
-     private boolean tryItemClickBehaviourOverride(Player p_249615_, ClickAction p_250300_, Slot p_249384_, ItemStack p_251073_, ItemStack p_252026_) {
+     private boolean tryItemClickBehaviourOverride(Player player, ClickAction clickAction, Slot slot, ItemStack clicked, ItemStack carried) {
 +        // Neo: Fire the ItemStackedOnOtherEvent, and return true if it was cancelled (meaning the event was handled). Returning true will trigger the container to stop processing further logic.
 +        // The first parameter to onItemStackedOn is the "carried" (under-mouse) item, which is the second ItemStack parameter to this method.
-+        if (net.neoforged.neoforge.common.CommonHooks.onItemStackedOn(p_252026_, p_251073_, p_249384_, p_250300_, p_249615_, createCarriedSlotAccess())) {
++        if (net.neoforged.neoforge.common.CommonHooks.onItemStackedOn(carried, clicked, slot, clickAction, player, createCarriedSlotAccess())) {
 +            return true;
 +        }
 +
-         FeatureFlagSet featureflagset = p_249615_.level().enabledFeatures();
-         return p_252026_.isItemEnabled(featureflagset) && p_252026_.overrideStackedOnOther(p_249384_, p_250300_, p_249615_)
+         FeatureFlagSet enabledFeatures = player.level().enabledFeatures();
+         return carried.isItemEnabled(enabledFeatures) && carried.overrideStackedOnOther(slot, clickAction, player)
              ? true

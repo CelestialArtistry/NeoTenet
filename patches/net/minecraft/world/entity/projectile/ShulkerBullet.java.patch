@@ -1,22 +1,11 @@
 --- a/net/minecraft/world/entity/projectile/ShulkerBullet.java
 +++ b/net/minecraft/world/entity/projectile/ShulkerBullet.java
-@@ -30,8 +_,9 @@
- import net.minecraft.world.phys.EntityHitResult;
- import net.minecraft.world.phys.HitResult;
- import net.minecraft.world.phys.Vec3;
-+import org.teneted.neotenet.injection.world.entity.projectile.InjectionShulkerBullet;
- 
--public class ShulkerBullet extends Projectile {
-+public class ShulkerBullet extends Projectile implements InjectionShulkerBullet {
-     private static final double SPEED = 0.15;
-     @Nullable
-     private Entity finalTarget;
 @@ -218,7 +_,7 @@
-             }
- 
-             HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
--            if (hitresult.getType() != HitResult.Type.MISS) {
-+            if (hitresult.getType() != HitResult.Type.MISS && !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitresult)) {
-                 this.hitTargetOrDeflectSelf(hitresult);
-             }
+             this.handlePortal();
          }
+ 
+-        if (hitResult != null && this.isAlive() && hitResult.getType() != HitResult.Type.MISS) {
++        if (hitResult != null && this.isAlive() && hitResult.getType() != HitResult.Type.MISS && !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitResult)) {
+             this.hitTargetOrDeflectSelf(hitResult);
+         }
+ 

@@ -13,9 +13,10 @@ import java.util.Set;
 import java.util.stream.Stream;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryDataLoader;
+import net.minecraft.resources.RegistryValidator;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ApiStatus.Internal
 public final class DataPackRegistriesHooks {
@@ -44,7 +45,7 @@ public final class DataPackRegistriesHooks {
         DATA_PACK_REGISTRIES.add(loaderData);
         if (data.networkCodec() != null) {
             SYNCED_CUSTOM_REGISTRIES.add(loaderData.key());
-            NETWORKABLE_REGISTRIES.add(new RegistryDataLoader.RegistryData<T>(loaderData.key(), data.networkCodec(), false));
+            NETWORKABLE_REGISTRIES.add(new RegistryDataLoader.RegistryData<T>(loaderData.key(), data.networkCodec(), RegistryValidator.none()));
         }
     }
 
@@ -69,10 +70,9 @@ public final class DataPackRegistriesHooks {
         return SYNCED_CUSTOM_REGISTRIES_VIEW;
     }
 
-    @Nullable
     @ApiStatus.Internal
     @SuppressWarnings("unchecked")
-    public static <T> RegistryDataLoader.RegistryData<T> getSyncedRegistry(final ResourceKey<? extends Registry<T>> registry) {
+    public static <T> RegistryDataLoader.@Nullable RegistryData<T> getSyncedRegistry(final ResourceKey<? extends Registry<T>> registry) {
         return (RegistryDataLoader.RegistryData<T>) NETWORKABLE_REGISTRIES.stream().filter(data -> data.key().equals(registry)).findFirst().orElse(null);
     }
 }

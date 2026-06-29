@@ -1,31 +1,37 @@
 --- a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
-@@ -1,6 +_,8 @@
- package net.minecraft.world.level.block.entity;
+@@ -109,9 +_,34 @@
+         return retrievedItem;
+     }
  
- import com.google.common.annotations.VisibleForTesting;
++    // Neo: Support deferring non-transactional notification and song player update until the end of a transaction
++    private final net.neoforged.neoforge.transfer.transaction.RootCommitJournal itemChangedJournal =
++            new net.neoforged.neoforge.transfer.transaction.RootCommitJournal(() -> {
++                if (!isRemoved()) {
++                    itemChanged();
++                }
++            });
++    @Override
++    public void onTransfer(int slot, int amountChange, net.neoforged.neoforge.transfer.transaction.TransactionContext transaction) {
++        itemChangedJournal.updateSnapshots(transaction);
++    }
 +
-+import java.util.List;
- import java.util.Optional;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Holder;
-@@ -19,12 +_,18 @@
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.ticks.ContainerSingleItem;
-+import org.bukkit.entity.HumanEntity;
-+import org.teneted.neotenet.injection.world.level.block.entity.InjectionJukeboxBlockEntity;
- 
--public class JukeboxBlockEntity extends BlockEntity implements Clearable, ContainerSingleItem.BlockContainerSingleItem {
-+public class JukeboxBlockEntity extends BlockEntity implements Clearable, ContainerSingleItem.BlockContainerSingleItem, InjectionJukeboxBlockEntity {
-     public static final String SONG_ITEM_TAG_ID = "RecordItem";
-     public static final String TICKS_SINCE_SONG_STARTED_TAG_ID = "ticks_since_song_started";
-     private ItemStack item = ItemStack.EMPTY;
-     private final JukeboxSongPlayer jukeboxSongPlayer = new JukeboxSongPlayer(this::onSongChanged, this.getBlockPos());
-+    // CraftBukkit start - add fields and methods
-+    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
-+    private int maxStack = MAX_STACK;
-+    public boolean opened;
- 
-     public JukeboxBlockEntity(BlockPos p_155613_, BlockState p_155614_) {
-         super(BlockEntityType.JUKEBOX, p_155613_, p_155614_);
++    @Override
++    public void setItem(int slot, ItemStack stack, boolean insideTransaction) {
++        if (slot == 0) {
++            if (insideTransaction) {
++                this.item = stack;
++            } else {
++                setTheItem(stack);
++            }
++        }
++    }
+     @Override
+     public void setTheItem(ItemStack itemStack) {
+         this.item = itemStack;
++        itemChanged();
++    }
++    private void itemChanged() {
+         boolean itemWasInserted = !this.item.isEmpty();
+         Optional<Holder<JukeboxSong>> maybeSong = JukeboxSong.fromStack(this.item);
+         this.notifyItemChangedInJukebox(itemWasInserted);

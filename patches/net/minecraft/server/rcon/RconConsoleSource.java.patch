@@ -1,32 +1,11 @@
 --- a/net/minecraft/server/rcon/RconConsoleSource.java
 +++ b/net/minecraft/server/rcon/RconConsoleSource.java
-@@ -7,14 +_,27 @@
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.world.phys.Vec2;
- import net.minecraft.world.phys.Vec3;
--
--public class RconConsoleSource implements CommandSource {
-+import org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender;
-+import org.teneted.neotenet.injection.server.rcon.InjectionRconConsoleSource;
-+
-+import java.net.SocketAddress;
-+
-+public class RconConsoleSource implements CommandSource, InjectionRconConsoleSource {
-     private static final String RCON = "Rcon";
-     private static final Component RCON_COMPONENT = Component.literal("Rcon");
-     private final StringBuffer buffer = new StringBuffer();
-     private final MinecraftServer server;
-+    // CraftBukkit start
-+    public SocketAddress socketAddress;
-+    private final CraftRemoteConsoleCommandSender remoteConsole = new CraftRemoteConsoleCommandSender(this);
-+
-+    public RconConsoleSource(MinecraftServer p_11505_, SocketAddress socketAddress) {
-+        this(p_11505_);
-+        this.socketAddress = socketAddress;
-+    }
+@@ -44,7 +_,7 @@
  
-     public RconConsoleSource(MinecraftServer p_11505_) {
-+        // CraftBukkit end
-         this.server = p_11505_;
+     @Override
+     public void sendSystemMessage(Component message) {
+-        this.buffer.append(message.getString());
++        this.buffer.append(message.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
      }
  
+     @Override

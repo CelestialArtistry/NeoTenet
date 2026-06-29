@@ -1,53 +1,11 @@
 --- a/net/minecraft/world/level/portal/PortalShape.java
 +++ b/net/minecraft/world/level/portal/PortalShape.java
-@@ -21,13 +_,14 @@
- import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.world.PortalCreateEvent;
- 
- public class PortalShape {
-     private static final int MIN_WIDTH = 2;
+@@ -28,7 +_,7 @@
      public static final int MAX_WIDTH = 21;
      private static final int MIN_HEIGHT = 3;
      public static final int MAX_HEIGHT = 21;
--    private static final BlockBehaviour.StatePredicate FRAME = (p_77720_, p_77721_, p_77722_) -> p_77720_.is(Blocks.OBSIDIAN);
+-    private static final BlockBehaviour.StatePredicate FRAME = (state, level, pos) -> state.is(Blocks.OBSIDIAN);
 +    private static final BlockBehaviour.StatePredicate FRAME = net.neoforged.neoforge.common.extensions.IBlockStateExtension::isPortalFrame;
      private static final float SAFE_TRAVEL_MAX_ENTITY_XY = 4.0F;
      private static final double SAFE_TRAVEL_MAX_VERTICAL_DELTA = 1.0;
-     private final LevelAccessor level;
-@@ -38,6 +_,7 @@
-     private BlockPos bottomLeft;
-     private int height;
-     private final int width;
-+    org.bukkit.craftbukkit.util.BlockStateListPopulator blocks; // CraftBukkit - add field
- 
-     public static Optional<PortalShape> findEmptyPortalShape(LevelAccessor p_77709_, BlockPos p_77710_, Direction.Axis p_77711_) {
-         return findPortalShape(p_77709_, p_77710_, p_77727_ -> p_77727_.isValid() && p_77727_.numPortalBlocks == 0, p_77711_);
-@@ -167,6 +_,26 @@
-         BlockState blockstate = Blocks.NETHER_PORTAL.defaultBlockState().setValue(NetherPortalBlock.AXIS, this.axis);
-         BlockPos.betweenClosed(this.bottomLeft, this.bottomLeft.relative(Direction.UP, this.height - 1).relative(this.rightDir, this.width - 1))
-             .forEach(p_77725_ -> this.level.setBlock(p_77725_, blockstate, 18));
-+    }
-+
-+    public boolean createPortalBlocks(Entity entity) {
-+        org.bukkit.World bworld = this.level.getMinecraftWorld().getWorld();
-+        // Copy below for loop
-+        BlockState blockstate = Blocks.NETHER_PORTAL.defaultBlockState().setValue(NetherPortalBlock.AXIS, this.axis);
-+        BlockPos.betweenClosed(this.bottomLeft, this.bottomLeft.relative(Direction.UP, this.height - 1).relative(this.rightDir, this.width - 1)).forEach((blockposition) -> {
-+            blocks.setBlock(blockposition, blockstate, 18);
-+        });
-+        PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), PortalCreateEvent.CreateReason.FIRE);
-+        this.level.getMinecraftWorld().getServer().server.getPluginManager().callEvent(event);
-+
-+        if (event.isCancelled()) {
-+            return false;
-+        }
-+        // CraftBukkit end
-+        BlockPos.betweenClosed(this.bottomLeft, this.bottomLeft.relative(Direction.UP, this.height - 1).relative(this.rightDir, this.width - 1)).forEach((blockposition) -> {
-+            this.level.setBlock(blockposition, blockstate, 18);
-+        });
-+        return true;
-     }
- 
-     public boolean isComplete() {
+     private final Direction.Axis axis;

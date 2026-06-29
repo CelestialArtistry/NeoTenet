@@ -1,22 +1,11 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -27,8 +_,9 @@
- import net.minecraft.world.phys.EntityHitResult;
- import net.minecraft.world.phys.HitResult;
- import net.minecraft.world.phys.Vec3;
-+import org.teneted.neotenet.injection.world.entity.projectile.InjectionProjectile;
- 
--public abstract class Projectile extends Entity implements TraceableEntity {
-+public abstract class Projectile extends Entity implements TraceableEntity, InjectionProjectile {
-     @Nullable
-     private UUID ownerUUID;
-     @Nullable
-@@ -284,7 +_,7 @@
-         Entity entity = this.getOwner();
-         return entity instanceof Player
-             ? entity.mayInteract(p_150167_, p_150168_)
--            : entity == null || p_150167_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-+            : entity == null || net.neoforged.neoforge.event.EventHooks.canEntityGrief(p_150167_, entity);
+@@ -343,7 +_,7 @@
+     @Override
+     public boolean mayInteract(ServerLevel level, BlockPos pos) {
+         Entity owner = this.getOwner();
+-        return owner instanceof Player ? owner.mayInteract(level, pos) : owner == null || level.getGameRules().get(GameRules.MOB_GRIEFING);
++        return owner instanceof Player ? owner.mayInteract(level, pos) : owner == null || net.neoforged.neoforge.event.EventHooks.canEntityGrief(level, owner);
      }
  
-     public boolean mayBreak(Level p_307481_) {
+     public boolean mayBreak(ServerLevel level) {

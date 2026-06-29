@@ -8,9 +8,6 @@
     "minecraft:beach",
     "minecraft:lush_caves",
     "minecraft:dripstone_caves",
-    {
-      "id": "#forge:is_wet/overworld",
-      "required": false
-    }
+    "minecraft:sulfur_caves"
   ]
 }

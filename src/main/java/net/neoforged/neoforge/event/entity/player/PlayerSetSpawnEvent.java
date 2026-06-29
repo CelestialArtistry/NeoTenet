@@ -7,10 +7,11 @@ package net.neoforged.neoforge.event.entity.player;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.ICancellableEvent;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This event is fired when a player's spawn point is set or reset.<br>
@@ -22,11 +23,11 @@ public class PlayerSetSpawnEvent extends PlayerEvent implements ICancellableEven
     @Nullable
     private final BlockPos newSpawn;
 
-    public PlayerSetSpawnEvent(Player player, ResourceKey<Level> spawnLevel, @Nullable BlockPos newSpawn, boolean forced) {
+    public PlayerSetSpawnEvent(Player player, ServerPlayer.@Nullable RespawnConfig respawnConfig) {
         super(player);
-        this.spawnLevel = spawnLevel;
-        this.newSpawn = newSpawn;
-        this.forced = forced;
+        this.spawnLevel = ServerPlayer.RespawnConfig.getDimensionOrDefault(respawnConfig);
+        this.newSpawn = respawnConfig != null ? respawnConfig.respawnData().pos() : null;
+        this.forced = respawnConfig != null && respawnConfig.forced();
     }
 
     public boolean isForced() {

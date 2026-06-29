@@ -6,22 +6,19 @@
 package net.neoforged.neoforge.common.world;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class MobSpawnSettingsBuilder extends MobSpawnSettings.Builder {
     private final Set<MobCategory> typesView = Collections.unmodifiableSet(this.spawners.keySet());
     private final Set<EntityType<?>> costView = Collections.unmodifiableSet(this.mobSpawnCosts.keySet());
 
     public MobSpawnSettingsBuilder(MobSpawnSettings orig) {
-        orig.getSpawnerTypes().forEach(k -> {
-            spawners.get(k).clear();
-            spawners.get(k).addAll(orig.getMobs(k).unwrap());
-        });
+        orig.getSpawnerTypes().forEach(k -> spawners.get(k).addAll(orig.getMobs(k)));
         orig.getEntityTypes().forEach(k -> mobSpawnCosts.put(k, orig.getMobSpawnCost(k)));
         creatureGenerationProbability = orig.getCreatureProbability();
     }
@@ -30,7 +27,7 @@ public class MobSpawnSettingsBuilder extends MobSpawnSettings.Builder {
         return this.typesView;
     }
 
-    public List<MobSpawnSettings.SpawnerData> getSpawner(MobCategory type) {
+    public WeightedList.Builder<MobSpawnSettings.SpawnerData> getSpawner(MobCategory type) {
         return this.spawners.get(type);
     }
 
@@ -38,8 +35,7 @@ public class MobSpawnSettingsBuilder extends MobSpawnSettings.Builder {
         return this.costView;
     }
 
-    @Nullable
-    public MobSpawnSettings.MobSpawnCost getCost(EntityType<?> type) {
+    public MobSpawnSettings.@Nullable MobSpawnCost getCost(EntityType<?> type) {
         return this.mobSpawnCosts.get(type);
     }
 

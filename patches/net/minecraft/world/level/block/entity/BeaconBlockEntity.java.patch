@@ -1,53 +1,13 @@
 --- a/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
-@@ -18,7 +_,6 @@
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.chat.Component;
- import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
--import net.minecraft.resources.ResourceKey;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
-@@ -39,13 +_,13 @@
- import net.minecraft.world.inventory.ContainerData;
- import net.minecraft.world.inventory.ContainerLevelAccess;
- import net.minecraft.world.level.Level;
--import net.minecraft.world.level.block.BeaconBeamBlock;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.levelgen.Heightmap;
- import net.minecraft.world.phys.AABB;
-+import org.teneted.neotenet.injection.world.level.block.entity.InjectionBeaconBlockEntity;
+@@ -138,8 +_,8 @@
  
--public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable {
-+public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable, InjectionBeaconBlockEntity {
-     private static final int MAX_LEVELS = 4;
-     public static final List<List<Holder<MobEffect>>> BEACON_EFFECTS = List.of(
-         List.of(MobEffects.MOVEMENT_SPEED, MobEffects.DIG_SPEED),
-@@ -137,8 +_,8 @@
- 
-         for (int i1 = 0; i1 < 10 && blockpos.getY() <= l; i1++) {
-             BlockState blockstate = p_155108_.getBlockState(blockpos);
--            if (blockstate.getBlock() instanceof BeaconBeamBlock beaconbeamblock) {
--                int j1 = beaconbeamblock.getColor().getTextureDiffuseColor();
-+            Integer j1 = blockstate.getBeaconColorMultiplier(p_155108_, blockpos, p_155109_);
-+            if (j1 != null) {
-                 if (p_155111_.checkingBeamSections.size() <= 1) {
-                     beaconblockentity$beaconbeamsection = new BeaconBlockEntity.BeaconBeamSection(j1);
-                     p_155111_.checkingBeamSections.add(beaconblockentity$beaconbeamsection);
-@@ -290,6 +_,15 @@
-         } else {
-             return null;
-         }
-+    }
-+
-+    public static List getHumansInRange(Level world, BlockPos blockposition, int i) {
-+        double d0 = (double) (i * 10 + 10);
-+
-+        AABB axisalignedbb = (new AABB(blockposition)).inflate(d0).expandTowards(0.0D, (double) world.getHeight(), 0.0D);
-+        List<Player> list = world.getEntitiesOfClass(Player.class, axisalignedbb);
-+
-+        return list;
-     }
- 
-     @Override
+         for (int i = 0; i < 10 && checkPos.getY() <= lastSetBlock; i++) {
+             BlockState state = level.getBlockState(checkPos);
+-            if (state.getBlock() instanceof BeaconBeamBlock beaconBeamBlock) {
+-                int color = beaconBeamBlock.getColor().getTextureDiffuseColor();
++            Integer color = state.getBeaconColorMultiplier(level, checkPos, pos);
++            if (color != null) {
+                 if (entity.checkingBeamSections.size() <= 1) {
+                     lastBeamSection = new BeaconBeamOwner.Section(color);
+                     entity.checkingBeamSections.add(lastBeamSection);

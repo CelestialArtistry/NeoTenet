@@ -13,8 +13,13 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
+import org.jspecify.annotations.Nullable;
 
+/**
+ * @deprecated Use {@link WorldlyContainerWrapper} instead.
+ */
+@Deprecated(since = "1.21.9", forRemoval = true)
 public class SidedInvWrapper implements IItemHandlerModifiable {
     protected final WorldlyContainer inv;
     @Nullable

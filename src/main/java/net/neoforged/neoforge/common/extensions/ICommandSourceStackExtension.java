@@ -5,12 +5,14 @@
 
 package net.neoforged.neoforge.common.extensions;
 
+import com.mojang.authlib.GameProfile;
+import java.util.Optional;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Scoreboard;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Additional methods for {@link CommandSourceStack} so that commands and arguments can access various things without directly referencing using server specific classes
@@ -30,15 +32,9 @@ public interface ICommandSourceStackExtension {
     /**
      * @return the advancement from the id
      */
-    default AdvancementHolder getAdvancement(ResourceLocation id) {
+    @Nullable
+    default AdvancementHolder getAdvancement(Identifier id) {
         return self().getServer().getAdvancements().get(id);
-    }
-
-    /**
-     * @return the recipe manager
-     */
-    default RecipeManager getRecipeManager() {
-        return self().getServer().getRecipeManager();
     }
 
     /**
@@ -46,5 +42,10 @@ public interface ICommandSourceStackExtension {
      */
     default Level getUnsidedLevel() {
         return self().getLevel();
+    }
+
+    /// {@return the game profile of the command source, if available}
+    default Optional<GameProfile> getSourceProfile() {
+        return self().source.getGameProfile();
     }
 }

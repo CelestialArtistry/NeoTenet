@@ -10,14 +10,19 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
+/**
+ * @deprecated Use {@link ResourceHandlerSlot} instead.
+ */
+@Deprecated(since = "1.21.9", forRemoval = true)
 public class SlotItemHandler extends Slot {
-    private static Container emptyInventory = new SimpleContainer(0);
+    private static final Container EMPTY_INVENTORY = new SimpleContainer(0);
     private final IItemHandler itemHandler;
     protected final int index;
 
     public SlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-        super(emptyInventory, index, xPosition, yPosition);
+        super(EMPTY_INVENTORY, index, xPosition, yPosition);
         this.itemHandler = itemHandler;
         this.index = index;
     }
@@ -74,10 +79,9 @@ public class SlotItemHandler extends Slot {
     public IItemHandler getItemHandler() {
         return itemHandler;
     }
-/* TODO Slot patches
-@Override
-public boolean isSameInventory(Slot other)
-{
-return other instanceof SlotItemHandler && ((SlotItemHandler) other).getItemHandler() == this.itemHandler;
-}*/
+
+    @Override
+    public boolean isSameInventory(Slot other) {
+        return other instanceof SlotItemHandler sih && sih.itemHandler == this.itemHandler;
+    }
 }

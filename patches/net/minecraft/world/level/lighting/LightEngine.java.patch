@@ -1,11 +1,23 @@
 --- a/net/minecraft/world/level/lighting/LightEngine.java
 +++ b/net/minecraft/world/level/lighting/LightEngine.java
-@@ -44,7 +_,7 @@
-         return p_285372_ == p_285110_
+@@ -38,11 +_,19 @@
+         this.clearChunkCache();
+     }
+ 
++    /**
++     * @deprecated Neo: use overload with level context instead
++     */
++    @Deprecated
+     public static boolean hasDifferentLightProperties(BlockState oldState, BlockState newState) {
++        return hasDifferentLightProperties(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO, oldState, newState);
++    }
++
++    public static boolean hasDifferentLightProperties(net.minecraft.world.level.BlockGetter level, BlockPos pos, BlockState oldState, BlockState newState) {
+         return newState == oldState
              ? false
-             : p_285372_.getLightBlock(p_285159_, p_284985_) != p_285110_.getLightBlock(p_285159_, p_284985_)
--                || p_285372_.getLightEmission() != p_285110_.getLightEmission()
-+                || p_285372_.getLightEmission(p_285159_, p_284985_) != p_285110_.getLightEmission(p_285159_, p_284985_)
-                 || p_285372_.useShapeForLightOcclusion()
-                 || p_285110_.useShapeForLightOcclusion();
+             : newState.getLightDampening() != oldState.getLightDampening()
+-                || newState.getLightEmission() != oldState.getLightEmission()
++                || newState.getLightEmission(level, pos) != oldState.getLightEmission(level, pos)
+                 || newState.useShapeForLightOcclusion()
+                 || oldState.useShapeForLightOcclusion();
      }

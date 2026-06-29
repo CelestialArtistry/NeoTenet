@@ -9,7 +9,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.JsonOps;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -23,52 +22,44 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.conditions.ConditionalOps;
-import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.registries.datamaps.AdvancedDataMapType;
 import net.neoforged.neoforge.registries.datamaps.DataMapFile;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
 import net.neoforged.neoforge.registries.datamaps.DataMapValueMerger;
 import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
+import net.neoforged.neoforge.resource.ContextAwareReloadListener;
 import org.slf4j.Logger;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class DataMapLoader implements PreparableReloadListener {
+public class DataMapLoader extends ContextAwareReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String PATH = "data_maps";
     private Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> results;
-    private final ICondition.IContext conditionContext;
-    private final RegistryAccess registryAccess;
-
-    public DataMapLoader(ICondition.IContext conditionContext, RegistryAccess registryAccess) {
-        this.conditionContext = conditionContext;
-        this.registryAccess = registryAccess;
-    }
 
     @Override
-    public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
-        return this.load(resourceManager, backgroundExecutor, preparationsProfiler)
+    public CompletableFuture<Void> reload(SharedState sharedState, Executor backgroundExecutor, PreparationBarrier preparationBarrier, Executor gameExecutor) {
+        return this.load(sharedState.resourceManager(), backgroundExecutor, Profiler.get())
                 .thenCompose(preparationBarrier::wait)
                 .thenAcceptAsync(values -> this.results = values, gameExecutor);
     }
 
-    public void apply() {
-        results.forEach((key, result) -> this.apply((BaseMappedRegistry) registryAccess.registryOrThrow(key), result));
+    public void apply(RegistryAccess registryAccess) {
+        results.forEach((key, result) -> this.apply(registryAccess, (BaseMappedRegistry) registryAccess.lookupOrThrow(key), result));
 
         // Clear the intermediary maps and objects
         results = null;
     }
 
-    private <T> void apply(BaseMappedRegistry<T> registry, LoadResult<T> result) {
+    private <T> void apply(RegistryAccess registryAccess, BaseMappedRegistry<T> registry, LoadResult<T> result) {
         registry.dataMaps.clear();
         result.results().forEach((key, entries) -> registry.dataMaps.put(
                 key, this.buildDataMap(registry, key, (List) entries)));
@@ -129,36 +120,36 @@ public class DataMapLoader implements PreparableReloadListener {
         if (value.left().isPresent()) {
             registry.getTagOrEmpty(value.left().orElseThrow()).forEach(consumer);
         } else {
-            var object = registry.getHolder(value.right().orElseThrow());
+            var object = registry.get(value.right().orElseThrow());
             if (object.isPresent()) {
                 consumer.accept(object.get());
             } else if (required) {
-                LOGGER.error("Object with ID {} specified in data map for registry {} doesn't exist", value.right().orElseThrow().location(), registry.key().location());
+                LOGGER.error("Object with ID {} specified in data map for registry {} doesn't exist", value.right().orElseThrow().identifier(), registry.key().identifier());
             }
         }
     }
 
     private CompletableFuture<Map<ResourceKey<? extends Registry<?>>, LoadResult<?>>> load(ResourceManager manager, Executor executor, ProfilerFiller profiler) {
-        return CompletableFuture.supplyAsync(() -> load(manager, profiler, registryAccess, conditionContext), executor);
+        return CompletableFuture.supplyAsync(() -> load(manager, profiler), executor);
     }
 
-    private static Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> load(ResourceManager manager, ProfilerFiller profiler, RegistryAccess access, ICondition.IContext context) {
-        final RegistryOps<JsonElement> ops = new ConditionalOps<>(RegistryOps.create(JsonOps.INSTANCE, access), context);
+    private Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> load(ResourceManager manager, ProfilerFiller profiler) {
+        final RegistryOps<JsonElement> ops = makeConditionalOps();
 
         final Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> values = new HashMap<>();
-        access.registries().forEach(registryEntry -> {
-            final var registryKey = registryEntry.key();
-            profiler.push("registry_data_maps/" + registryKey.location() + "/locating");
-            final var fileToId = FileToIdConverter.json(PATH + "/" + getFolderLocation(registryKey.location()));
-            for (Map.Entry<ResourceLocation, List<Resource>> entry : fileToId.listMatchingResourceStacks(manager).entrySet()) {
-                ResourceLocation key = entry.getKey();
-                final ResourceLocation attachmentId = fileToId.fileToId(key);
+        getRegistryLookup().listRegistries().forEach(registryLookup -> {
+            final var registryKey = registryLookup.key();
+            profiler.push("registry_data_maps/" + registryKey.identifier() + "/locating");
+            final var fileToId = FileToIdConverter.json(PATH + "/" + getFolderLocation(registryKey.identifier()));
+            for (Map.Entry<Identifier, List<Resource>> entry : fileToId.listMatchingResourceStacks(manager).entrySet()) {
+                Identifier key = entry.getKey();
+                final Identifier attachmentId = fileToId.fileToId(key);
                 final var attachment = RegistryManager.getDataMap((ResourceKey) registryKey, attachmentId);
                 if (attachment == null) {
-                    LOGGER.warn("Found data map file for non-existent data map type '{}' on registry '{}'.", attachmentId, registryKey.location());
+                    LOGGER.warn("Found data map file for non-existent data map type '{}' on registry '{}'.", attachmentId, registryKey.identifier());
                     continue;
                 }
-                profiler.popPush("registry_data_maps/" + registryKey.location() + "/" + attachmentId + "/loading");
+                profiler.popPush("registry_data_maps/" + registryKey.identifier() + "/" + attachmentId + "/loading");
                 values.computeIfAbsent(registryKey, k -> new LoadResult<>(new HashMap<>())).results.put(attachment, readData(
                         ops, attachment, (ResourceKey) registryKey, entry.getValue()));
             }
@@ -168,8 +159,8 @@ public class DataMapLoader implements PreparableReloadListener {
         return values;
     }
 
-    public static String getFolderLocation(ResourceLocation registryId) {
-        return (registryId.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) ? "" : registryId.getNamespace() + "/") + registryId.getPath();
+    public static String getFolderLocation(Identifier registryId) {
+        return (registryId.getNamespace().equals(Identifier.DEFAULT_NAMESPACE) ? "" : registryId.getNamespace() + "/") + registryId.getPath();
     }
 
     private static <A, T> List<DataMapFile<A, T>> readData(RegistryOps<JsonElement> ops, DataMapType<T, A> attachmentType, ResourceKey<Registry<T>> registryKey, List<Resource> resources) {

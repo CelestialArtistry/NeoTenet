@@ -1,13 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "#": {
-      "tag": "c:nuggets/gold"
-    },
-    "X": {
-      "item": "minecraft:carrot"
-    }
+    "#": "#c:nuggets/gold",
+    "X": "minecraft:carrot"
   },
   "pattern": [
     "###",
@@ -15,7 +10,6 @@
     "###"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:golden_carrot"
   }
 }

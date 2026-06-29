@@ -1,47 +1,6 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -74,8 +_,9 @@
- import net.minecraft.world.level.validation.ForbiddenSymlinkInfo;
- import net.minecraft.world.level.validation.PathAllowList;
- import org.slf4j.Logger;
-+import org.teneted.neotenet.injection.world.level.storage.InjectionLevelStorageSource;
- 
--public class LevelStorageSource {
-+public class LevelStorageSource implements InjectionLevelStorageSource {
-     static final Logger LOGGER = LogUtils.getLogger();
-     static final DateTimeFormatter FORMATTER = FileNameDateFormatter.create();
-     private static final String TAG_DATA = "Data";
-@@ -360,6 +_,20 @@
-         return this.worldDirValidator;
-     }
- 
-+    // CraftBukkit start
-+    public static Path getStorageFolder(Path path, ResourceKey<LevelStem> dimensionType) {
-+        if (dimensionType == LevelStem.OVERWORLD) {
-+            return path;
-+        } else if (dimensionType == LevelStem.NETHER) {
-+            return path.resolve("DIM-1");
-+        } else if (dimensionType == LevelStem.END) {
-+            return path.resolve("DIM1");
-+        } else {
-+            return path.resolve("dimensions").resolve(dimensionType.location().getNamespace()).resolve(dimensionType.location().getPath());
-+        }
-+    }
-+    // CraftBukkit end
-+
-     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> levels) implements Iterable<LevelStorageSource.LevelDirectory> {
-         public boolean isEmpty() {
-             return this.levels.isEmpty();
-@@ -410,6 +_,8 @@
-         public final LevelStorageSource.LevelDirectory levelDirectory;
-         private final String levelId;
-         private final Map<LevelResource, Path> resources = Maps.newHashMap();
-+        // CraftBukkit start
-+        public ResourceKey<LevelStem> dimensionType;
- 
-         LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
-             this.levelId = p_289967_;
-@@ -463,6 +_,19 @@
+@@ -525,6 +_,19 @@
              }
          }
  
@@ -61,15 +20,28 @@
          public PlayerDataStorage createPlayerStorage() {
              this.checkLock();
              return new PlayerDataStorage(this, LevelStorageSource.this.fixerUpper);
-@@ -496,6 +_,7 @@
-             CompoundTag compoundtag = p_78292_.createTag(p_78291_, p_78293_);
-             CompoundTag compoundtag1 = new CompoundTag();
-             compoundtag1.put("Data", compoundtag);
-+            net.neoforged.neoforge.common.CommonHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
-             this.saveLevelData(compoundtag1);
+@@ -554,10 +_,12 @@
+             Dynamic<?> unfixedDataTag;
+             try {
+                 unfixedDataTag = this.getUnfixedDataTag(false);
++                this.readAdditionalLevelSaveData(false);
+             } catch (IOException | NbtException | ReportedNbtException e) {
+                 LevelStorageSource.LOGGER.warn("Failed to load world data from {}", this.levelDirectory.dataFile(), e);
+                 LevelStorageSource.LOGGER.info("Attempting to use fallback {}", this.levelDirectory.oldDataFile());
+                 unfixedDataTag = this.getUnfixedDataTag(true);
++                this.readAdditionalLevelSaveData(true);
+                 this.restoreLevelDataFromOld();
+             }
+ 
+@@ -583,6 +_,7 @@
+             CompoundTag dataTag = levelData.createTag(singleplayerUUID);
+             CompoundTag root = new CompoundTag();
+             root.put("Data", dataTag);
++            net.neoforged.neoforge.common.CommonHooks.writeAdditionalLevelSaveData(levelData, root);
+             this.saveLevelData(root);
          }
  
-@@ -515,6 +_,10 @@
+@@ -609,6 +_,10 @@
  
          public Optional<Path> getIconFile() {
              return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());

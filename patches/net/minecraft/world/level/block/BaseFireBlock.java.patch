@@ -1,71 +1,19 @@
 --- a/net/minecraft/world/level/block/BaseFireBlock.java
 +++ b/net/minecraft/world/level/block/BaseFireBlock.java
-@@ -8,9 +_,11 @@
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.sounds.SoundSource;
- import net.minecraft.util.RandomSource;
-+import net.minecraft.world.InteractionResult;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.context.BlockPlaceContext;
-+import net.minecraft.world.item.context.UseOnContext;
- import net.minecraft.world.level.BlockGetter;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.state.BlockBehaviour;
-@@ -18,8 +_,9 @@
- import net.minecraft.world.level.portal.PortalShape;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.teneted.neotenet.injection.world.level.block.InjectionBaseFireBlock;
- 
--public abstract class BaseFireBlock extends Block {
-+public abstract class BaseFireBlock extends Block implements InjectionBaseFireBlock {
-     private static final int SECONDS_ON_FIRE = 8;
-     private final float fireDamage;
-     protected static final float AABB_OFFSET = 1.0F;
-@@ -139,10 +_,11 @@
-     }
- 
-     @Override
--    protected void onPlace(BlockState p_49279_, Level p_49280_, BlockPos p_49281_, BlockState p_49282_, boolean p_49283_) {
-+    public void onPlace(BlockState p_49279_, Level p_49280_, BlockPos p_49281_, BlockState p_49282_, boolean p_49283_) {
-         if (!p_49282_.is(p_49279_.getBlock())) {
-             if (inPortalDimension(p_49280_)) {
-                 Optional<PortalShape> optional = PortalShape.findEmptyPortalShape(p_49280_, p_49281_, Direction.Axis.X);
-+                optional = net.neoforged.neoforge.event.EventHooks.onTrySpawnPortal(p_49280_, p_49281_, optional);
-                 if (optional.isPresent()) {
-                     optional.get().createPortalBlocks();
+@@ -154,6 +_,7 @@
+         if (!oldState.is(state.getBlock())) {
+             if (inPortalDimension(level)) {
+                 Optional<PortalShape> optionalShape = PortalShape.findEmptyPortalShape(level, pos, Direction.Axis.X);
++                optionalShape = net.neoforged.neoforge.event.EventHooks.onTrySpawnPortal(level, pos, optionalShape);
+                 if (optionalShape.isPresent()) {
+                     optionalShape.get().createPortalBlocks(level);
                      return;
-@@ -155,6 +_,23 @@
-         }
-     }
+@@ -197,7 +_,7 @@
+         boolean hasObsidian = false;
  
-+    public void onPlace(BlockState p_49279_, Level p_49280_, BlockPos p_49281_, BlockState p_49282_, boolean p_49283_, UseOnContext context) { // CraftBukkit - context
-+        if (!p_49282_.is(p_49279_.getBlock())) {
-+            if (inPortalDimension(p_49280_)) {
-+                Optional<PortalShape> optional = PortalShape.findEmptyPortalShape(p_49280_, p_49281_, Direction.Axis.X);
-+                optional = net.neoforged.neoforge.event.EventHooks.onTrySpawnPortal(p_49280_, p_49281_, optional);
-+                if (optional.isPresent()) {
-+                    optional.get().createPortalBlocks((context == null) ? null : context.getPlayer()); // CraftBukkit - player
-+                    return;
-+                }
-+            }
-+
-+            if (!p_49279_.canSurvive(p_49280_, p_49281_)) {
-+                fireExtinguished(p_49280_, p_49281_); // CraftBukkit - fuel block broke
-+            }
-+        }
-+    }
-+
-     private static boolean inPortalDimension(Level p_49249_) {
-         return p_49249_.dimension() == Level.OVERWORLD || p_49249_.dimension() == Level.NETHER;
-     }
-@@ -185,7 +_,7 @@
-             boolean flag = false;
- 
-             for (Direction direction : Direction.values()) {
--                if (p_49270_.getBlockState(blockpos$mutableblockpos.set(p_49271_).move(direction)).is(Blocks.OBSIDIAN)) {
-+                if (p_49270_.getBlockState(blockpos$mutableblockpos.set(p_49271_).move(direction)).isPortalFrame(p_49270_, blockpos$mutableblockpos)) {
-                     flag = true;
-                     break;
-                 }
+         for (Direction face : Direction.values()) {
+-            if (level.getBlockState(testPos.set(pos).move(face)).is(Blocks.OBSIDIAN)) {
++            if (level.getBlockState(testPos.set(pos).move(face)).isPortalFrame(level, testPos)) {
+                 hasObsidian = true;
+                 break;
+             }

@@ -1,11 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "iron_ingot",
   "key": {
-    "#": {
-      "tag": "c:nuggets/iron"
-    }
+    "#": "#c:nuggets/iron"
   },
   "pattern": [
     "###",
@@ -13,7 +10,6 @@
     "###"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:iron_ingot"
   }
 }

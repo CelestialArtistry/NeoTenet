@@ -1,10 +1,30 @@
 --- a/net/minecraft/core/Holder.java
 +++ b/net/minecraft/core/Holder.java
-@@ -220,6 +_,14 @@
-             }
+@@ -15,7 +_,8 @@
+ 
+ import net.neoforged.neoforge.common.extensions.IHolderExtension;
+ 
+-public sealed interface Holder<T> extends IHolderExtension<T> permits Holder.Direct, Holder.Reference {
++// TODO 26.2 - decide how to deal with Holder being seleaed
++public /* sealed */ interface Holder<T> extends IHolderExtension<T> /* permits Holder.Direct, Holder.Reference */ {
+     T value();
+ 
+     boolean isBound();
+@@ -129,7 +_,7 @@
+         DIRECT;
+     }
+ 
+-    non-sealed class Reference<T> implements Holder<T> {
++    /* non-sealed */ class Reference<T> implements Holder<T> {
+         private final HolderOwner<T> owner;
+         private @Nullable Set<TagKey<T>> tags;
+         private @Nullable DataComponentMap components;
+@@ -249,6 +_,15 @@
+             this.value = value;
          }
  
-+        @org.jetbrains.annotations.Nullable
++
++        @org.jspecify.annotations.Nullable
 +        public <A> A getData(net.neoforged.neoforge.registries.datamaps.DataMapType<T, A> type) {
 +            if (owner instanceof HolderLookup.RegistryLookup<T> lookup) {
 +                return lookup.getData(type, key());
@@ -12,10 +32,10 @@
 +            return null;
 +        }
 +
-         void bindTags(Collection<TagKey<T>> p_205770_) {
-             this.tags = Set.copyOf(p_205770_);
+         void bindTags(Collection<TagKey<T>> tags) {
+             this.tags = Set.copyOf(tags);
          }
-@@ -232,6 +_,33 @@
+@@ -270,6 +_,32 @@
          @Override
          public String toString() {
              return "Reference{" + this.key + "=" + this.value + "}";
@@ -23,7 +43,7 @@
 +
 +        // Neo: Add key getter that doesn't allocate
 +        @Override
-+        @org.jetbrains.annotations.Nullable
++        @org.jspecify.annotations.Nullable
 +        public ResourceKey<T> getKey() {
 +            return this.key;
 +        }
@@ -43,9 +63,8 @@
 +
 +        // Neo: Helper method to get the registry lookup from a holder
 +        @Override
-+        @org.jetbrains.annotations.Nullable
-+        public HolderLookup.RegistryLookup<T> unwrapLookup() {
++        public HolderLookup.@Nullable RegistryLookup<T> unwrapLookup() {
 +            return this.owner instanceof HolderLookup.RegistryLookup<T> rl ? rl : null;
          }
  
-         protected static enum Type {
+         protected enum Type {

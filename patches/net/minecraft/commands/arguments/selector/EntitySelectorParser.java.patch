@@ -1,34 +1,6 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
-@@ -12,6 +_,7 @@
- import java.util.List;
- import java.util.UUID;
- import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.atomic.AtomicBoolean;
- import java.util.function.BiConsumer;
- import java.util.function.BiFunction;
- import java.util.function.Consumer;
-@@ -30,8 +_,9 @@
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
-+import org.teneted.neotenet.injection.commands.arguments.selector.InjectionEntitySelectorParser;
- 
--public class EntitySelectorParser {
-+public class EntitySelectorParser implements InjectionEntitySelectorParser {
-     public static final char SYNTAX_SELECTOR_START = '@';
-     private static final char SYNTAX_OPTIONS_START = '[';
-     private static final char SYNTAX_OPTIONS_END = ']';
-@@ -115,6 +_,8 @@
-     private boolean hasScores;
-     private boolean hasAdvancements;
-     private boolean usesSelectors;
-+    public AtomicBoolean parseSelector$overridePermissions = new AtomicBoolean(false);
-+    public AtomicBoolean parse$overridePermissions = new AtomicBoolean(false);
- 
-     public EntitySelectorParser(StringReader p_121220_, boolean p_121221_) {
-         this.reader = p_121220_;
-@@ -481,6 +_,9 @@
+@@ -465,6 +_,9 @@
              }
  
              this.reader.skip();
@@ -38,11 +10,11 @@
              this.parseSelector();
          } else {
              this.parseNameOrUUID();
-@@ -497,6 +_,7 @@
-         p_121248_.suggest("@s", Component.translatable("argument.entity.selector.self"));
-         p_121248_.suggest("@e", Component.translatable("argument.entity.selector.allEntities"));
-         p_121248_.suggest("@n", Component.translatable("argument.entity.selector.nearestEntity"));
-+        net.neoforged.neoforge.common.command.EntitySelectorManager.fillSelectorSuggestions(p_121248_);
+@@ -481,6 +_,7 @@
+         builder.suggest("@s", Component.translatable("argument.entity.selector.self"));
+         builder.suggest("@e", Component.translatable("argument.entity.selector.allEntities"));
+         builder.suggest("@n", Component.translatable("argument.entity.selector.nearestEntity"));
++        net.neoforged.neoforge.common.command.EntitySelectorManager.fillSelectorSuggestions(builder);
      }
  
-     private CompletableFuture<Suggestions> suggestNameOrSelector(SuggestionsBuilder p_121287_, Consumer<SuggestionsBuilder> p_121288_) {
+     private CompletableFuture<Suggestions> suggestNameOrSelector(SuggestionsBuilder builder, Consumer<SuggestionsBuilder> names) {

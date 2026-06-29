@@ -1,16 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "#": {
-      "tag": "minecraft:soul_fire_base_blocks"
-    },
-    "L": {
-      "tag": "minecraft:logs"
-    },
-    "S": {
-      "tag": "c:rods/wooden"
-    }
+    "#": "#minecraft:soul_fire_base_blocks",
+    "L": "#minecraft:logs",
+    "S": "#c:rods/wooden"
   },
   "pattern": [
     " S ",
@@ -18,7 +11,6 @@
     "LLL"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:soul_campfire"
   }
 }

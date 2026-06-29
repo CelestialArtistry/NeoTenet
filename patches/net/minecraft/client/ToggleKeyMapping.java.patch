@@ -1,18 +1,21 @@
 --- a/net/minecraft/client/ToggleKeyMapping.java
 +++ b/net/minecraft/client/ToggleKeyMapping.java
-@@ -17,13 +_,14 @@
+@@ -29,12 +_,17 @@
      @Override
-     public void setDown(boolean p_92534_) {
+     public void setDown(boolean down) {
          if (this.needsToggle.getAsBoolean()) {
--            if (p_92534_) {
-+            if (p_92534_ && isConflictContextAndModifierActive()) {
+-            if (down) {
++            if (down && isConflictContextAndModifierActive()) {
                  super.setDown(!this.isDown());
              }
          } else {
-             super.setDown(p_92534_);
+             super.setDown(down);
          }
++    }
++
++    @Override
++    public boolean isDown() {
++        return this.isDown && (isConflictContextAndModifierActive() || needsToggle.getAsBoolean());
      }
-+    @Override public boolean isDown() { return this.isDown && (isConflictContextAndModifierActive() || needsToggle.getAsBoolean()); }
  
-     protected void reset() {
-         super.setDown(false);
+     @Override
