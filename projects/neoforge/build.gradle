@@ -20,11 +20,6 @@ evaluationDependsOn(":neoforge-coremods")
 
 gradleutils.setupSigning(project: project, signAllPublications: true)
 
-changelog {
-    from '26.1.0'
-    disableAutomaticPublicationRegistration()
-}
-
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 25
     options.encoding = 'UTF-8'
@@ -560,11 +555,6 @@ artifacts {
     }
     installerJar(installerJar) {
         setClassifier("installer")
-    }
-    changelog(createChangelog.outputFile) {
-        builtBy(createChangelog)
-        setClassifier("changelog")
-        setExtension("txt")
     }
 }
 
