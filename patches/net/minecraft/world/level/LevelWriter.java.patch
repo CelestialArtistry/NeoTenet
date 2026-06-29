@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/LevelWriter.java
++++ b/net/minecraft/world/level/LevelWriter.java
+@@ -5,8 +_,9 @@
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.state.BlockState;
+ import org.jspecify.annotations.Nullable;
++import org.teneted.neotenet.injection.world.level.LevelWriterInjection;
+ 
+-public interface LevelWriter {
++public interface LevelWriter extends LevelWriterInjection {
+     boolean setBlock(BlockPos pos, BlockState blockState, @Block.UpdateFlags int updateFlags, int updateLimit);
+ 
+     default boolean setBlock(BlockPos pos, BlockState blockState, @Block.UpdateFlags int updateFlags) {

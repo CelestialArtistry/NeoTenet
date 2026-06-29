@@ -1,3 +1,8 @@
 # Modified Class list,check it when migrate
-net/minecraft/commands/Commands # add inner class
-net/minecraft/world/level/block/ChestBlock # add inner class
+net.minecraft.commands.Commands # add inner class
+net.minecraft.world.level.block.ChestBlock # add inner class
+net.minecraft.server.MinecraftServer # add fields
+net.minecraft.world.SimpleContainer # add fields and constructors
+net.minecraft.world.CompoundContainer # add fields
+net.minecraft.world.level.Level # add fields
+net.minecraft.world.level.Level.ExplosionInteraction # add enums
