@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "org.teneted.neotenet.mixin.bukkit",
+  "mixins": [
+    "CraftServerMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

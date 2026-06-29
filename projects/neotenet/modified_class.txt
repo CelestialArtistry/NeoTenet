@@ -6,3 +6,8 @@ net.minecraft.world.SimpleContainer # add fields and constructors
 net.minecraft.world.CompoundContainer # add fields
 net.minecraft.world.level.Level # add fields
 net.minecraft.world.level.Level.ExplosionInteraction # add enums
+net.minecraft.network.Connection # add fields
+net.minecraft.network.chat.TextColor # add fields and constructors
+net.minecraft.network.protocol.common.custom.DiscardedPayload # add fields and constructors
+net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket # add constructors
+net.minecraft.server.level.ChunkMap # add inner class and fields
