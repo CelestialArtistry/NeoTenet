@@ -1,0 +1,13 @@
+--- a/net/minecraft/server/bossevents/CustomBossEvent.java
++++ b/net/minecraft/server/bossevents/CustomBossEvent.java
+@@ -16,8 +_,9 @@
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.BossEvent;
++import org.teneted.neotenet.injection.server.bossevents.CustomBossEventInjection;
+ 
+-public class CustomBossEvent extends ServerBossEvent {
++public class CustomBossEvent extends ServerBossEvent implements CustomBossEventInjection {
+     private static final int DEFAULT_MAX = 100;
+     private final Identifier customId;
+     private final Set<UUID> players = Sets.newHashSet();

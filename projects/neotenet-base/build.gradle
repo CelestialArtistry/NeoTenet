@@ -3,22 +3,6 @@ plugins {
     id 'maven-publish'
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs rootProject.file('src/main/java'), rootProject.file('projects/neotenet/src/main/java')
-        }
-        resources {
-            srcDirs rootProject.file('src/main/resources'), rootProject.file('src/generated/resources'), rootProject.file('projects/neotenet/src/main/resources')
-        }
-    }
-    client {
-        java {
-            srcDirs rootProject.file('src/client/java')
-        }
-    }
-}
-
 dependencies {
     for (var asmModule : ["org.ow2.asm:asm", "org.ow2.asm:asm-commons", "org.ow2.asm:asm-tree", "org.ow2.asm:asm-util", "org.ow2.asm:asm-analysis"]) {
         compileOnly(asmModule) {
@@ -98,12 +82,6 @@ dependencies {
     compileOnly 'org.apache.maven.resolver:maven-resolver-util:1.9.18'
     // LibraryLoader end
 
-    // Vanilla Lib Start
-    compileOnly 'com.mojang:authlib:9.0.75'
-    compileOnly 'com.mojang:datafixerupper:10.0.21'
-    compileOnly 'com.mojang:jtracy:1.0.37'
-    compileOnly 'it.unimi.dsi:fastutil:8.5.18'
-    // Vanilla Lib end
     compileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
 }
 

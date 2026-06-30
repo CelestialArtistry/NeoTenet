@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -71,8 +_,9 @@
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
++import org.teneted.neotenet.injection.server.dedicated.DedicatedServerInjection;
+ 
+-public class DedicatedServer extends MinecraftServer implements ServerInterface {
++public class DedicatedServer extends MinecraftServer implements ServerInterface, DedicatedServerInjection {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final int CONVERSION_RETRY_DELAY_MS = 5000;
+     private static final int CONVERSION_RETRIES = 2;
 @@ -80,14 +_,15 @@
      private @Nullable QueryThreadGs4 queryThreadGs4;
      private final RconConsoleSource rconConsoleSource;

@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
+@@ -46,6 +_,7 @@
+ import net.minecraft.world.phys.Vec3;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
++import org.teneted.neotenet.injection.server.level.ServerEntity_SynchronizerInjection;
+ 
+ public class ServerEntity {
+     private static final Logger LOGGER = LogUtils.getLogger();
 @@ -98,9 +_,9 @@
  
          if (this.entity instanceof ItemFrame frame && this.tickCount % 10 == 0) {
@@ -49,3 +57,12 @@
      }
  
      public Vec3 getPositionBase() {
+@@ -354,7 +_,7 @@
+         }
+     }
+ 
+-    public interface Synchronizer {
++    public interface Synchronizer extends ServerEntity_SynchronizerInjection {
+         void sendToTrackingPlayers(Packet<? super ClientGamePacketListener> packet);
+ 
+         void sendToTrackingPlayersAndSelf(Packet<? super ClientGamePacketListener> packet);

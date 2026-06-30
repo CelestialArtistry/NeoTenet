@@ -1,0 +1,13 @@
+--- a/net/minecraft/advancements/AdvancementHolder.java
++++ b/net/minecraft/advancements/AdvancementHolder.java
+@@ -5,8 +_,9 @@
+ import net.minecraft.network.codec.ByteBufCodecs;
+ import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.resources.Identifier;
++import org.teneted.neotenet.injection.advancements.AdvancementHolderInjection;
+ 
+-public record AdvancementHolder(Identifier id, Advancement value) {
++public record AdvancementHolder(Identifier id, Advancement value) implements AdvancementHolderInjection {
+     public static final StreamCodec<RegistryFriendlyByteBuf, AdvancementHolder> STREAM_CODEC = StreamCodec.composite(
+         Identifier.STREAM_CODEC, AdvancementHolder::id, Advancement.STREAM_CODEC, AdvancementHolder::value, AdvancementHolder::new
+     );

@@ -159,6 +159,10 @@ tasks.register('prepareNeoForgeBase', Copy) {
 
     from('projects/neoforge/src/main/java')
     into('projects/neotenet-base/src/main/java')
+    from('projects/neotenet/src/main/java')
+    into('projects/neotenet-base/src/main/java')
+    from('src/main/java')
+    into('projects/neotenet-base/src/main/java')
 
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

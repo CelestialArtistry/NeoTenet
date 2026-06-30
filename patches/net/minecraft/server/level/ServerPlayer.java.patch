@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -204,8 +_,9 @@
+ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
++import org.teneted.neotenet.injection.server.level.ServerPlayerInjection;
+ 
+-public class ServerPlayer extends Player {
++public class ServerPlayer extends Player implements ServerPlayerInjection {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
+     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
 @@ -229,7 +_,7 @@
      private static final boolean DEFAULT_SEEN_CREDITS = false;
      private static final boolean DEFAULT_SPAWN_EXTRA_PARTICLES_ON_FALL = false;

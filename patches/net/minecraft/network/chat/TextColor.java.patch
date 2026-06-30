@@ -1,5 +1,16 @@
 --- a/net/minecraft/network/chat/TextColor.java
 +++ b/net/minecraft/network/chat/TextColor.java
+@@ -9,8 +_,9 @@
+ import java.util.Objects;
+ import net.minecraft.ChatFormatting;
+ import org.jspecify.annotations.Nullable;
++import org.teneted.neotenet.injection.network.chat.TextColorInjection;
+ 
+-public final class TextColor {
++public final class TextColor implements TextColorInjection {
+     private static final String CUSTOM_COLOR_PREFIX = "#";
+     public static final Codec<TextColor> CODEC = Codec.STRING.comapFlatMap(TextColor::parseColor, TextColor::serialize);
+     private static final Map<String, TextColor> NAMED_COLORS = new HashMap<>();
 @@ -31,7 +_,7 @@
      public static final TextColor YELLOW = named("yellow", 16777045);
      public static final TextColor WHITE = named("white", 16777215);

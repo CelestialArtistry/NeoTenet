@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
+@@ -181,8 +_,9 @@
+ import net.minecraft.world.waypoints.WaypointTransmitter;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
++import org.teneted.neotenet.injection.server.level.ServerLevelInjection;
+ 
+-public class ServerLevel extends Level implements WorldGenLevel, ServerEntityGetter {
++public class ServerLevel extends Level implements WorldGenLevel, ServerEntityGetter, ServerLevelInjection {
+     public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
+     public static final IntProvider RAIN_DELAY = UniformInt.of(12000, 180000);
+     public static final IntProvider RAIN_DURATION = UniformInt.of(12000, 24000);
 @@ -195,11 +_,11 @@
      private final List<ServerPlayer> players = Lists.newArrayList();
      private final ServerChunkCache chunkSource;

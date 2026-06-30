@@ -1,0 +1,13 @@
+--- a/net/minecraft/commands/CommandSourceStack.java
++++ b/net/minecraft/commands/CommandSourceStack.java
+@@ -49,8 +_,9 @@
+ import org.jspecify.annotations.Nullable;
+ 
+ import net.neoforged.neoforge.common.extensions.ICommandSourceStackExtension;
++import org.teneted.neotenet.injection.commands.CommandSourceStackInjection;
+ 
+-public class CommandSourceStack implements SharedSuggestionProvider, ExecutionCommandSource<CommandSourceStack>, ICommandSourceStackExtension {
++public class CommandSourceStack implements SharedSuggestionProvider, ExecutionCommandSource<CommandSourceStack>, ICommandSourceStackExtension, CommandSourceStackInjection {
+     public static final SimpleCommandExceptionType ERROR_NOT_PLAYER = new SimpleCommandExceptionType(Component.translatable("permissions.requires.player"));
+     public static final SimpleCommandExceptionType ERROR_NOT_ENTITY = new SimpleCommandExceptionType(Component.translatable("permissions.requires.entity"));
+     public final CommandSource source;

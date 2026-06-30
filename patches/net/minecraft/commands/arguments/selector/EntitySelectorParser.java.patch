@@ -1,5 +1,16 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
+@@ -33,8 +_,9 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ import org.jspecify.annotations.Nullable;
++import org.teneted.neotenet.injection.commands.arguments.selector.EntitySelectorParserInjection;
+ 
+-public class EntitySelectorParser {
++public class EntitySelectorParser implements EntitySelectorParserInjection {
+     public static final char SYNTAX_SELECTOR_START = '@';
+     private static final char SYNTAX_OPTIONS_START = '[';
+     private static final char SYNTAX_OPTIONS_END = ']';
 @@ -465,6 +_,9 @@
              }
  

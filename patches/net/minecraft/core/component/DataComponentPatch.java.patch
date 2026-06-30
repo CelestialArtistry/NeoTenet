@@ -1,5 +1,13 @@
 --- a/net/minecraft/core/component/DataComponentPatch.java
 +++ b/net/minecraft/core/component/DataComponentPatch.java
+@@ -17,6 +_,7 @@
+ import net.minecraft.resources.Identifier;
+ import net.minecraft.util.Unit;
+ import org.jspecify.annotations.Nullable;
++import org.teneted.neotenet.injection.core.component.DataComponentPatch_BuilderInjection;
+ 
+ public final class DataComponentPatch {
+     public static final DataComponentPatch EMPTY = new DataComponentPatch(Reference2ObjectMaps.emptyMap());
 @@ -156,6 +_,14 @@
          return new DataComponentPatch.Builder();
      }
@@ -15,7 +23,15 @@
      public <T> @Nullable T get(DataComponentGetter prototype, DataComponentType<? extends T> type) {
          return getFromPatchAndPrototype(this.map, prototype, type);
      }
-@@ -255,6 +_,7 @@
+@@ -248,13 +_,14 @@
+         return builder.toString();
+     }
+ 
+-    public static class Builder {
++    public static class Builder implements DataComponentPatch_BuilderInjection {
+         private final Reference2ObjectMap<DataComponentType<?>, Optional<?>> map = new Reference2ObjectArrayMap<>();
+ 
+         private Builder() {
          }
  
          public <T> DataComponentPatch.Builder set(DataComponentType<T> type, T value) {
