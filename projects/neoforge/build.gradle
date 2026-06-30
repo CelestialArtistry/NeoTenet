@@ -30,7 +30,7 @@ tasks.withType(JavaCompile).configureEach {
 sourceSets {
     main {
         java {
-            srcDirs rootProject.file('src/main/java'), rootProject.file('projects/bukkit/src/main/java'), rootProject.file('projects/craftbukkit/src/main/java'), rootProject.file('projects/neotenet/src/main/java')
+            srcDirs rootProject.file('src/main/java'), rootProject.file('projects/neotenet/src/main/java')
         }
         resources {
             srcDirs rootProject.file('src/main/resources'), rootProject.file('src/generated/resources'), rootProject.file('projects/neotenet/src/main/resources')
