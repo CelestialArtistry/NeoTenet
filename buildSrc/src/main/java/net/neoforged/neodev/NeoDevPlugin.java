@@ -109,6 +109,7 @@ public class NeoDevPlugin implements Plugin<Project> {
         // 2. Apply AT to the source jar from 1.
         var atFiles = List.of(
                 project.getRootProject().file("src/main/resources/META-INF/accesstransformer.cfg"),
+                project.getRootProject().file("src/main/resources/META-INF/neotenet-accesstransformer.cfg"),// NeoTenet - add ATS
                 genAts);
         var applyAt = configureAccessTransformer(
                 project,

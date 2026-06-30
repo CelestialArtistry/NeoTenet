@@ -14,7 +14,7 @@
 @@ -32,15 +_,27 @@
      public static final TextColor WHITE = named("white", 16777215);
      private final int value;
-     private final @Nullable String name;
+     public final @Nullable String name;
 +    // CraftBukkit start
 +    @Nullable
 +    public final ChatFormatting format;

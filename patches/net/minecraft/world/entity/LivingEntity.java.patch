@@ -42,10 +42,10 @@
 +    @Deprecated
 +    public static final Predicate<LivingEntity> PLAYER_NOT_WEARING_DISGUISE_ITEM = livingEntity -> PLAYER_NOT_WEARING_DISGUISE_ITEM_FOR_TARGET.test(livingEntity, null);
      private final AttributeMap attributes;
-     private final CombatTracker combatTracker = new CombatTracker(this);
-     private final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
+     public CombatTracker combatTracker = new CombatTracker(this);
+     public final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
 @@ -284,6 +_,21 @@
-     protected final EntityEquipment equipment;
+     public final EntityEquipment equipment;
      private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
      public @Nullable Vec3 currentImpulseImpactPos;
 +    /**

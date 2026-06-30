@@ -12,7 +12,7 @@
      private static final int CONVERSION_RETRY_DELAY_MS = 5000;
      private static final int CONVERSION_RETRIES = 2;
 @@ -88,6 +_,7 @@
-     private final ServerLinks serverLinks;
+     public ServerLinks serverLinks;
      private final Map<String, String> codeOfConductTexts;
      private final @Nullable ManagementServer jsonRpcServer;
 +    private net.neoforged.neoforge.server.dedicated.@Nullable DedicatedLanServerPinger dediLanPinger;
