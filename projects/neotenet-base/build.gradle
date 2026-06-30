@@ -6,7 +6,7 @@ plugins {
 sourceSets {
     main {
         java {
-            rootProject.file('projects/neotenet-base/other-src/main/java')
+            srcDirs rootProject.file('projects/neotenet-base/src/main/java'), rootProject.file('projects/neotenet-base/other-src/main/java')
         }
     }
 }

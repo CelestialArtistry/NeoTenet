@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/BlockGetter.java
 +++ b/net/minecraft/world/level/BlockGetter.java
+@@ -22,8 +_,9 @@
+ import org.jspecify.annotations.Nullable;
+ 
+ import net.neoforged.neoforge.common.extensions.IBlockGetterExtension;
++import org.teneted.neotenet.injection.world.level.BlockGetterInjection;
+ 
+-public interface BlockGetter extends LevelHeightAccessor, IBlockGetterExtension {
++public interface BlockGetter extends LevelHeightAccessor, IBlockGetterExtension, BlockGetterInjection {
+     @Nullable BlockEntity getBlockEntity(BlockPos pos);
+ 
+     default <T extends BlockEntity> Optional<T> getBlockEntity(BlockPos pos, BlockEntityType<T> type) {
 @@ -36,7 +_,7 @@
      FluidState getFluidState(BlockPos pos);
  

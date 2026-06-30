@@ -13,6 +13,17 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
+@@ -139,8 +_,9 @@
+ import org.slf4j.Logger;
+ 
+ import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
++import org.teneted.neotenet.injection.world.entity.LivingEntityInjection;
+ 
+-public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter, ILivingEntityExtension {
++public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter, ILivingEntityExtension, LivingEntityInjection {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final String TAG_ACTIVE_EFFECTS = "active_effects";
+     public static final String TAG_ATTRIBUTES = "attributes";
 @@ -177,14 +_,14 @@
      private static final double MAX_LINE_OF_SIGHT_TEST_RANGE = 128.0;
      protected static final int LIVING_ENTITY_FLAG_IS_USING = 1;
@@ -218,7 +229,12 @@
          return true;
      }
  
-@@ -1014,12 +_,13 @@
+@@ -1010,16 +_,17 @@
+     }
+ 
+     public final boolean addEffect(MobEffectInstance newEffect) {
+-        return this.addEffect(newEffect, null);
++        return this.addEffect(newEffect, (Entity) null);
      }
  
      public boolean addEffect(MobEffectInstance newEffect, @Nullable Entity source) {

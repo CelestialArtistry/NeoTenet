@@ -1,9 +1,13 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -126,6 +_,7 @@
- import net.neoforged.neoforge.common.extensions.IPlayerExtension;
+@@ -124,8 +_,10 @@
+ import org.jspecify.annotations.Nullable;
  
- public abstract class Player extends Avatar implements ContainerUser, IPlayerExtension {
+ import net.neoforged.neoforge.common.extensions.IPlayerExtension;
++import org.teneted.neotenet.injection.world.entity.player.PlayerInjection;
+ 
+-public abstract class Player extends Avatar implements ContainerUser, IPlayerExtension {
++public abstract class Player extends Avatar implements ContainerUser, IPlayerExtension, PlayerInjection {
 +    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
      public static final int MAX_HEALTH = 20;
      public static final int SLEEP_DURATION = 100;
@@ -24,7 +28,7 @@
      protected final float defaultFlySpeed = 0.02F;
      private int lastLevelUpTime;
      private final GameProfile gameProfile;
-@@ -173,6 +_,10 @@
+@@ -173,6 +_,13 @@
      private Optional<GlobalPos> lastDeathLocation = Optional.empty();
      public @Nullable FishingHook fishing;
      protected float hurtDir;
@@ -32,6 +36,9 @@
 +    private final java.util.Collection<MutableComponent> suffixes = new java.util.LinkedList<>();
 +    @Nullable
 +    private Pose forcedPose = null;
++    // CraftBukkit start
++    public boolean fauxSleeping;
++    public int oldLevel = -1;
  
      public Player(Level level, GameProfile gameProfile) {
          super(EntityTypes.PLAYER, level);

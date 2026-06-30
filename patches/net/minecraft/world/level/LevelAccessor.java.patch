@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/LevelAccessor.java
++++ b/net/minecraft/world/level/LevelAccessor.java
+@@ -22,8 +_,9 @@
+ import net.minecraft.world.ticks.ScheduledTick;
+ import net.minecraft.world.ticks.TickPriority;
+ import org.jspecify.annotations.Nullable;
++import org.teneted.neotenet.injection.world.level.LevelAccessorInjection;
+ 
+-public interface LevelAccessor extends CommonLevelAccessor, ScheduledTickAccess {
++public interface LevelAccessor extends CommonLevelAccessor, ScheduledTickAccess, LevelAccessorInjection {
+     long nextSubTickCount();
+ 
+     @Override
