@@ -1,6 +1,17 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -144,6 +_,11 @@
+@@ -95,8 +_,9 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.ticks.ContainerSingleItem;
+ import org.jspecify.annotations.Nullable;
++import org.teneted.neotenet.injection.world.entity.MobInjection;
+ 
+-public abstract class Mob extends LivingEntity implements Targeting, EquipmentUser, Leashable {
++public abstract class Mob extends LivingEntity implements Targeting, EquipmentUser, Leashable, MobInjection {
+     private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
+     private static final int MOB_FLAG_NO_AI = 1;
+     private static final int MOB_FLAG_LEFTHANDED = 2;
+@@ -144,6 +_,12 @@
      private Leashable.@Nullable LeashData leashData;
      private BlockPos homePosition = BlockPos.ZERO;
      private int homeRadius = -1;
@@ -9,6 +20,7 @@
 +    private boolean spawnCancelled = false;
 +    /** Neo: Prevent immediate spawning from conversions to capture conversion results for events */
 +    protected boolean preventConversionSpawns = false;
++    public boolean aware = true; // CraftBukkit
  
      protected Mob(EntityType<? extends Mob> type, Level level) {
          super(type, level);

@@ -12,3 +12,7 @@ net.minecraft.network.protocol.common.custom.DiscardedPayload # add fields and c
 net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket # add constructors
 net.minecraft.server.level.ChunkMap # add inner class and fields
 net.minecraft.world.entity.Entity # add fields
+net.minecraft.world.entity.LivingEntity # add fields and inner class
+net.minecraft.world.entity.Mob # add fields
+net.minecraft.world.entity.player.Player # add fields
+net.minecraft.server.level.ServerPlayer # add fields

@@ -1,5 +1,35 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -12,9 +_,12 @@
+ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
++
++import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.ConcurrentModificationException;
+ import java.util.EnumMap;
++import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+@@ -134,13 +_,15 @@
+ import net.minecraft.world.scores.Scoreboard;
+ import net.minecraft.world.waypoints.Waypoint;
+ import net.minecraft.world.waypoints.WaypointTransmitter;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
+ import org.jetbrains.annotations.Contract;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
+ 
+ import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
++import org.teneted.neotenet.injection.world.entity.LivingEntityInjection;
+ 
+-public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter, ILivingEntityExtension {
++public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter, ILivingEntityExtension, LivingEntityInjection {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final String TAG_ACTIVE_EFFECTS = "active_effects";
+     public static final String TAG_ATTRIBUTES = "attributes";
 @@ -211,7 +_,8 @@
      public static final float ELYTRA_VERTICAL_AIR_DRAG = 0.98F;
      public static final float BASE_SWIM_SPEED = 0.02F;
@@ -20,7 +50,7 @@
      private final AttributeMap attributes;
      public CombatTracker combatTracker = new CombatTracker(this);
      public final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
-@@ -284,6 +_,13 @@
+@@ -284,6 +_,20 @@
      public final EntityEquipment equipment;
      private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
      public @Nullable Vec3 currentImpulseImpactPos;
@@ -31,6 +61,13 @@
 +     * the stack before the method's return.
 +     **/
 +    protected java.util.@Nullable Stack<net.neoforged.neoforge.common.damagesource.DamageContainer> damageContainers = new java.util.Stack<>();
++    public int expToDrop;
++    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
++    public org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
++    public boolean collides = true;
++    public Set<UUID> collidableExemptions = new HashSet<>();
++    public boolean bukkitPickUpLoot;
++    public int invulnerableDuration = 20;
  
      protected LivingEntity(EntityType<? extends LivingEntity> type, Level level) {
          super(type, level);
@@ -81,6 +118,32 @@
          }
  
          return entity;
+@@ -847,6 +_,25 @@
+         this.updateDirtyEffects();
+     }
+ 
++    // CraftBukkit start
++    private static class ProcessableEffect {
++
++        private Holder<MobEffect> type;
++        private MobEffectInstance effect;
++        private final EntityPotionEffectEvent.Cause cause;
++
++        private ProcessableEffect(MobEffectInstance effect, EntityPotionEffectEvent.Cause cause) {
++            this.effect = effect;
++            this.cause = cause;
++        }
++
++        private ProcessableEffect(Holder<MobEffect> type, EntityPotionEffectEvent.Cause cause) {
++            this.type = type;
++            this.cause = cause;
++        }
++    }
++    // CraftBukkit end
++
+     protected void tickEffects() {
+         if (this.level() instanceof ServerLevel serverLevel) {
+             Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
 @@ -856,8 +_,10 @@
                      Holder<MobEffect> mobEffect = iterator.next();
                      MobEffectInstance effect = this.activeEffects.get(mobEffect);
@@ -130,7 +193,12 @@
          return true;
      }
  
-@@ -1014,12 +_,13 @@
+@@ -1010,16 +_,17 @@
+     }
+ 
+     public final boolean addEffect(MobEffectInstance newEffect) {
+-        return this.addEffect(newEffect, null);
++        return this.addEffect(newEffect, (Entity) null);
      }
  
      public boolean addEffect(MobEffectInstance newEffect, @Nullable Entity source) {
