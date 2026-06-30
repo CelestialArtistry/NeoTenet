@@ -11,18 +11,6 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private final DistanceManager distanceManager;
      public final ServerLevel level;
-@@ -65,9 +_,9 @@
-     private final ServerChunkCache.MainThreadExecutor mainThreadProcessor;
-     public final ChunkMap chunkMap;
-     private final SavedDataStorage savedDataStorage;
--    public final TicketStorage ticketStorage;
-+    private final TicketStorage ticketStorage;
-     private long lastInhabitedUpdate;
--    public boolean spawnEnemies = true;
-+    private boolean spawnEnemies = true;
-     private static final int CACHE_SIZE = 4;
-     private final long[] lastChunkPos = new long[4];
-     private final @Nullable ChunkStatus[] lastChunkStatus = new ChunkStatus[4];
 @@ -101,7 +_,7 @@
              LOGGER.error("Failed to create dimension data storage directory", e);
          }

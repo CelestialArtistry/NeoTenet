@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/animal/pig/Pig.java
 +++ b/net/minecraft/world/entity/animal/pig/Pig.java
-@@ -70,7 +_,7 @@
-     private static final EntityDimensions BABY_DIMENSIONS = EntityDimensions.scalable(0.45F, 0.45F)
-         .withEyeHeight(0.40625F)
-         .withAttachments(EntityAttachments.builder().attach(EntityAttachment.PASSENGER, 0.0F, 0.5F, 0.0F));
--    public final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME);
-+    private final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME);
- 
-     public Pig(EntityType<? extends Pig> type, Level level) {
-         super(type, level);
 @@ -200,10 +_,11 @@
  
      @Override
@@ -22,12 +13,3 @@
              });
              if (zombifiedPiglin == null) {
                  super.thunderHit(level, lightningBolt);
-@@ -260,7 +_,7 @@
-         return new Vec3(0.0, 0.6F * this.getEyeHeight(), this.getBbWidth() * 0.4F);
-     }
- 
--    public void setVariant(Holder<PigVariant> variant) {
-+    private void setVariant(Holder<PigVariant> variant) {
-         this.entityData.set(DATA_VARIANT_ID, variant);
-     }
- 

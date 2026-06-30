@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -64,7 +_,7 @@
-     private static final String SITTING_DAMAGE_RECEIVED_KEY = "sitting_damage_received";
-     private static final int DEFAULT_DEATH_TIME = 0;
-     public final DragonFlightHistory flightHistory = new DragonFlightHistory();
--    public final EnderDragonPart[] subEntities;
-+    private final EnderDragonPart[] subEntities;
-     public final EnderDragonPart head;
-     private final EnderDragonPart neck;
-     private final EnderDragonPart body;
 @@ -150,8 +_,19 @@
          entityData.define(DATA_PHASE, EnderDragonPhase.HOVERING.getId());
      }

@@ -1,28 +1,13 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -47,18 +_,18 @@
-     public static final int CARRIED_SLOT_SIZE = Integer.MAX_VALUE;
-     public static final int SLOTS_PER_ROW = 9;
-     public static final int SLOT_SIZE = 18;
--    public NonNullList<ItemStack> lastSlots = NonNullList.create();
--    public NonNullList<Slot> slots = NonNullList.create();
-+    private final NonNullList<ItemStack> lastSlots = NonNullList.create();
-+    public final NonNullList<Slot> slots = NonNullList.create();
-     private final List<DataSlot> dataSlots = Lists.newArrayList();
-     private ItemStack carried = ItemStack.EMPTY;
--    public NonNullList<RemoteSlot> remoteSlots = NonNullList.create();
-+    private final NonNullList<RemoteSlot> remoteSlots = NonNullList.create();
-     private final IntList remoteDataSlots = new IntArrayList();
-     private RemoteSlot remoteCarried = RemoteSlot.PLACEHOLDER;
-     private int stateId;
-     private final @Nullable MenuType<?> menuType;
-     public final int containerId;
-     private int quickcraftType = -1;
--    public int quickcraftStatus;
-+    private int quickcraftStatus;
-     private final Set<Slot> quickcraftSlots = Sets.newHashSet();
+@@ -63,6 +_,7 @@
      private final List<ContainerListener> containerListeners = Lists.newArrayList();
      private @Nullable ContainerSynchronizer synchronizer;
+     private boolean suppressRemoteUpdates;
++    public boolean checkReachable = true;
+ 
+     protected AbstractContainerMenu(@Nullable MenuType<?> menuType, int containerId) {
+         this.menuType = menuType;
 @@ -558,6 +_,12 @@
      }
  

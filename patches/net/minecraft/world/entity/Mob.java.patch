@@ -11,25 +11,7 @@
      private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
      private static final int MOB_FLAG_NO_AI = 1;
      private static final int MOB_FLAG_LEFTHANDED = 2;
-@@ -131,19 +_,25 @@
-     protected JumpControl jumpControl;
-     private final BodyRotationControl bodyRotationControl;
-     protected PathNavigation navigation;
--    public GoalSelector goalSelector;
--    public GoalSelector targetSelector;
-+    public final GoalSelector goalSelector;
-+    public final GoalSelector targetSelector;
-     private @Nullable LivingEntity target;
-     private final Sensing sensing;
-     private DropChances dropChances = DropChances.DEFAULT;
-     private boolean canPickUpLoot = false;
--    public boolean persistenceRequired = false;
-+    private boolean persistenceRequired = false;
-     private final Map<PathType, Float> pathfindingMalus = Maps.newEnumMap(PathType.class);
--    public Optional<ResourceKey<LootTable>> lootTable = Optional.empty();
--    public long lootTableSeed;
-+    private Optional<ResourceKey<LootTable>> lootTable = Optional.empty();
-+    private long lootTableSeed;
+@@ -144,6 +_,12 @@
      private Leashable.@Nullable LeashData leashData;
      private BlockPos homePosition = BlockPos.ZERO;
      private int homeRadius = -1;

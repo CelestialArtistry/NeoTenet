@@ -1,21 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/trialspawner/TrialSpawner.java
 +++ b/net/minecraft/world/level/block/entity/trialspawner/TrialSpawner.java
-@@ -60,12 +_,12 @@
-     private static final int MAX_MOB_TRACKING_DISTANCE_SQR = Mth.square(47);
-     private static final float SPAWNING_AMBIENT_SOUND_CHANCE = 0.02F;
-     private final TrialSpawnerStateData data = new TrialSpawnerStateData();
--    public TrialSpawner.FullConfig config;
--    public final TrialSpawner.StateAccessor stateAccessor;
-+    private TrialSpawner.FullConfig config;
-+    private final TrialSpawner.StateAccessor stateAccessor;
-     private PlayerDetector playerDetector;
-     private final PlayerDetector.EntitySelector entitySelector;
-     private boolean overridePeacefulAndMobSpawnRule;
--    public boolean isOminous;
-+    private boolean isOminous;
- 
-     public TrialSpawner(
-         TrialSpawner.FullConfig config, TrialSpawner.StateAccessor stateAccessor, PlayerDetector playerDetector, PlayerDetector.EntitySelector entitySelector
 @@ -212,9 +_,9 @@
                  }
  

@@ -1,16 +1,5 @@
 --- a/net/minecraft/world/entity/monster/hoglin/Hoglin.java
 +++ b/net/minecraft/world/entity/monster/hoglin/Hoglin.java
-@@ -68,8 +_,8 @@
-     private static final boolean DEFAULT_CANNOT_BE_HUNTED = false;
-     public static final int CONVERSION_TIME = 300;
-     private int attackAnimationRemainingTicks;
--    public int timeInOverworld = 0;
--    public boolean cannotBeHunted = false;
-+    private int timeInOverworld = 0;
-+    private boolean cannotBeHunted = false;
-     private static final Brain.Provider<Hoglin> BRAIN_PROVIDER = Brain.<Hoglin>provider(
-         List.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ADULT, SensorType.HOGLIN_SPECIFIC_SENSOR),
-         var0 -> HoglinAi.getActivities()
 @@ -148,7 +_,7 @@
          HoglinAi.updateActivity(this);
          if (this.isConverting()) {
@@ -30,14 +19,5 @@
 +                net.neoforged.neoforge.event.EventHooks.onLivingConvert(this, zoglin);
 +            }
          );
-     }
- 
-@@ -287,7 +_,7 @@
-         this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, isImmuneToZombification);
-     }
- 
--    public boolean isImmuneToZombification() {
-+    private boolean isImmuneToZombification() {
-         return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
      }
  

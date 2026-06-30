@@ -1,19 +1,5 @@
 --- a/net/minecraft/world/entity/animal/feline/Ocelot.java
 +++ b/net/minecraft/world/entity/animal/feline/Ocelot.java
-@@ -72,11 +_,11 @@
-         this.reassessTrustingGoals();
-     }
- 
--    public boolean isTrusting() {
-+    private boolean isTrusting() {
-         return this.entityData.get(DATA_TRUSTING);
-     }
- 
--    public void setTrusting(boolean trusting) {
-+    private void setTrusting(boolean trusting) {
-         this.entityData.set(DATA_TRUSTING, trusting);
-         this.reassessTrustingGoals();
-     }
 @@ -168,7 +_,7 @@
          if ((this.temptGoal == null || this.temptGoal.isRunning()) && !this.isTrusting() && this.isFood(itemStack) && player.distanceToSqr(this) < 9.0) {
              this.usePlayerItem(player, hand, itemStack);

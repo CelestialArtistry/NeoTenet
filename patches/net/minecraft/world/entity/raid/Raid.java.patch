@@ -1,31 +1,5 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -108,12 +_,12 @@
-     public static final int RAID_REMOVAL_THRESHOLD_SQR = 12544;
-     private final Map<Integer, Raider> groupToLeaderMap = Maps.newHashMap();
-     private final Map<Integer, Set<Raider>> groupRaiderMap = Maps.newHashMap();
--    public final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
--    public long ticksActive;
-+    private final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
-+    private long ticksActive;
-     private BlockPos center;
-     private boolean started;
--    public float totalHealth;
--    public int raidOmenLevel;
-+    private float totalHealth;
-+    private int raidOmenLevel;
-     private boolean active;
-     private int groupsSpawned;
-     private int postRaidTicks;
-@@ -122,7 +_,7 @@
-     private final ServerBossEvent raidEvent = new ServerBossEvent(
-         Mth.createInsecureUUID(this.random), RAID_NAME_COMPONENT, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10
-     );
--    public final int numGroups;
-+    private final int numGroups;
-     private Raid.RaidStatus status;
-     private int celebrationTicks;
-     private Optional<BlockPos> waveSpawnPos = Optional.empty();
 @@ -533,7 +_,7 @@
              int ravagersSpawned = 0;
  

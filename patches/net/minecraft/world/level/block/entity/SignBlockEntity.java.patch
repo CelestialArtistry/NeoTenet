@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
-@@ -38,7 +_,7 @@
-     private static final int MAX_TEXT_LINE_WIDTH = 90;
-     private static final int TEXT_LINE_HEIGHT = 10;
-     private static final boolean DEFAULT_IS_WAXED = false;
--    public @Nullable UUID playerWhoMayEdit;
-+    private @Nullable UUID playerWhoMayEdit;
-     private SignText frontText;
-     private SignText backText;
-     private boolean isWaxed = false;
 @@ -202,7 +_,7 @@
                      hasAnyClickCommand = true;
                      break;

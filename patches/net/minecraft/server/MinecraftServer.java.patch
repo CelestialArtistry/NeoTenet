@@ -9,7 +9,7 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportType;
-@@ -186,11 +_,13 @@
+@@ -186,10 +_,12 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.ScoreboardSaveData;
@@ -19,70 +19,10 @@
 +import org.teneted.neotenet.injection.server.MinecraftServerInjection;
  
 -public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, ServerInfo, ChunkIOErrorReporter {
--    public static final Logger LOGGER = LogUtils.getLogger();
 +public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, ServerInfo, ChunkIOErrorReporter, MinecraftServerInjection {
-+    private static final Logger LOGGER = LogUtils.getLogger();
+     private static final Logger LOGGER = LogUtils.getLogger();
      public static final String VANILLA_BRAND = "vanilla";
      private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
-     private static final int TICK_STATS_SPAN = 100;
-@@ -214,8 +_,8 @@
-     public static final Supplier<GameRules> DEFAULT_GAME_RULES = () -> new GameRules(WorldDataConfiguration.DEFAULT.enabledFeatures());
-     public static final NameAndId ANONYMOUS_PLAYER_PROFILE = new NameAndId(Util.NIL_UUID, "Anonymous Player");
-     public static final String SERVER_THREAD_NAME = "Server thread";
--    public LevelStorageSource.LevelStorageAccess storageSource;
--    public final PlayerDataStorage playerDataStorage;
-+    protected final LevelStorageSource.LevelStorageAccess storageSource;
-+    protected final PlayerDataStorage playerDataStorage;
-     private final SavedDataStorage savedDataStorage;
-     private final List<Runnable> tickables = Lists.newArrayList();
-     private final GameRules gameRules;
-@@ -225,16 +_,16 @@
-     private boolean willStartRecordingMetrics;
-     private MinecraftServer.@Nullable TimeProfiler debugCommandProfiler;
-     private boolean debugCommandProfilerDelayStart;
--    private ServerConnectionListener connection;
--    public final LevelLoadListener levelLoadListener;
-+    private final ServerConnectionListener connection;
-+    private final LevelLoadListener levelLoadListener;
-     private @Nullable ServerStatus status;
-     private ServerStatus.@Nullable Favicon statusIcon;
-     private final RandomSource random = RandomSource.create();
--    public final DataFixer fixerUpper;
-+    private final DataFixer fixerUpper;
-     private String localIp;
-     private int port = -1;
-     private final LayeredRegistryAccess<RegistryLayer> registries;
--    private Map<ResourceKey<Level>, ServerLevel> levels = Maps.newLinkedHashMap();
-+    private final Map<ResourceKey<Level>, ServerLevel> levels = Maps.newLinkedHashMap();
-     private PlayerList playerList;
-     private volatile boolean running = true;
-     private boolean stopped;
-@@ -256,7 +_,7 @@
-     private final NotificationManager notificationManager;
-     private final ServerActivityMonitor serverActivityMonitor;
-     private long lastServerStatus;
--    public final Thread serverThread;
-+    private final Thread serverThread;
-     private long lastTickNanos = Util.getNanos();
-     private long taskExecutionStartNanos = Util.getNanos();
-     private long idleTimeNanos;
-@@ -276,13 +_,13 @@
-     private boolean enforceWhitelist;
-     private boolean usingWhitelist;
-     private float smoothedTickTimeMillis;
--    public final Executor executor;
-+    private final Executor executor;
-     private @Nullable String serverId;
--    public MinecraftServer.ReloadableResources resources;
-+    private MinecraftServer.ReloadableResources resources;
-     private final StructureTemplateManager structureTemplateManager;
-     private final ServerTickRateManager tickRateManager;
-     private final ServerDebugSubscribers debugSubscribers = new ServerDebugSubscribers(this);
--    protected WorldData worldData;
-+    protected final WorldData worldData;
-     private LevelData.RespawnData effectiveRespawnData = LevelData.RespawnData.DEFAULT;
-     private final PotionBrewing potionBrewing;
-     private FuelValues fuelValues;
 @@ -293,10 +_,21 @@
      private final PacketProcessor packetProcessor;
      private final TimerQueue<MinecraftServer> scheduledEvents;
@@ -142,15 +82,6 @@
              ChunkPos spawnChunk = ChunkPos.containing(chunkSource.randomState().sampler().findSpawnPosition());
              levelLoadListener.start(LevelLoadListener.Stage.PREPARE_GLOBAL_SPAWN, 0);
              levelLoadListener.updateFocus(level.dimension(), spawnChunk);
-@@ -542,7 +_,7 @@
-         levelData.setGameType(GameType.SPECTATOR);
-     }
- 
--    public void prepareLevels() {
-+    private void prepareLevels() {
-         ChunkLoadCounter chunkLoadCounter = new ChunkLoadCounter();
- 
-         for (ServerLevel level : this.levels.values()) {
 @@ -550,6 +_,7 @@
                  TicketStorage savedTickets = level.getDataStorage().get(TicketStorage.TYPE);
                  if (savedTickets != null) {

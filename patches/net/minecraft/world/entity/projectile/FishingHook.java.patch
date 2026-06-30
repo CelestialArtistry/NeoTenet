@@ -1,27 +1,5 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -55,16 +_,16 @@
-     private boolean biting;
-     private int outOfWaterTime;
-     private static final int MAX_OUT_OF_WATER_TIME = 10;
--    public static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.INT);
-+    private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.INT);
-     private static final EntityDataAccessor<Boolean> DATA_BITING = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.BOOLEAN);
-     private int life;
-     private int nibble;
--    public int timeUntilLured;
--    public int timeUntilHooked;
-+    private int timeUntilLured;
-+    private int timeUntilHooked;
-     private float fishAngle;
-     private boolean openWater = true;
--    public @Nullable Entity hookedIn;
--    public FishingHook.FishHookState currentState = FishingHook.FishHookState.FLYING;
-+    private @Nullable Entity hookedIn;
-+    private FishingHook.FishHookState currentState = FishingHook.FishHookState.FLYING;
-     private final int luck;
-     private final int lureSpeed;
-     private final InterpolationHandler interpolationHandler = new InterpolationHandler(this);
 @@ -254,8 +_,8 @@
          if (owner.canInteractWithLevel()) {
              ItemStack selectedItem = owner.getMainHandItem();
@@ -42,15 +20,6 @@
      }
  
      @Override
-@@ -289,7 +_,7 @@
-         this.setDeltaMovement(this.getDeltaMovement().normalize().scale(hitResult.distanceTo(this)));
-     }
- 
--    public void setHookedEntity(@Nullable Entity hookedIn) {
-+    private void setHookedEntity(@Nullable Entity hookedIn) {
-         this.hookedIn = hookedIn;
-         this.getEntityData().set(DATA_HOOKED_ENTITY, hookedIn == null ? 0 : hookedIn.getId() + 1);
-     }
 @@ -448,6 +_,7 @@
          Player owner = this.getPlayerOwner();
          if (!this.level().isClientSide() && owner != null && !this.shouldStopFishing(owner)) {
@@ -85,21 +54,3 @@
              return dmg;
          } else {
              return 0;
-@@ -502,7 +_,7 @@
-         super.handleEntityEvent(id);
-     }
- 
--    public void pullEntity(Entity entity) {
-+    protected void pullEntity(Entity entity) {
-         Entity owner = this.getOwner();
-         if (owner != null) {
-             Vec3 delta = new Vec3(owner.getX() - this.getX(), owner.getY() - this.getY(), owner.getZ() - this.getZ()).scale(0.1);
-@@ -568,7 +_,7 @@
-         }
-     }
- 
--    public enum FishHookState {
-+    private enum FishHookState {
-         FLYING,
-         HOOKED_IN_ENTITY,
-         BOBBING;

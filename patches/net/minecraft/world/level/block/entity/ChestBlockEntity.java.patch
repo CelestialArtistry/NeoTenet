@@ -1,29 +1,9 @@
 --- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -29,7 +_,7 @@
-     private static final int EVENT_SET_OPEN_COUNT = 1;
-     private static final Component DEFAULT_NAME = Component.translatable("container.chest");
-     private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
--    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-+    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-         @Override
-         protected void onOpen(Level level, BlockPos pos, BlockState blockState) {
-             if (blockState.getBlock() instanceof ChestBlock chestBlock) {
-@@ -101,7 +_,7 @@
-         entity.chestLidController.tickLid();
+@@ -182,6 +_,17 @@
+         return ChestMenu.threeRows(containerId, inventory, this);
      }
  
--    public static void playSound(Level level, BlockPos worldPosition, BlockState blockState, SoundEvent event) {
-+    private static void playSound(Level level, BlockPos worldPosition, BlockState blockState, SoundEvent event) {
-         ChestType type = blockState.getValue(ChestBlock.TYPE);
-         if (type != ChestType.LEFT) {
-             double x = worldPosition.getX() + 0.5;
-@@ -180,6 +_,17 @@
-     @Override
-     protected AbstractContainerMenu createMenu(int containerId, Inventory inventory) {
-         return ChestMenu.threeRows(containerId, inventory, this);
-+    }
-+
 +    @Override
 +    public void setBlockState(BlockState blockState) {
 +        var oldState = getBlockState();
@@ -33,6 +13,8 @@
 +                || (oldState.getValue(ChestBlock.TYPE) != blockState.getValue(ChestBlock.TYPE))) {
 +            this.invalidateCapabilities();
 +        }
-     }
- 
++    }
++
      public void recheckOpen() {
+         if (!this.remove) {
+             this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());

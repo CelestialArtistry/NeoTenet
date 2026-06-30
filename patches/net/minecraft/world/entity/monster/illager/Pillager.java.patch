@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/monster/illager/Pillager.java
 +++ b/net/minecraft/world/entity/monster/illager/Pillager.java
-@@ -59,7 +_,7 @@
-     private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(Pillager.class, EntityDataSerializers.BOOLEAN);
-     private static final int INVENTORY_SIZE = 5;
-     private static final int SLOT_OFFSET = 300;
--    public final SimpleContainer inventory = new SimpleContainer(5);
-+    private final SimpleContainer inventory = new SimpleContainer(5);
- 
-     public Pillager(EntityType<? extends Pillager> type, Level level) {
-         super(type, level);
 @@ -97,7 +_,7 @@
  
      @Override

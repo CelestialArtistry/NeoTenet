@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -56,11 +_,12 @@
-     );
-     private static final FileToIdConverter RECIPE_LISTER = FileToIdConverter.registry(Registries.RECIPE);
-     private final HolderLookup.Provider registries;
--    public RecipeMap recipes = RecipeMap.EMPTY;
-+    private RecipeMap recipes = RecipeMap.EMPTY;
-     private Map<ResourceKey<RecipePropertySet>, RecipePropertySet> propertySets = Map.of();
+@@ -61,6 +_,7 @@
      private SelectableRecipe.SingleInputSet<StonecutterRecipe> stonecutterRecipes = SelectableRecipe.SingleInputSet.empty();
      private List<RecipeManager.ServerDisplayInfo> allDisplays = List.of();
      private Map<ResourceKey<Recipe<?>>, List<RecipeManager.ServerDisplayInfo>> recipeToDisplay = Map.of();

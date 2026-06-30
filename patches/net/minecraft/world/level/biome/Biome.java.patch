@@ -16,9 +16,8 @@
      @Deprecated(forRemoval = true)
      public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
      private static final int TEMPERATURE_CACHE_SIZE = 1024;
--    public final Biome.ClimateSettings climateSettings;
 +    /** Neo: Field accesses are redirected to {@link #getModifiedClimateSettings()} with a coremod. */
-+    private final Biome.ClimateSettings climateSettings;
+     private final Biome.ClimateSettings climateSettings;
      private final BiomeGenerationSettings generationSettings;
      private final MobSpawnSettings mobSettings;
      private final EnvironmentAttributeMap attributes;
@@ -39,15 +38,6 @@
      }
  
      public boolean hasPrecipitation() {
-@@ -122,7 +_,7 @@
-     }
- 
-     @Deprecated
--    public float getTemperature(BlockPos pos, int seaLevel) {
-+    private float getTemperature(BlockPos pos, int seaLevel) {
-         long key = pos.asLong();
-         Long2FloatLinkedOpenHashMap cache = this.temperatureCache.get();
-         float cached = cache.get(key);
 @@ -197,7 +_,7 @@
      }
  

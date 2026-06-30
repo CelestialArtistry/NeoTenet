@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -31,7 +_,7 @@
-     protected static final String OLD_PLAYER = "Player";
-     protected static final String SINGLEPLAYER_UUID = "singleplayer_uuid";
-     protected static final String OLD_WORLD_GEN_SETTINGS = "WorldGenSettings";
--    public LevelSettings settings;
-+    private LevelSettings settings;
-     private final PrimaryLevelData.SpecialWorldProperty specialWorldProperty;
-     private final Lifecycle worldGenSettingsLifecycle;
-     private LevelData.RespawnData respawnData;
 @@ -42,6 +_,7 @@
      private final Set<String> knownServerBrands;
      private boolean wasModded;

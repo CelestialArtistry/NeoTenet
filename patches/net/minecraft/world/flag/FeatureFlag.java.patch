@@ -1,13 +1,9 @@
 --- a/net/minecraft/world/flag/FeatureFlag.java
 +++ b/net/minecraft/world/flag/FeatureFlag.java
-@@ -1,11 +_,27 @@
- package net.minecraft.world.flag;
- 
+@@ -3,9 +_,25 @@
  public class FeatureFlag {
--    public final FeatureFlagUniverse universe;
--    public final long mask;
-+    final FeatureFlagUniverse universe;
-+    final long mask;
+     final FeatureFlagUniverse universe;
+     final long mask;
 +    final int extMaskIndex;
 +    final boolean modded;
  

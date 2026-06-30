@@ -1,33 +1,5 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -47,18 +_,18 @@
-     private static final int DEFAULT_MAX_NEARBY_ENTITIES = 6;
-     private static final int DEFAULT_REQUIRED_PLAYER_RANGE = 16;
-     private static final int DEFAULT_SPAWN_RANGE = 4;
--    public int spawnDelay = 20;
--    public WeightedList<SpawnData> spawnPotentials = WeightedList.of();
--    public @Nullable SpawnData nextSpawnData;
-+    private int spawnDelay = 20;
-+    private WeightedList<SpawnData> spawnPotentials = WeightedList.of();
-+    private @Nullable SpawnData nextSpawnData;
-     private double spin;
-     private double oSpin;
--    public int minSpawnDelay = 200;
--    public int maxSpawnDelay = 800;
--    public int spawnCount = 4;
-+    private int minSpawnDelay = 200;
-+    private int maxSpawnDelay = 800;
-+    private int spawnCount = 4;
-     private @Nullable Entity displayEntity;
--    public int maxNearbyEntities = 6;
--    public int requiredPlayerRange = 16;
--    public int spawnRange = 4;
-+    private int maxNearbyEntities = 6;
-+    private int requiredPlayerRange = 16;
-+    private int spawnRange = 4;
- 
-     public void setEntityId(EntityType<?> type, @Nullable Level level, RandomSource random, BlockPos pos) {
-         this.getOrCreateNextSpawnData(level, random, pos).getEntityToSpawn().putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
 @@ -154,16 +_,15 @@
  
                              entity.snapTo(entity.getX(), entity.getY(), entity.getZ(), random.nextFloat() * 360.0F, 0.0F);

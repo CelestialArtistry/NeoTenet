@@ -9,33 +9,6 @@
              return super.mobInteract(player, hand);
          }
  
-@@ -318,7 +_,7 @@
-         return InteractionResult.SUCCESS;
-     }
- 
--    public void setUnhappy() {
-+    private void setUnhappy() {
-         this.setUnhappyCounter(40);
-         if (!this.level().isClientSide()) {
-             this.makeSound(SoundEvents.VILLAGER_NO);
-@@ -612,7 +_,7 @@
-         super.die(source);
-     }
- 
--    public void releaseAllPois() {
-+    private void releaseAllPois() {
-         this.releasePoi(MemoryModuleType.HOME);
-         this.releasePoi(MemoryModuleType.JOB_SITE);
-         this.releasePoi(MemoryModuleType.POTENTIAL_JOB_SITE);
-@@ -701,7 +_,7 @@
-         return VillagerData.canLevelUp(currentLevel) && this.villagerXp >= VillagerData.getMaxXpPerLevel(currentLevel);
-     }
- 
--    public void increaseMerchantCareer(ServerLevel level) {
-+    private void increaseMerchantCareer(ServerLevel level) {
-         this.setVillagerData(this.getVillagerData().withLevel(this.getVillagerData().level() + 1));
-         this.updateTrades(level);
-     }
 @@ -761,10 +_,11 @@
  
      @Override

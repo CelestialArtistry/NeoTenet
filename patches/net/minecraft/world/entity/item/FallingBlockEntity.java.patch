@@ -1,20 +1,5 @@
 --- a/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -65,10 +_,10 @@
-     private BlockState blockState = DEFAULT_BLOCK_STATE;
-     public int time = 0;
-     public boolean dropItem = true;
--    public boolean cancelDrop = false;
--    public boolean hurtEntities;
--    public int fallDamageMax = 40;
--    public float fallDamagePerDistance = 0.0F;
-+    private boolean cancelDrop = false;
-+    private boolean hurtEntities;
-+    private int fallDamageMax = 40;
-+    private float fallDamagePerDistance = 0.0F;
-     public @Nullable CompoundTag blockData;
-     public boolean forceTickAfterTeleportToDuplicate;
-     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
 @@ -158,7 +_,7 @@
              if (this.level() instanceof ServerLevel serverLevel && (this.isAlive() || this.forceTickAfterTeleportToDuplicate)) {
                  BlockPos pos = this.blockPosition();

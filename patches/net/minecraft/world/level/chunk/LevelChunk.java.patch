@@ -1,16 +1,5 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -88,8 +_,8 @@
-         }
-     };
-     private final Map<BlockPos, LevelChunk.RebindableTickingBlockEntityWrapper> tickersInLevel = Maps.newHashMap();
--    public boolean loaded;
--    public final Level level;
-+    private boolean loaded;
-+    private final Level level;
-     private @Nullable Supplier<FullChunkStatus> fullStatus;
-     private LevelChunk.@Nullable PostLoadProcessor postLoad;
-     private final Int2ObjectMap<GameEventListenerRegistry> gameEventListenerRegistrySections;
 @@ -156,6 +_,7 @@
          this.setAllStarts(protoChunk.getAllStarts());
          this.setAllReferences(protoChunk.getAllReferences());

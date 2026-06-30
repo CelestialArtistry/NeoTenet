@@ -1,28 +1,5 @@
 --- a/net/minecraft/world/entity/animal/wolf/Wolf.java
 +++ b/net/minecraft/world/entity/animal/wolf/Wolf.java
-@@ -110,7 +_,7 @@
-     private static final DyeColor DEFAULT_COLLAR_COLOR = DyeColor.RED;
-     private float interestedAngle;
-     private float interestedAngleO;
--    public boolean isWet;
-+    private boolean isWet;
-     private boolean isShaking;
-     private float shakeAnim;
-     private float shakeAnimO;
-@@ -158,11 +_,11 @@
-         }
-     }
- 
--    public Holder<WolfVariant> getVariant() {
-+    private Holder<WolfVariant> getVariant() {
-         return this.entityData.get(DATA_VARIANT_ID);
-     }
- 
--    public void setVariant(Holder<WolfVariant> variant) {
-+    private void setVariant(Holder<WolfVariant> variant) {
-         this.entityData.set(DATA_VARIANT_ID, variant);
-     }
- 
 @@ -506,7 +_,7 @@
      }
  
@@ -32,12 +9,3 @@
              this.tame(player);
              this.navigation.stop();
              this.setTarget(null);
-@@ -581,7 +_,7 @@
-         return DyeColor.byId(this.entityData.get(DATA_COLLAR_COLOR));
-     }
- 
--    public void setCollarColor(DyeColor color) {
-+    private void setCollarColor(DyeColor color) {
-         this.entityData.set(DATA_COLLAR_COLOR, color.getId());
-     }
- 

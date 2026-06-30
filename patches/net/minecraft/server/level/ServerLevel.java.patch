@@ -11,20 +11,6 @@
      public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
      public static final IntProvider RAIN_DELAY = UniformInt.of(12000, 180000);
      public static final IntProvider RAIN_DURATION = UniformInt.of(12000, 24000);
-@@ -195,11 +_,11 @@
-     private final List<ServerPlayer> players = Lists.newArrayList();
-     private final ServerChunkCache chunkSource;
-     private final MinecraftServer server;
--    public final ServerLevelData serverLevelData;
-+    private final ServerLevelData serverLevelData;
-     private final EntityTickList entityTickList = new EntityTickList();
-     private final ServerWaypointManager waypointManager;
-     private EnvironmentAttributeSystem environmentAttributes;
--    public final PersistentEntitySectionManager<Entity> entityManager;
-+    private final PersistentEntitySectionManager<Entity> entityManager;
-     private final GameEventDispatcher gameEventDispatcher;
-     public boolean noSave;
-     private final SleepStatus sleepStatus;
 @@ -216,11 +_,19 @@
      private boolean handlingTick;
      private final List<CustomSpawner> customSpawners;

@@ -1,25 +1,5 @@
 --- a/net/minecraft/world/entity/monster/zombie/ZombieVillager.java
 +++ b/net/minecraft/world/entity/monster/zombie/ZombieVillager.java
-@@ -59,7 +_,7 @@
- import org.jspecify.annotations.Nullable;
- 
- public class ZombieVillager extends Zombie implements VillagerDataHolder {
--    public static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieVillager.class, EntityDataSerializers.BOOLEAN);
-+    private static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieVillager.class, EntityDataSerializers.BOOLEAN);
-     private static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA = SynchedEntityData.defineId(
-         ZombieVillager.class, EntityDataSerializers.VILLAGER_DATA
-     );
-@@ -72,8 +_,8 @@
-     private static final int SPECIAL_BLOCK_RADIUS = 4;
-     private static final int NOT_CONVERTING = -1;
-     private static final int DEFAULT_XP = 0;
--    public int villagerConversionTime;
--    public @Nullable UUID conversionStarter;
-+    private int villagerConversionTime;
-+    private @Nullable UUID conversionStarter;
-     private @Nullable GossipContainer gossips;
-     private @Nullable MerchantOffers tradeOffers;
-     private int villagerXp = 0;
 @@ -152,7 +_,7 @@
          if (!this.level().isClientSide() && this.isAlive() && this.isConverting()) {
              int amount = this.getConversionProgress();
@@ -29,15 +9,6 @@
                  this.finishConversion((ServerLevel)this.level());
              }
          }
-@@ -193,7 +_,7 @@
-         return this.getEntityData().get(DATA_CONVERTING_ID);
-     }
- 
--    public void startConverting(@Nullable UUID player, int time) {
-+    private void startConverting(@Nullable UUID player, int time) {
-         this.conversionStarter = player;
-         this.villagerConversionTime = time;
-         this.getEntityData().set(DATA_CONVERTING_ID, true);
 @@ -267,6 +_,8 @@
                  if (!this.isSilent()) {
                      level.levelEvent(null, 1027, this.blockPosition(), 0);

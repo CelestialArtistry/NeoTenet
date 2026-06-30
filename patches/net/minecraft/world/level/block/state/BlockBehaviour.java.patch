@@ -55,15 +55,6 @@
      public abstract static class BlockStateBase extends StateHolder<Block, BlockState> implements TypedInstance<Block> {
          private static final Direction[] DIRECTIONS = Direction.values();
          private static final VoxelShape[] EMPTY_OCCLUSION_SHAPES = Util.make(new VoxelShape[DIRECTIONS.length], s -> Arrays.fill(s, Shapes.empty()));
-@@ -420,7 +_,7 @@
-         private boolean legacySolid;
-         private final PushReaction pushReaction;
-         private final MapColor mapColor;
--        public final float destroySpeed;
-+        private final float destroySpeed;
-         private final boolean requiresCorrectToolForDrops;
-         private final boolean canOcclude;
-         private final BlockBehaviour.StatePredicate isRedstoneConductor;
 @@ -505,7 +_,12 @@
                  this.occlusionShapesByFace = new VoxelShape[DIRECTIONS.length];
  

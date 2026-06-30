@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/DropperBlock.java
 +++ b/net/minecraft/world/level/block/DropperBlock.java
-@@ -45,7 +_,7 @@
-     }
- 
-     @Override
--    public void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
-+    protected void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
-         DispenserBlockEntity blockEntity = level.getBlockEntity(pos, BlockEntityTypes.DROPPER).orElse(null);
-         if (blockEntity == null) {
-             LOGGER.warn("Ignoring dispensing attempt for Dropper without matching block entity at {}", pos);
 @@ -58,12 +_,16 @@
                  ItemStack itemStack = blockEntity.getItem(slot);
                  if (!itemStack.isEmpty()) {

@@ -14,39 +14,6 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
      private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -229,7 +_,7 @@
-     private static final boolean DEFAULT_SEEN_CREDITS = false;
-     private static final boolean DEFAULT_SPAWN_EXTRA_PARTICLES_ON_FALL = false;
-     public ServerGamePacketListenerImpl connection;
--    public final MinecraftServer server;
-+    private final MinecraftServer server;
-     public final ServerPlayerGameMode gameMode;
-     private final PlayerAdvancements advancements;
-     private final ServerStatsCounter stats;
-@@ -242,20 +_,20 @@
-     private float lastSentHealth = -1.0E8F;
-     private int lastSentFood = -99999999;
-     private boolean lastFoodSaturationZero = true;
--    public int lastSentExp = -99999999;
-+    private int lastSentExp = -99999999;
-     private ChatVisiblity chatVisibility = ChatVisiblity.FULL;
-     private ParticleStatus particleStatus = ParticleStatus.ALL;
-     private boolean canChatColor = true;
-     private long lastActionTime = Util.getMillis();
-     private @Nullable Entity camera;
--    public boolean isChangingDimension;
-+    private boolean isChangingDimension;
-     public boolean seenCredits = false;
-     private final ServerRecipeBook recipeBook;
-     private @Nullable Vec3 levitationStartPos;
-     private int levitationStartTime;
-     private boolean disconnected;
-     private int requestedViewDistance = 2;
--    public String language = "en_us";
-+    private String language = "en_us";
-     private @Nullable Vec3 startingToFallPosition;
-     private @Nullable Vec3 enteredNetherPosition;
-     private @Nullable Vec3 enteredLavaOnVehiclePosition;
 @@ -317,6 +_,10 @@
          }
  
@@ -91,15 +58,6 @@
  
      public ServerPlayer(MinecraftServer server, ServerLevel level, GameProfile gameProfile, ClientInformation clientInformation) {
          super(level, gameProfile);
-@@ -545,7 +_,7 @@
-         this.lastSentExp = -1;
-     }
- 
--    public void initMenu(AbstractContainerMenu container) {
-+    private void initMenu(AbstractContainerMenu container) {
-         container.addSlotListener(this.containerListener);
-         container.setSynchronizer(this.containerSynchronizer);
-     }
 @@ -665,7 +_,26 @@
                  }
  
@@ -157,15 +115,6 @@
          boolean showDeathMessage = this.level().getGameRules().get(GameRules.SHOW_DEATH_MESSAGES);
          if (showDeathMessage) {
              Component deathMessage = this.getCombatTracker().getDeathMessage();
-@@ -1042,7 +_,7 @@
-         super.onAttributeUpdated(attribute);
-     }
- 
--    public static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
-+    private static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
-         ServerLevel level, ServerPlayer.RespawnConfig respawnConfig, boolean consumeSpawnBlock
-     ) {
-         LevelData.RespawnData respawnData = respawnConfig.respawnData;
 @@ -1068,7 +_,7 @@
              }
  
@@ -208,15 +157,6 @@
          return this;
      }
  
-@@ -1154,7 +_,7 @@
-         this.connection.send(new ClientboundPlayerRotationPacket(yRot, relativeY, xRot, relativeX));
-     }
- 
--    public void triggerDimensionChangeTriggers(ServerLevel oldLevel) {
-+    private void triggerDimensionChangeTriggers(ServerLevel oldLevel) {
-         ResourceKey<Level> oldKey = oldLevel.dimension();
-         ResourceKey<Level> newKey = this.level().dimension();
-         CriteriaTriggers.CHANGED_DIMENSION.trigger(this, oldKey, newKey);
 @@ -1184,8 +_,19 @@
  
      @Override
@@ -275,14 +215,7 @@
          return this.isReachableBedBlock(pos) || this.isReachableBedBlock(pos.relative(direction.getOpposite()));
      }
  
-@@ -1326,18 +_,26 @@
-         this.connection.send(new ClientboundShowDialogPacket(dialog));
-     }
- 
--    public void nextContainerCounter() {
-+    private void nextContainerCounter() {
-         this.containerCounter = this.containerCounter % 100 + 1;
-     }
+@@ -1332,12 +_,20 @@
  
      @Override
      public OptionalInt openMenu(@Nullable MenuProvider provider) {
@@ -507,21 +440,3 @@
      }
  
      @Override
-@@ -2233,7 +_,7 @@
-         return this.shoulderEntityLeft;
-     }
- 
--    public void setShoulderEntityLeft(CompoundTag tag) {
-+    protected void setShoulderEntityLeft(CompoundTag tag) {
-         this.shoulderEntityLeft = tag;
-         this.setShoulderParrotLeft(extractParrotVariant(tag));
-     }
-@@ -2242,7 +_,7 @@
-         return this.shoulderEntityRight;
-     }
- 
--    public void setShoulderEntityRight(CompoundTag tag) {
-+    protected void setShoulderEntityRight(CompoundTag tag) {
-         this.shoulderEntityRight = tag;
-         this.setShoulderParrotRight(extractParrotVariant(tag));
-     }

@@ -1,36 +1,5 @@
 --- a/net/minecraft/world/entity/animal/fox/Fox.java
 +++ b/net/minecraft/world/entity/animal/fox/Fox.java
-@@ -117,10 +_,10 @@
-     private static final int FLAG_SLEEPING = 32;
-     private static final int FLAG_FACEPLANTED = 64;
-     private static final int FLAG_DEFENDING = 128;
--    public static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> DATA_TRUSTED_ID_0 = SynchedEntityData.defineId(
-+    private static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> DATA_TRUSTED_ID_0 = SynchedEntityData.defineId(
-         Fox.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE
-     );
--    public static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> DATA_TRUSTED_ID_1 = SynchedEntityData.defineId(
-+    private static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> DATA_TRUSTED_ID_1 = SynchedEntityData.defineId(
-         Fox.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE
-     );
-     private static final Predicate<ItemEntity> ALLOWED_ITEMS = e -> !e.hasPickUpDelay() && e.isAlive();
-@@ -390,7 +_,7 @@
-         return Fox.Variant.byId(this.entityData.get(DATA_TYPE_ID));
-     }
- 
--    public void setVariant(Fox.Variant variant) {
-+    private void setVariant(Fox.Variant variant) {
-         this.entityData.set(DATA_TYPE_ID, variant.getId());
-     }
- 
-@@ -489,7 +_,7 @@
-         return this.getFlag(32);
-     }
- 
--    public void setSleeping(boolean sleeping) {
-+    private void setSleeping(boolean sleeping) {
-         this.setFlag(32, sleeping);
-     }
- 
 @@ -706,13 +_,18 @@
  
      @Override
