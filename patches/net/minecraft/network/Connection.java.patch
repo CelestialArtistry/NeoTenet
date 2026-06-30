@@ -11,12 +11,13 @@
      private volatile @Nullable PacketListener disconnectListener;
      private volatile @Nullable PacketListener packetListener;
      private @Nullable DisconnectionDetails disconnectionDetails;
-@@ -81,6 +_,8 @@
+@@ -81,6 +_,9 @@
      private volatile @Nullable DisconnectionDetails delayedDisconnect;
      private @Nullable BandwidthDebugMonitor bandwidthDebugMonitor;
      private @Nullable UUID intendedProfileId;
 +    @Nullable
 +    private ProtocolInfo<?> inboundProtocol;
++    public String hostname = ""; // CraftBukkit - add field
  
      public Connection(PacketFlow receiving) {
          this.receiving = receiving;

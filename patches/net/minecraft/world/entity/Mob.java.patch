@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -131,19 +_,24 @@
+@@ -131,19 +_,25 @@
      protected JumpControl jumpControl;
      private final BodyRotationControl bodyRotationControl;
      protected PathNavigation navigation;
@@ -27,6 +27,7 @@
 +    private boolean spawnCancelled = false;
 +    /** Neo: Prevent immediate spawning from conversions to capture conversion results for events */
 +    protected boolean preventConversionSpawns = false;
++    public boolean aware = true; // CraftBukkit
  
      protected Mob(EntityType<? extends Mob> type, Level level) {
          super(type, level);

@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -12,9 +_,12 @@
+ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
++
++import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.ConcurrentModificationException;
+ import java.util.EnumMap;
++import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
 @@ -177,14 +_,14 @@
      private static final double MAX_LINE_OF_SIGHT_TEST_RANGE = 128.0;
      protected static final int LIVING_ENTITY_FLAG_IS_USING = 1;
@@ -78,7 +91,7 @@
      protected int fallFlyTicks;
      private long lastKineticHitFeedbackTime = -2147483648L;
      private BlockPos lastPos;
-@@ -277,13 +_,20 @@
+@@ -277,13 +_,28 @@
      private float swimAmount;
      private float swimAmountO;
      protected Brain<?> brain;
@@ -98,6 +111,14 @@
 +     * the stack before the method's return.
 +     **/
 +    protected java.util.@Nullable Stack<net.neoforged.neoforge.common.damagesource.DamageContainer> damageContainers = new java.util.Stack<>();
++    // CraftBukkit start
++    public int expToDrop;
++    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
++    public org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
++    public boolean collides = true;
++    public Set<UUID> collidableExemptions = new HashSet<>();
++    public boolean bukkitPickUpLoot;
++    public int invulnerableDuration = 20;
  
      protected LivingEntity(EntityType<? extends LivingEntity> type, Level level) {
          super(type, level);

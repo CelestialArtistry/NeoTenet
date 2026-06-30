@@ -154,14 +154,19 @@ tasks.register('applyCBPatches') {
     }
 }
 
+tasks.register("prepareNeoForgeOtherSrc", Copy) {
+    group = 'neotenet'
+    from('src/main/java')
+    from('projects/neotenet/src/main/java')
+    into('projects/neotenet-base/other-src/main/java')
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 tasks.register('prepareNeoForgeBase', Copy) {
     group = 'neotenet'
+    dependsOn 'prepareNeoForgeOtherSrc'
 
     from('projects/neoforge/src/main/java')
-    into('projects/neotenet-base/src/main/java')
-    from('projects/neotenet/src/main/java')
-    into('projects/neotenet-base/src/main/java')
-    from('src/main/java')
     into('projects/neotenet-base/src/main/java')
 
     duplicatesStrategy = DuplicatesStrategy.INCLUDE

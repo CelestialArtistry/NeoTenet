@@ -25,7 +25,7 @@
      private final GameEventDispatcher gameEventDispatcher;
      public boolean noSave;
      private final SleepStatus sleepStatus;
-@@ -216,11 +_,17 @@
+@@ -216,11 +_,19 @@
      private boolean handlingTick;
      private final List<CustomSpawner> customSpawners;
      private @Nullable EnderDragonFight dragonFight;
@@ -41,6 +41,8 @@
 +    public java.util.OptionalLong getSeedOverride() {
 +        return this.seedOverride;
 +    }
++    public LevelStorageSource.LevelStorageAccess storageSource;
++    public UUID uuid;
  
      public ServerLevel(
          MinecraftServer server,
@@ -250,7 +252,7 @@
          this.neighborUpdater.updateNeighborsAtExceptFromFacing(pos, blockObject, skipDirection, orientation);
      }
  
-@@ -1206,7 +_,7 @@
+@@ -1206,14 +_,16 @@
          Explosion.BlockInteraction blockInteraction = switch (interactionType) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.BLOCK_EXPLOSION_DROP_DECAY);
@@ -259,7 +261,8 @@
                  ? this.getDestroyType(GameRules.MOB_EXPLOSION_DROP_DECAY)
                  : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.TNT_EXPLOSION_DROP_DECAY);
-@@ -1214,6 +_,7 @@
+             case TRIGGER -> Explosion.BlockInteraction.TRIGGER_BLOCK;
++            case STANDARD -> Explosion.BlockInteraction.DESTROY;
          };
          Vec3 center = new Vec3(x, y, z);
          ServerExplosion explosion = new ServerExplosion(this, source, damageSource, damageCalculator, center, r, fire, blockInteraction);

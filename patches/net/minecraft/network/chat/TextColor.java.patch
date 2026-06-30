@@ -11,12 +11,33 @@
      private static final String CUSTOM_COLOR_PREFIX = "#";
      public static final Codec<TextColor> CODEC = Codec.STRING.comapFlatMap(TextColor::parseColor, TextColor::serialize);
      private static final Map<String, TextColor> NAMED_COLORS = new HashMap<>();
-@@ -31,7 +_,7 @@
+@@ -31,16 +_,28 @@
      public static final TextColor YELLOW = named("yellow", 16777045);
      public static final TextColor WHITE = named("white", 16777215);
      private final int value;
 -    public final @Nullable String name;
 +    private final @Nullable String name;
++    // CraftBukkit start
++    @Nullable
++    public final ChatFormatting format;
++
++    private TextColor(int value, String name, ChatFormatting format) {
++        this.format = format;
++        // CraftBukkit end
++        this.value = value & 16777215;
++        this.name = name;
++    }
  
      private TextColor(int value, String name) {
          this.value = value & 16777215;
+         this.name = name;
++        this.format = null;
+     }
+ 
+     private TextColor(int value) {
+         this.value = value & 16777215;
+         this.name = null;
++        this.format = null;
+     }
+ 
+     private static TextColor named(String name, int rgb) {
