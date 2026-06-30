@@ -64,3 +64,12 @@
          WorldDimensions.Complete finalDimensions = dimensions.bake(datapackDimensions);
          Lifecycle lifecycle = finalDimensions.lifecycle().add(context.datapackWorldgen().allRegistriesLifecycle());
          PrimaryLevelData primaryLevelData = new PrimaryLevelData(createLevelSettings, finalDimensions.specialWorldProperty(), lifecycle);
+@@ -301,7 +_,7 @@
+         return new WorldLoader.InitConfig(packConfig, Commands.CommandSelection.DEDICATED, properties.functionPermissions);
+     }
+ 
+-    private static void forceUpgrade(
++    public static void forceUpgrade(
+         LevelStorageSource.LevelStorageAccess storageSource,
+         DataFixer fixerUpper,
+         boolean eraseCache,

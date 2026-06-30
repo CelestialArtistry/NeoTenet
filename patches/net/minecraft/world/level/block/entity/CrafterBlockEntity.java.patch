@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/CrafterBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/CrafterBlockEntity.java
+@@ -34,7 +_,7 @@
+     private static final int DEFAULT_TRIGGERED = 0;
+     private static final Component DEFAULT_NAME = Component.translatable("container.crafter");
+     private NonNullList<ItemStack> items = NonNullList.withSize(9, ItemStack.EMPTY);
+-    private int craftingTicksRemaining = 0;
++    public int craftingTicksRemaining = 0;
+     protected final ContainerData containerData = new ContainerData() {
+         private final int[] slotStates = new int[9];
+         private int triggered = 0;

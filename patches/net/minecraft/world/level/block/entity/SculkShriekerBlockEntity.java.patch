@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/SculkShriekerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SculkShriekerBlockEntity.java
+@@ -52,7 +_,7 @@
+         map.put(4, SoundEvents.WARDEN_LISTENING_ANGRY);
+     });
+     private static final int DEFAULT_WARNING_LEVEL = 0;
+-    private int warningLevel = 0;
++    public int warningLevel = 0;
+     private final VibrationSystem.User vibrationUser = new SculkShriekerBlockEntity.VibrationUser();
+     private VibrationSystem.Data vibrationData = new VibrationSystem.Data();
+     private final VibrationSystem.Listener vibrationListener = new VibrationSystem.Listener(this);

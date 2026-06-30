@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
+@@ -30,7 +_,7 @@
+     private static final boolean DEFAULT_IMMUNE_TO_ZOMBIFICATION = false;
+     private static final boolean DEFAULT_PICK_UP_LOOT = true;
+     private static final int DEFAULT_TIME_IN_OVERWORLD = 0;
+-    protected int timeInOverworld = 0;
++    public int timeInOverworld = 0;
+ 
+     public AbstractPiglin(EntityType<? extends AbstractPiglin> type, Level level) {
+         super(type, level);
+@@ -52,7 +_,7 @@
+         this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, isImmuneToZombification);
+     }
+ 
+-    protected boolean isImmuneToZombification() {
++    public boolean isImmuneToZombification() {
+         return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
+     }
+ 
 @@ -86,7 +_,7 @@
              this.timeInOverworld = 0;
          }

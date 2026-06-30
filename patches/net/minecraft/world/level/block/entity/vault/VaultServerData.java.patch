@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/vault/VaultServerData.java
++++ b/net/minecraft/world/level/block/entity/vault/VaultServerData.java
+@@ -52,7 +_,7 @@
+         return this.lastInsertFailTimestamp;
+     }
+ 
+-    Set<UUID> getRewardedPlayers() {
++    public Set<UUID> getRewardedPlayers() {
+         return this.rewardedPlayers;
+     }
+ 

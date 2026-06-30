@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/BaseCommandBlock.java
++++ b/net/minecraft/world/level/BaseCommandBlock.java
+@@ -129,7 +_,7 @@
+         return true;
+     }
+ 
+-    private BaseCommandBlock.@Nullable CloseableCommandBlockSource createSource(ServerLevel level) {
++    public BaseCommandBlock.@Nullable CloseableCommandBlockSource createSource(ServerLevel level) {
+         return this.trackOutput ? new BaseCommandBlock.CloseableCommandBlockSource(level) : null;
+     }
+ 

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/equine/SkeletonHorse.java
++++ b/net/minecraft/world/entity/animal/equine/SkeletonHorse.java
+@@ -38,7 +_,7 @@
+         .withAttachments(EntityAttachments.builder().attach(EntityAttachment.PASSENGER, 0.0F, EntityTypes.SKELETON_HORSE.getHeight() - 0.25F, 0.0F))
+         .scale(0.7F);
+     private boolean isTrap = false;
+-    private int trapTime = 0;
++    public int trapTime = 0;
+ 
+     public SkeletonHorse(EntityType<? extends SkeletonHorse> type, Level level) {
+         super(type, level);

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/storage/TagValueInput.java
 +++ b/net/minecraft/world/level/storage/TagValueInput.java
+@@ -29,7 +_,7 @@
+ public class TagValueInput implements ValueInput {
+     private final ProblemReporter problemReporter;
+     private final ValueInputContextHelper context;
+-    private final CompoundTag input;
++    public final CompoundTag input;
+ 
+     private TagValueInput(ProblemReporter problemReporter, ValueInputContextHelper context, CompoundTag input) {
+         this.problemReporter = problemReporter;
 @@ -116,6 +_,12 @@
      }
  

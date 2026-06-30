@@ -1,6 +1,18 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -67,9 +_,14 @@
+@@ -58,18 +_,23 @@
+     private static final short DEFAULT_LIT_TIME_REMAINING = 0;
+     private static final short DEFAULT_LIT_TOTAL_TIME = 0;
+     protected NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
+-    private int litTimeRemaining;
++    public int litTimeRemaining;
+     private int litTotalTime;
+-    private int cookingTimer;
+-    private int cookingTotalTime;
++    public int cookingTimer;
++    public int cookingTotalTime;
+     protected final ContainerData dataAccess = new ContainerData() {
+         @Override
          public int get(int dataId) {
              switch (dataId) {
                  case 0:
@@ -16,9 +28,12 @@
                  case 2:
                      return AbstractFurnaceBlockEntity.this.cookingTimer;
                  case 3:
-@@ -103,12 +_,14 @@
+@@ -101,14 +_,16 @@
+             return 4;
+         }
      };
-     public final Reference2IntOpenHashMap<ResourceKey<Recipe<?>>> recipesUsed = new Reference2IntOpenHashMap<>();
+-    private final Reference2IntOpenHashMap<ResourceKey<Recipe<?>>> recipesUsed = new Reference2IntOpenHashMap<>();
++    public final Reference2IntOpenHashMap<ResourceKey<Recipe<?>>> recipesUsed = new Reference2IntOpenHashMap<>();
      private final RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> quickCheck;
 +    private final RecipeType<? extends AbstractCookingRecipe> recipeType;
  

@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/ServerAdvancementManager.java
++++ b/net/minecraft/server/ServerAdvancementManager.java
+@@ -22,7 +_,7 @@
+ 
+ public class ServerAdvancementManager extends SimpleJsonResourceReloadListener<Advancement> {
+     private static final Logger LOGGER = LogUtils.getLogger();
+-    private Map<Identifier, AdvancementHolder> advancements = Map.of();
++    public Map<Identifier, AdvancementHolder> advancements = Map.of();
+     private AdvancementTree tree = new AdvancementTree();
+     private final HolderLookup.Provider registries;
+ 

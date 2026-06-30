@@ -9,3 +9,12 @@
      public final boolean preventProxyConnections = this.get("prevent-proxy-connections", false);
      public final String serverIp = this.get("server-ip", "");
      public final Settings<DedicatedServerProperties>.MutableValue<Boolean> allowFlight = this.getMutable("allow-flight", false);
+@@ -246,7 +_,7 @@
+         return this.worldDimensionData.create(registries);
+     }
+ 
+-    private record WorldDimensionData(JsonObject generatorSettings, String levelType) {
++    public record WorldDimensionData(JsonObject generatorSettings, String levelType) {
+         private static final Map<String, ResourceKey<WorldPreset>> LEGACY_PRESET_NAMES = Map.of(
+             "default", WorldPresets.NORMAL, "largebiomes", WorldPresets.LARGE_BIOMES
+         );

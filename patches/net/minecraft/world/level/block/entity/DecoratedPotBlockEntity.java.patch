@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
+@@ -30,7 +_,7 @@
+     public static final int EVENT_POT_WOBBLES = 1;
+     public long wobbleStartedAtTick;
+     public DecoratedPotBlockEntity.@Nullable WobbleStyle lastWobbleStyle;
+-    private PotDecorations decorations;
++    public PotDecorations decorations;
+     private ItemStack item = ItemStack.EMPTY;
+     protected @Nullable ResourceKey<LootTable> lootTable;
+     protected long lootTableSeed;

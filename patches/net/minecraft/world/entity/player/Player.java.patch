@@ -12,6 +12,22 @@
      public static final int MAX_HEALTH = 20;
      public static final int SLEEP_DURATION = 100;
      public static final int WAKE_UP_DURATION = 10;
+@@ -157,13 +_,13 @@
+     protected FoodData foodData = new FoodData();
+     protected int jumpTriggerTime;
+     public int takeXpDelay;
+-    private int sleepCounter = 0;
++    public int sleepCounter = 0;
+     protected boolean wasUnderwater;
+     private final Abilities abilities = new Abilities();
+     public int experienceLevel = 0;
+     public int totalExperience = 0;
+     public float experienceProgress = 0.0F;
+-    protected int enchantmentSeed = 0;
++    public int enchantmentSeed = 0;
+     protected final float defaultFlySpeed = 0.02F;
+     private int lastLevelUpTime;
+     private final GameProfile gameProfile;
 @@ -173,6 +_,12 @@
      private Optional<GlobalPos> lastDeathLocation = Optional.empty();
      public @Nullable FishingHook fishing;
@@ -71,6 +87,15 @@
          if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
              Pose desiredPose = this.getDesiredPose();
              Pose actualPose;
+@@ -407,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected int getFireImmuneTicks() {
++    public int getFireImmuneTicks() {
+         return 20;
+     }
+ 
 @@ -526,6 +_,7 @@
  
      @Override

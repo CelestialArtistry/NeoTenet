@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
+@@ -26,7 +_,7 @@
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final int DEFAULT_LAST_INTERACTED_SLOT = -1;
+     private final NonNullList<ItemStack> items = NonNullList.withSize(6, ItemStack.EMPTY);
+-    private int lastInteractedSlot = -1;
++    public int lastInteractedSlot = -1;
+ 
+     public ChiseledBookShelfBlockEntity(BlockPos worldPosition, BlockState blockState) {
+         super(BlockEntityTypes.CHISELED_BOOKSHELF, worldPosition, blockState);
 @@ -88,12 +_,50 @@
  
      @Override

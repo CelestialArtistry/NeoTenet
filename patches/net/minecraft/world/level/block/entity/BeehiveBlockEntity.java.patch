@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
+@@ -84,8 +_,8 @@
+     private static final int MIN_TICKS_BEFORE_REENTERING_HIVE = 400;
+     private static final int MIN_OCCUPATION_TICKS_NECTAR = 2400;
+     public static final int MIN_OCCUPATION_TICKS_NECTARLESS = 600;
+-    private final List<BeehiveBlockEntity.BeeData> stored = Lists.newArrayList();
+-    private @Nullable BlockPos savedFlowerPos;
++    private List<BeehiveBlockEntity.BeeData> stored = Lists.newArrayList();
++    public @Nullable BlockPos savedFlowerPos;
+ 
+     public BeehiveBlockEntity(BlockPos worldPosition, BlockState blockState) {
+         super(BlockEntityTypes.BEEHIVE, worldPosition, blockState);

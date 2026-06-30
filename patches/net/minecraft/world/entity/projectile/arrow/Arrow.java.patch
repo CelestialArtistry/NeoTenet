@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/projectile/arrow/Arrow.java
++++ b/net/minecraft/world/entity/projectile/arrow/Arrow.java
+@@ -37,7 +_,7 @@
+         this.updateColor();
+     }
+ 
+-    private PotionContents getPotionContents() {
++    public PotionContents getPotionContents() {
+         return this.getPickupItemStackOrigin().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+     }
+ 
+@@ -45,7 +_,7 @@
+         return this.getPickupItemStackOrigin().getOrDefault(DataComponents.POTION_DURATION_SCALE, 1.0F);
+     }
+ 
+-    private void setPotionContents(PotionContents potionContents) {
++    public void setPotionContents(PotionContents potionContents) {
+         this.getPickupItemStackOrigin().set(DataComponents.POTION_CONTENTS, potionContents);
+         this.updateColor();
+     }
+@@ -56,7 +_,7 @@
+         this.updateColor();
+     }
+ 
+-    private void updateColor() {
++    public void updateColor() {
+         PotionContents potionContents = this.getPotionContents();
+         this.entityData.set(ID_EFFECT_COLOR, potionContents.equals(PotionContents.EMPTY) ? -1 : potionContents.getColor());
+     }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/SculkSensorBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SculkSensorBlockEntity.java
+@@ -20,7 +_,7 @@
+     private VibrationSystem.Data vibrationData;
+     private final VibrationSystem.Listener vibrationListener;
+     private final VibrationSystem.User vibrationUser;
+-    private int lastVibrationFrequency = 0;
++    public int lastVibrationFrequency = 0;
+ 
+     protected SculkSensorBlockEntity(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState) {
+         super(type, worldPosition, blockState);

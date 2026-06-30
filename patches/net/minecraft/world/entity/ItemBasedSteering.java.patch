@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/entity/ItemBasedSteering.java
++++ b/net/minecraft/world/entity/ItemBasedSteering.java
+@@ -10,8 +_,8 @@
+     private static final int MAX_BOOST_TIME = 700;
+     private final SynchedEntityData entityData;
+     private final EntityDataAccessor<Integer> boostTimeAccessor;
+-    private boolean boosting;
+-    private int boostTime;
++    public boolean boosting;
++    public int boostTime;
+ 
+     public ItemBasedSteering(SynchedEntityData entityData, EntityDataAccessor<Integer> boostTimeAccessor) {
+         this.entityData = entityData;
+@@ -44,7 +_,7 @@
+         return this.boosting ? 1.0F + 1.15F * Mth.sin((float)this.boostTime / this.boostTimeTotal() * (float) Math.PI) : 1.0F;
+     }
+ 
+-    private int boostTimeTotal() {
++    public int boostTimeTotal() {
+         return this.entityData.get(this.boostTimeAccessor);
+     }
+ }

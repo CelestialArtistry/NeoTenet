@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/vehicle/boat/AbstractBoat.java
 +++ b/net/minecraft/world/entity/vehicle/boat/AbstractBoat.java
+@@ -70,7 +_,7 @@
+     private boolean inputDown;
+     private double waterLevel;
+     private float landFriction;
+-    private AbstractBoat.Status status;
++    public AbstractBoat.Status status;
+     private AbstractBoat.Status oldStatus;
+     private double lastYd;
+     private boolean isAboveBubbleColumn;
 @@ -418,7 +_,7 @@
                  for (int z = minZ; z < maxZ; z++) {
                      pos.set(x, y, z);

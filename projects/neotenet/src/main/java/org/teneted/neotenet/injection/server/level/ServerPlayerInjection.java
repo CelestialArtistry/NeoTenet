@@ -13,9 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
-import org.bukkit.Location;
 import org.bukkit.WeatherType;
-import org.bukkit.craftbukkit.event.CraftPortalEvent;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSpawnChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -25,6 +24,11 @@ import org.teneted.neotenet.injection.world.entity.player.PlayerInjection;
 import java.util.Set;
 
 public interface ServerPlayerInjection extends PlayerInjection {
+
+    @Override
+    default CraftPlayer getBukkitEntity() {
+        throw new IllegalArgumentException("Not implemented");
+    }
 
     default void resendItemInHands() {
         throw new IllegalArgumentException("Not implemented");

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/inventory/MerchantContainer.java
++++ b/net/minecraft/world/inventory/MerchantContainer.java
+@@ -14,7 +_,7 @@
+     private final Merchant merchant;
+     private final NonNullList<ItemStack> itemStacks = NonNullList.withSize(3, ItemStack.EMPTY);
+     private @Nullable MerchantOffer activeOffer;
+-    private int selectionHint;
++    public int selectionHint;
+     private int futureXp;
+ 
+     public MerchantContainer(Merchant villager) {

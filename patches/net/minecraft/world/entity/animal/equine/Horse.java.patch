@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/equine/Horse.java
++++ b/net/minecraft/world/entity/animal/equine/Horse.java
+@@ -82,7 +_,7 @@
+         return this.entityData.get(DATA_ID_TYPE_VARIANT);
+     }
+ 
+-    private void setVariantAndMarkings(Variant variant, Markings markings) {
++    public void setVariantAndMarkings(Variant variant, Markings markings) {
+         this.setTypeVariant(variant.getId() & 0xFF | markings.getId() << 8 & 0xFF00);
+     }
+ 

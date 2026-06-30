@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/projectile/arrow/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/arrow/AbstractArrow.java
+@@ -72,13 +_,13 @@
+     protected int inGroundTime;
+     public AbstractArrow.Pickup pickup = AbstractArrow.Pickup.DISALLOWED;
+     public int shakeTime = 0;
+-    private int life = 0;
+-    private double baseDamage = 2.0;
++    public int life = 0;
++    public double baseDamage = 2.0;
+     private SoundEvent soundEvent = this.getDefaultHitGroundSoundEvent();
+     private @Nullable IntOpenHashSet piercingIgnoreEntityIds;
+     private @Nullable List<Entity> piercedAndKilledEntities;
+-    private ItemStack pickupItemStack = this.getDefaultPickupItem();
+-    private @Nullable ItemStack firedFromWeapon = null;
++    public ItemStack pickupItemStack = this.getDefaultPickupItem();
++    public @Nullable ItemStack firedFromWeapon = null;
+ 
+     protected AbstractArrow(EntityType<? extends AbstractArrow> type, Level level) {
+         super(type, level);
 @@ -284,11 +_,15 @@
  
              if (entitiesHit.isEmpty()) {
@@ -17,3 +35,21 @@
                  ProjectileDeflection deflection = this.hitTargetsOrDeflectSelf(entitiesHit);
                  this.needsSync = true;
                  if (this.getPierceLevel() > 0 && deflection == ProjectileDeflection.NONE) {
+@@ -349,7 +_,7 @@
+         this.life = 0;
+     }
+ 
+-    protected boolean isInGround() {
++    public boolean isInGround() {
+         return this.entityData.get(IN_GROUND);
+     }
+ 
+@@ -683,7 +_,7 @@
+         this.setFlag(1, critArrow);
+     }
+ 
+-    private void setPierceLevel(byte pieceLevel) {
++    public void setPierceLevel(byte pieceLevel) {
+         this.entityData.set(PIERCE_LEVEL, pieceLevel);
+     }
+ 

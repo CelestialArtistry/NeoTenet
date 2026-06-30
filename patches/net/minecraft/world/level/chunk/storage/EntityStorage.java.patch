@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
+@@ -31,10 +_,10 @@
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final String ENTITIES_TAG = "Entities";
+     private static final String POSITION_TAG = "Position";
+-    private final ServerLevel level;
++    public final ServerLevel level;
+     private final SimpleRegionStorage simpleRegionStorage;
+     private final LongSet emptyChunks = new LongOpenHashSet();
+-    private final ConsecutiveExecutor entityDeserializerQueue;
++    public final ConsecutiveExecutor entityDeserializerQueue;
+ 
+     public EntityStorage(SimpleRegionStorage simpleRegionStorage, ServerLevel level, Executor mainThreadExecutor) {
+         this.simpleRegionStorage = simpleRegionStorage;
 @@ -94,9 +_,13 @@
                  ListTag entities = new ListTag();
                  chunk.getEntities().forEach(e -> {

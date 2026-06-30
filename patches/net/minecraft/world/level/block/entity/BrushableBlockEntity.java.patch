@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
+@@ -47,10 +_,10 @@
+     private int brushCount;
+     private long brushCountResetsAtTick;
+     private long coolDownEndsAtTick;
+-    private ItemStack item = ItemStack.EMPTY;
++    public ItemStack item = ItemStack.EMPTY;
+     private @Nullable Direction hitDirection;
+-    private @Nullable ResourceKey<LootTable> lootTable;
+-    private long lootTableSeed;
++    public @Nullable ResourceKey<LootTable> lootTable;
++    public long lootTableSeed;
+ 
+     public BrushableBlockEntity(BlockPos worldPosition, BlockState blockState) {
+         super(BlockEntityTypes.BRUSHABLE_BLOCK, worldPosition, blockState);

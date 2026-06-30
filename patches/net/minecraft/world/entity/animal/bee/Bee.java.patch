@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/animal/bee/Bee.java
 +++ b/net/minecraft/world/entity/animal/bee/Bee.java
+@@ -132,7 +_,7 @@
+     private float rollAmountO;
+     private int timeSinceSting;
+     private int ticksWithoutNectarSinceExitingHive = 0;
+-    private int stayOutOfHiveCountdown = 0;
++    public int stayOutOfHiveCountdown = 0;
+     private int numCropsGrownSincePollination = 0;
+     private static final int COOLDOWN_BEFORE_LOCATING_NEW_HIVE = 200;
+     private int remainingCooldownBeforeLocatingNewHive;
+@@ -141,7 +_,7 @@
+     private static final int MAX_FIND_FLOWER_RETRY_COOLDOWN = 60;
+     private int remainingCooldownBeforeLocatingNewFlower = Mth.nextInt(this.random, 20, 60);
+     private @Nullable BlockPos savedFlowerPos;
+-    private @Nullable BlockPos hivePos;
++    public @Nullable BlockPos hivePos;
+     private Bee.BeePollinateGoal beePollinateGoal;
+     private Bee.BeeGoToHiveGoal goToHiveGoal;
+     private Bee.BeeGoToKnownFlowerGoal goToKnownFlowerGoal;
 @@ -471,7 +_,7 @@
          if (this.hivePos == null) {
              return null;
@@ -7,6 +25,24 @@
 -            return this.isTooFarAway(this.hivePos) ? null : this.level().getBlockEntity(this.hivePos, BlockEntityTypes.BEEHIVE).orElse(null);
 +            return this.isTooFarAway(this.hivePos) ? null : this.level().getBlockEntity(this.hivePos) instanceof BeehiveBlockEntity hive ? hive : null;
          }
+     }
+ 
+@@ -483,7 +_,7 @@
+         return this.getFlag(8);
+     }
+ 
+-    private void setHasNectar(boolean hasNectar) {
++    public void setHasNectar(boolean hasNectar) {
+         if (hasNectar) {
+             this.resetTicksWithoutNectarSinceExitingHive();
+         }
+@@ -495,7 +_,7 @@
+         return this.getFlag(4);
+     }
+ 
+-    private void setHasStung(boolean hasStung) {
++    public void setHasStung(boolean hasStung) {
+         this.setFlag(4, hasStung);
      }
  
 @@ -637,8 +_,18 @@

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/inventory/CraftingMenu.java
++++ b/net/minecraft/world/inventory/CraftingMenu.java
+@@ -27,7 +_,7 @@
+     private static final int INV_SLOT_END = 37;
+     private static final int USE_ROW_SLOT_START = 37;
+     private static final int USE_ROW_SLOT_END = 46;
+-    private final ContainerLevelAccess access;
++    public final ContainerLevelAccess access;
+     private final Player player;
+     private boolean placingRecipe;
+ 

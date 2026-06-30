@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
+@@ -44,8 +_,8 @@
+     private float activeRotation;
+     private boolean isActive;
+     private boolean isHunting;
+-    private final List<BlockPos> effectBlocks = Lists.newArrayList();
+-    private @Nullable EntityReference<LivingEntity> destroyTarget;
++    public final List<BlockPos> effectBlocks = Lists.newArrayList();
++    public @Nullable EntityReference<LivingEntity> destroyTarget;
+     private long nextAmbientSoundActivation;
+ 
+     public ConduitBlockEntity(BlockPos worldPosition, BlockState blockState) {
 @@ -150,10 +_,8 @@
                          BlockPos testPos = worldPosition.offset(ox, oy, oz);
                          BlockState testBlock = level.getBlockState(testPos);
@@ -13,3 +24,12 @@
                          }
                      }
                  }
+@@ -218,7 +_,7 @@
+         return candidates.isEmpty() ? null : EntityReference.of(Util.getRandom(candidates, level.getRandom()));
+     }
+ 
+-    private static AABB getDestroyRangeAABB(BlockPos worldPosition) {
++    public static AABB getDestroyRangeAABB(BlockPos worldPosition) {
+         return new AABB(worldPosition).inflate(8.0);
+     }
+ 

@@ -11,8 +11,18 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int CONVERSION_RETRY_DELAY_MS = 5000;
      private static final int CONVERSION_RETRIES = 2;
-@@ -88,6 +_,7 @@
-     public ServerLinks serverLinks;
+@@ -80,14 +_,15 @@
+     private @Nullable QueryThreadGs4 queryThreadGs4;
+     private final RconConsoleSource rconConsoleSource;
+     private @Nullable RconThread rconThread;
+-    private final DedicatedServerSettings settings;
++    public DedicatedServerSettings settings;
+     private @Nullable MinecraftServerGui gui;
+     private final @Nullable ServerTextFilter serverTextFilter;
+     private @Nullable RemoteSampleLogger tickTimeLogger;
+     private boolean isTickTimeLoggingEnabled;
+-    private final ServerLinks serverLinks;
++    public ServerLinks serverLinks;
      private final Map<String, String> codeOfConductTexts;
      private final @Nullable ManagementServer jsonRpcServer;
 +    private net.neoforged.neoforge.server.dedicated.@Nullable DedicatedLanServerPinger dediLanPinger;

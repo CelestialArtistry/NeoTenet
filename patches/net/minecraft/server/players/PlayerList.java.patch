@@ -1,6 +1,22 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -128,6 +_,7 @@
+@@ -114,7 +_,7 @@
+     private static final int SEND_PLAYER_INFO_INTERVAL = 600;
+     private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z", Locale.ROOT);
+     private final MinecraftServer server;
+-    private final List<ServerPlayer> players = Lists.newArrayList();
++    public final List<ServerPlayer> players = Lists.newArrayList();
+     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
+     private final UserBanList bans;
+     private final IpBanList ipBans;
+@@ -122,12 +_,13 @@
+     private final UserWhiteList whitelist;
+     private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
+     private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
+-    private final PlayerDataStorage playerIo;
++    public final PlayerDataStorage playerIo;
+     private final LayeredRegistryAccess<RegistryLayer> registries;
+     private int viewDistance;
      private int simulationDistance;
      private boolean allowCommandsForAllPlayers;
      private int sendAllPlayerInfoIn;
@@ -30,7 +46,7 @@
          this.sendPlayerPermissionLevel(player);
          player.getStats().markAllDirty();
          player.getRecipeBook().sendInitialRecipeBook(player);
-@@ -221,6 +_,9 @@
+@@ -221,9 +_,12 @@
          player.initInventoryMenu();
          this.server.notificationManager().playerJoined(player);
          playerConnection.resumeFlushing();
@@ -39,7 +55,11 @@
 +        net.neoforged.neoforge.event.EventHooks.firePlayerLoggedIn(player);
      }
  
-     public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
+-    protected void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
++    public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
+         Set<Objective> objectives = Sets.newHashSet();
+ 
+         for (PlayerTeam team : scoreboard.getPlayerTeams()) {
 @@ -290,6 +_,7 @@
      }
  

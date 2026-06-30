@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/squid/GlowSquid.java
++++ b/net/minecraft/world/entity/animal/squid/GlowSquid.java
+@@ -100,7 +_,7 @@
+         return hurt;
+     }
+ 
+-    private void setDarkTicks(int ticks) {
++    public void setDarkTicks(int ticks) {
+         this.entityData.set(DATA_DARK_TICKS_REMAINING, ticks);
+     }
+ 

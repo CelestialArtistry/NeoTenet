@@ -1,6 +1,13 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
-@@ -30,6 +_,11 @@
+@@ -24,12 +_,17 @@
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final CompletableFuture<Unit> DATA_RELOAD_INITIAL_TASK = CompletableFuture.completedFuture(Unit.INSTANCE);
+     private final ReloadableServerRegistries.Holder fullRegistryHolder;
+-    private final Commands commands;
++    public Commands commands;
+     private final RecipeManager recipes;
+     private final ServerAdvancementManager advancements;
      private final ServerFunctionLibrary functionLibrary;
      private final List<Registry.PendingTags<?>> postponedTags;
      private final List<DataComponentInitializers.PendingComponents<?>> newComponents;

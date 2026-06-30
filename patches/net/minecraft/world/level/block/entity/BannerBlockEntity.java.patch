@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/BannerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BannerBlockEntity.java
+@@ -23,7 +_,7 @@
+     private static final String TAG_PATTERNS = "patterns";
+     private static final Component DEFAULT_NAME = Component.translatable("block.minecraft.banner");
+     private @Nullable Component name;
+-    private final DyeColor baseColor;
++    public DyeColor baseColor;
+     private BannerPatternLayers patterns = BannerPatternLayers.EMPTY;
+ 
+     public BannerBlockEntity(BlockPos worldPosition, BlockState blockState) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/projectile/hurtingprojectile/windcharge/AbstractWindCharge.java
++++ b/net/minecraft/world/entity/projectile/hurtingprojectile/windcharge/AbstractWindCharge.java
+@@ -93,7 +_,7 @@
+     public void push(double xa, double ya, double za) {
+     }
+ 
+-    protected abstract void explode(final Vec3 position);
++    public abstract void explode(final Vec3 position);
+ 
+     @Override
+     protected void onHitBlock(BlockHitResult hitResult) {

@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/entity/monster/Guardian.java
++++ b/net/minecraft/world/entity/monster/Guardian.java
+@@ -56,7 +_,7 @@
+     private @Nullable LivingEntity clientSideCachedAttackTarget;
+     private int clientSideAttackTime;
+     private boolean clientSideTouchedGround;
+-    protected @Nullable RandomStrollGoal randomStrollGoal;
++    public @Nullable RandomStrollGoal randomStrollGoal;
+ 
+     public Guardian(EntityType<? extends Guardian> type, Level level) {
+         super(type, level);
+@@ -110,7 +_,7 @@
+         return 80;
+     }
+ 
+-    private void setActiveAttackTarget(int entityId) {
++    public void setActiveAttackTarget(int entityId) {
+         this.entityData.set(DATA_ID_ATTACK_TARGET, entityId);
+     }
+ 
+@@ -338,9 +_,9 @@
+         }
+     }
+ 
+-    private static class GuardianAttackGoal extends Goal {
++    public static class GuardianAttackGoal extends Goal {
+         private final Guardian guardian;
+-        private int attackTime;
++        public int attackTime;
+         private final boolean elder;
+ 
+         public GuardianAttackGoal(Guardian guardian) {

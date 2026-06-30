@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/animal/feline/Cat.java
 +++ b/net/minecraft/world/entity/animal/feline/Cat.java
+@@ -125,7 +_,7 @@
+         return this.entityData.get(DATA_VARIANT_ID);
+     }
+ 
+-    private void setVariant(Holder<CatVariant> variant) {
++    public void setVariant(Holder<CatVariant> variant) {
+         this.entityData.set(DATA_VARIANT_ID, variant);
+     }
+ 
+@@ -196,7 +_,7 @@
+         return DyeColor.byId(this.entityData.get(DATA_COLLAR_COLOR));
+     }
+ 
+-    private void setCollarColor(DyeColor color) {
++    public void setCollarColor(DyeColor color) {
+         this.entityData.set(DATA_COLLAR_COLOR, color.getId());
+     }
+ 
 @@ -485,7 +_,7 @@
      }
  

@@ -1,0 +1,21 @@
+--- a/net/minecraft/util/datafix/fixes/BlockStateData.java
++++ b/net/minecraft/util/datafix/fixes/BlockStateData.java
+@@ -675,15 +_,15 @@
+         "east", "true", "north", "true", "south", "true", "west", "true"
+     );
+ 
+-    private static Dynamic<?> create(String name) {
++    public static Dynamic<?> create(String name) {
+         return new Dynamic<>(JavaOps.INSTANCE, Map.of("Name", name)).convert(NbtOps.INSTANCE);
+     }
+ 
+-    private static Dynamic<?> create(String name, Map<String, String> properties) {
++    public static Dynamic<?> create(String name, Map<String, String> properties) {
+         return new Dynamic<>(JavaOps.INSTANCE, Map.of("Name", name, "Properties", properties)).convert(NbtOps.INSTANCE);
+     }
+ 
+-    private static void register(int id, Dynamic<?> tag, Dynamic<?>... legacy) {
++    public static void register(int id, Dynamic<?> tag, Dynamic<?>... legacy) {
+         MAP[id] = tag;
+         int blockId = id >> 4;
+         if (BLOCK_DEFAULTS[blockId] == null) {

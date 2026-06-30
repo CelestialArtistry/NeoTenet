@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/DispenserBlock.java
++++ b/net/minecraft/world/level/block/DispenserBlock.java
+@@ -83,7 +_,7 @@
+         return InteractionResult.SUCCESS;
+     }
+ 
+-    protected void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
++    public void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
+         DispenserBlockEntity blockEntity = level.getBlockEntity(pos, BlockEntityTypes.DISPENSER).orElse(null);
+         if (blockEntity == null) {
+             LOGGER.warn("Ignoring dispensing attempt for Dispenser without matching block entity at {}", pos);

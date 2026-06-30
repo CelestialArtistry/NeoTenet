@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/vehicle/minecart/AbstractMinecartContainer.java
 +++ b/net/minecraft/world/entity/vehicle/minecart/AbstractMinecartContainer.java
+@@ -24,8 +_,8 @@
+ 
+ public abstract class AbstractMinecartContainer extends AbstractMinecart implements ContainerEntity {
+     private NonNullList<ItemStack> itemStacks = NonNullList.withSize(36, ItemStack.EMPTY);
+-    private @Nullable ResourceKey<LootTable> lootTable;
+-    private long lootTableSeed;
++    public @Nullable ResourceKey<LootTable> lootTable;
++    public long lootTableSeed;
+ 
+     protected AbstractMinecartContainer(EntityType<?> type, Level level) {
+         super(type, level);
 @@ -94,6 +_,8 @@
  
      @Override
