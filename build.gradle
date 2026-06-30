@@ -1,3 +1,6 @@
+import io.codechicken.diffpatch.cli.PatchOperation
+
+import java.nio.file.Paths
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import net.neoforged.neodev.CheckSplitSources
@@ -50,5 +53,108 @@ sourceSets {
         resources {
             srcDirs = []
         }
+    }
+}
+
+tasks.register('copyCB', Copy) {
+    group = 'neotenet'
+
+    from('projects/bukkit/src/main/java') {
+        exclude 'com/**'
+    }
+    from('projects/craftbukkit/src/main/java') {
+        exclude 'com/**'
+    }
+
+    into 'projects/neotenet/src/main/java'
+
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+def rootDir = rootProject.projectDir
+
+tasks.register('prepareCleanCB', Copy) {
+    group = 'neotenet'
+
+    from('projects/bukkit/src/main/java') {
+        exclude 'com/mojang/**'
+    }
+    from('projects/craftbukkit/src/main/java') {
+        exclude 'com/mojang/**'
+    }
+    into 'projects/cb-base/src/main/java'
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+import io.codechicken.diffpatch.cli.DiffOperation
+import io.codechicken.diffpatch.util.Input.MultiInput
+import io.codechicken.diffpatch.util.Output.MultiOutput
+
+tasks.register('genCBPatchesJar') {
+    group = 'neotenet'
+    dependsOn 'prepareCleanCB'
+
+    inputs.dir('projects/cb-base/src/main/java/org/bukkit')
+    inputs.dir('projects/neotenet/src/main/java/org/bukkit')
+    outputs.file('projects/neotenet/cb-patches.jar')
+
+    doLast {
+        def baseDir = new File(rootDir, 'projects/cb-base/src/main/java/org/bukkit').toPath()
+        def modifiedDir = new File(rootDir, 'projects/neotenet/src/main/java/org/bukkit').toPath()
+        def patchesJar = new File(rootDir, 'projects/neotenet/cb-patches.jar').toPath()
+
+        java.nio.file.Files.deleteIfExists(patchesJar)
+
+        def builder = DiffOperation.builder()
+                .logTo(logger::lifecycle)
+                .baseInput(MultiInput.folder(baseDir))
+                .changedInput(MultiInput.folder(modifiedDir))
+                .patchesOutput(MultiOutput.detectedArchive(patchesJar))
+                .autoHeader(true)
+                .level(io.codechicken.diffpatch.util.LogLevel.WARN)
+                .summary(false)
+                .aPrefix('a/')
+                .bPrefix('b/')
+                .lineEnding('\n')
+
+        def result = builder.build().operate()
+        int exit = result.exit
+        if (exit != 0 && exit != 1) {
+            throw new RuntimeException("Diffpatch Failed，Code: " + exit)
+        }
+        logger.lifecycle('Patched Successful: cb-patches.jar')
+    }
+}
+
+tasks.register('applyCBPatches') {
+    group = 'neotenet'
+    dependsOn 'copyCB'
+
+    inputs.file('projects/neotenet/cb-patches.jar')
+    outputs.dir('projects/neotenet/src/main/java/org/bukkit')
+
+    doLast {
+        def patchesJar = new File(rootDir, 'projects/neotenet/cb-patches.jar')
+        if (!patchesJar.exists()) {
+            logger.lifecycle('cb-patches.jar None Exist，Skip')
+            return
+        }
+        def baseDir = new File(rootDir, 'projects/cb-base/src/main/java/org/bukkit').toPath()
+        def targetDir = new File(rootDir, 'projects/neotenet/src/main/java/org/bukkit').toPath()
+
+        def builder = PatchOperation.builder()
+                .logTo(logger::lifecycle)
+                .baseInput(MultiInput.folder(baseDir))
+                .patchesInput(MultiInput.detectedArchive(patchesJar.toPath()))
+                .patchedOutput(MultiOutput.folder(targetDir))
+                .level(io.codechicken.diffpatch.util.LogLevel.WARN)
+                .summary(false)
+                .lineEnding('\n')
+
+        def result = builder.build().operate()
+        if (result.exit != 0 && result.exit != 1) {
+            throw new RuntimeException("Failed，Code: " + result.exit)
+        }
+        logger.lifecycle('Applied Successful')
     }
 }

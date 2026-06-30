@@ -10,6 +10,7 @@ import org.bukkit.Registry;
 import org.bukkit.craftbukkit.registry.CraftOldEnumRegistryItem;
 import org.jetbrains.annotations.NotNull;
 
+// ABSTRACT
 public class CraftArt extends CraftOldEnumRegistryItem<Art, PaintingVariant> implements Art {
 
     private static int count = 0;
