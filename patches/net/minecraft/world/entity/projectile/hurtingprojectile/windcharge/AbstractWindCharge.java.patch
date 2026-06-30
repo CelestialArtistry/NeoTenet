@@ -4,8 +4,8 @@
      public void push(double xa, double ya, double za) {
      }
  
--    protected abstract void explode(final Vec3 position);
-+    public abstract void explode(final Vec3 position);
+-    public abstract void explode(final Vec3 position);
++    protected abstract void explode(final Vec3 position);
  
      @Override
      protected void onHitBlock(BlockHitResult hitResult) {

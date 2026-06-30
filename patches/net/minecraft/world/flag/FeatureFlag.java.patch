@@ -4,10 +4,10 @@
  package net.minecraft.world.flag;
  
  public class FeatureFlag {
--    final FeatureFlagUniverse universe;
--    final long mask;
-+    public final FeatureFlagUniverse universe;
-+    public final long mask;
+-    public final FeatureFlagUniverse universe;
+-    public final long mask;
++    final FeatureFlagUniverse universe;
++    final long mask;
 +    final int extMaskIndex;
 +    final boolean modded;
  

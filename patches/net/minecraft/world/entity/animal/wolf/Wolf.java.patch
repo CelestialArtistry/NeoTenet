@@ -4,8 +4,8 @@
      private static final DyeColor DEFAULT_COLLAR_COLOR = DyeColor.RED;
      private float interestedAngle;
      private float interestedAngleO;
--    private boolean isWet;
-+    public boolean isWet;
+-    public boolean isWet;
++    private boolean isWet;
      private boolean isShaking;
      private float shakeAnim;
      private float shakeAnimO;
@@ -13,13 +13,13 @@
          }
      }
  
--    private Holder<WolfVariant> getVariant() {
-+    public Holder<WolfVariant> getVariant() {
+-    public Holder<WolfVariant> getVariant() {
++    private Holder<WolfVariant> getVariant() {
          return this.entityData.get(DATA_VARIANT_ID);
      }
  
--    private void setVariant(Holder<WolfVariant> variant) {
-+    public void setVariant(Holder<WolfVariant> variant) {
+-    public void setVariant(Holder<WolfVariant> variant) {
++    private void setVariant(Holder<WolfVariant> variant) {
          this.entityData.set(DATA_VARIANT_ID, variant);
      }
  
@@ -36,8 +36,8 @@
          return DyeColor.byId(this.entityData.get(DATA_COLLAR_COLOR));
      }
  
--    private void setCollarColor(DyeColor color) {
-+    public void setCollarColor(DyeColor color) {
+-    public void setCollarColor(DyeColor color) {
++    private void setCollarColor(DyeColor color) {
          this.entityData.set(DATA_COLLAR_COLOR, color.getId());
      }
  

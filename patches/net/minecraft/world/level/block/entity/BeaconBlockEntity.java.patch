@@ -4,17 +4,17 @@
      private static final String TAG_SECONDARY = "secondary_effect";
      private List<BeaconBeamOwner.Section> beamSections = new ArrayList<>();
      private List<BeaconBeamOwner.Section> checkingBeamSections = new ArrayList<>();
--    private int levels;
-+    public int levels;
+-    public int levels;
++    private int levels;
      private int lastCheckY;
--    private @Nullable Holder<MobEffect> primaryPower;
--    private @Nullable Holder<MobEffect> secondaryPower;
--    private @Nullable Component name;
--    private LockCode lockKey = LockCode.NO_LOCK;
-+    public @Nullable Holder<MobEffect> primaryPower;
-+    public @Nullable Holder<MobEffect> secondaryPower;
-+    public @Nullable Component name;
-+    public LockCode lockKey = LockCode.NO_LOCK;
+-    public @Nullable Holder<MobEffect> primaryPower;
+-    public @Nullable Holder<MobEffect> secondaryPower;
+-    public @Nullable Component name;
+-    public LockCode lockKey = LockCode.NO_LOCK;
++    private @Nullable Holder<MobEffect> primaryPower;
++    private @Nullable Holder<MobEffect> secondaryPower;
++    private @Nullable Component name;
++    private LockCode lockKey = LockCode.NO_LOCK;
      private final ContainerData dataAccess = new ContainerData() {
          @Override
          public int get(int dataId) {

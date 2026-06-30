@@ -4,8 +4,8 @@
  public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
      private static final Component DEFAULT_NAME = Component.translatable("container.barrel");
      private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
--    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-+    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+-    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
++    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
          @Override
          protected void onOpen(Level level, BlockPos pos, BlockState state) {
              BarrelBlockEntity.this.playSound(state, SoundEvents.BARREL_OPEN);
@@ -13,13 +13,13 @@
          }
      }
  
--    private void updateBlockState(BlockState state, boolean isOpen) {
-+    public void updateBlockState(BlockState state, boolean isOpen) {
+-    public void updateBlockState(BlockState state, boolean isOpen) {
++    private void updateBlockState(BlockState state, boolean isOpen) {
          this.level.setBlock(this.getBlockPos(), state.setValue(BarrelBlock.OPEN, isOpen), 3);
      }
  
--    private void playSound(BlockState state, SoundEvent event) {
-+    public void playSound(BlockState state, SoundEvent event) {
+-    public void playSound(BlockState state, SoundEvent event) {
++    private void playSound(BlockState state, SoundEvent event) {
          Vec3i direction = state.getValue(BarrelBlock.FACING).getUnitVec3i();
          double x = this.worldPosition.getX() + 0.5 + direction.getX() / 2.0;
          double y = this.worldPosition.getY() + 0.5 + direction.getY() / 2.0;

@@ -4,8 +4,8 @@
      private int count;
      private int popTime;
      @Deprecated
--    private final @Nullable Holder<Item> item;
-+    private @Nullable Holder<Item> item;
+-    private @Nullable Holder<Item> item;
++    private final @Nullable Holder<Item> item;
      private final PatchedDataComponentMap components;
  
      public static DataResult<ItemStack> validateStrict(ItemStack itemStack) {

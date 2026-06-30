@@ -4,8 +4,8 @@
          .withEyeHeight(0.69F)
          .withAttachments(EntityAttachments.builder().attach(EntityAttachment.PASSENGER, 0.0F, 0.75F, 0.0F));
      private static final String TAG_STEW_EFFECTS = "stew_effects";
--    private @Nullable SuspiciousStewEffects stewEffects;
-+    public @Nullable SuspiciousStewEffects stewEffects;
+-    public @Nullable SuspiciousStewEffects stewEffects;
++    private @Nullable SuspiciousStewEffects stewEffects;
      private @Nullable UUID lastLightningBoltUUID;
  
      public MushroomCow(EntityType<? extends MushroomCow> type, Level level) {
@@ -34,8 +34,8 @@
          return effectHolder != null ? Optional.of(effectHolder.getSuspiciousEffects()) : Optional.empty();
      }
  
--    private void setVariant(MushroomCow.Variant variant) {
-+    public void setVariant(MushroomCow.Variant variant) {
+-    public void setVariant(MushroomCow.Variant variant) {
++    private void setVariant(MushroomCow.Variant variant) {
          this.entityData.set(DATA_TYPE, variant.id);
      }
  

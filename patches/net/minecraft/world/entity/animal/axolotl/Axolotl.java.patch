@@ -4,8 +4,8 @@
          return Axolotl.Variant.byId(this.entityData.get(DATA_VARIANT));
      }
  
--    private void setVariant(Axolotl.Variant variant) {
-+    public void setVariant(Axolotl.Variant variant) {
+-    public void setVariant(Axolotl.Variant variant) {
++    private void setVariant(Axolotl.Variant variant) {
          this.entityData.set(DATA_VARIANT, variant.getId());
      }
  

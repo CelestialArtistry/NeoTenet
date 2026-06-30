@@ -4,8 +4,8 @@
      protected static final String OLD_PLAYER = "Player";
      protected static final String SINGLEPLAYER_UUID = "singleplayer_uuid";
      protected static final String OLD_WORLD_GEN_SETTINGS = "WorldGenSettings";
--    private LevelSettings settings;
-+    public LevelSettings settings;
+-    public LevelSettings settings;
++    private LevelSettings settings;
      private final PrimaryLevelData.SpecialWorldProperty specialWorldProperty;
      private final Lifecycle worldGenSettingsLifecycle;
      private LevelData.RespawnData respawnData;

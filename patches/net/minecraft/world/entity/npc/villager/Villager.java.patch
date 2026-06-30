@@ -13,8 +13,8 @@
          return InteractionResult.SUCCESS;
      }
  
--    private void setUnhappy() {
-+    public void setUnhappy() {
+-    public void setUnhappy() {
++    private void setUnhappy() {
          this.setUnhappyCounter(40);
          if (!this.level().isClientSide()) {
              this.makeSound(SoundEvents.VILLAGER_NO);
@@ -22,8 +22,8 @@
          super.die(source);
      }
  
--    private void releaseAllPois() {
-+    public void releaseAllPois() {
+-    public void releaseAllPois() {
++    private void releaseAllPois() {
          this.releasePoi(MemoryModuleType.HOME);
          this.releasePoi(MemoryModuleType.JOB_SITE);
          this.releasePoi(MemoryModuleType.POTENTIAL_JOB_SITE);
@@ -31,8 +31,8 @@
          return VillagerData.canLevelUp(currentLevel) && this.villagerXp >= VillagerData.getMaxXpPerLevel(currentLevel);
      }
  
--    private void increaseMerchantCareer(ServerLevel level) {
-+    public void increaseMerchantCareer(ServerLevel level) {
+-    public void increaseMerchantCareer(ServerLevel level) {
++    private void increaseMerchantCareer(ServerLevel level) {
          this.setVillagerData(this.getVillagerData().withLevel(this.getVillagerData().level() + 1));
          this.updateTrades(level);
      }

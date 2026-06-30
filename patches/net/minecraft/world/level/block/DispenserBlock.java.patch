@@ -4,8 +4,8 @@
          return InteractionResult.SUCCESS;
      }
  
--    protected void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
-+    public void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
+-    public void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
++    protected void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
          DispenserBlockEntity blockEntity = level.getBlockEntity(pos, BlockEntityTypes.DISPENSER).orElse(null);
          if (blockEntity == null) {
              LOGGER.warn("Ignoring dispensing attempt for Dispenser without matching block entity at {}", pos);

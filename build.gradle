@@ -153,3 +153,70 @@ tasks.register('applyCBPatches') {
         logger.lifecycle('Applied Successful')
     }
 }
+
+tasks.register('genNeoForgePatchesJar') {
+    group = 'neotenet'
+
+    inputs.dir('projects/neotenet-server/src/main/java')
+    inputs.dir('projects/neoforge/src/main/java')
+    outputs.file('projects/neotenet/neoforge-patches.jar')
+
+    doLast {
+        def baseDir = new File(rootDir, 'projects/neoforge/src/main/java').toPath()
+        def modifiedDir = new File(rootDir, 'projects/neotenet-server/src/main/java').toPath()
+        def patchesJar = new File(rootDir, 'projects/neotenet/neoforge-patches.jar').toPath()
+
+        java.nio.file.Files.deleteIfExists(patchesJar)
+
+        def builder = DiffOperation.builder()
+                .logTo(logger::lifecycle)
+                .baseInput(MultiInput.folder(baseDir))
+                .changedInput(MultiInput.folder(modifiedDir))
+                .patchesOutput(MultiOutput.detectedArchive(patchesJar))
+                .autoHeader(true)
+                .level(io.codechicken.diffpatch.util.LogLevel.WARN)
+                .summary(false)
+                .aPrefix('a/')
+                .bPrefix('b/')
+                .lineEnding('\n')
+
+        def result = builder.build().operate()
+        int exit = result.exit
+        if (exit != 0 && exit != 1) {
+            throw new RuntimeException("Diffpatch Failed，Code: " + exit)
+        }
+        logger.lifecycle('Patched Successful: neoforge-patches.jar')
+    }
+}
+
+tasks.register('applyNeoForgePatches') {
+    group = 'neotenet'
+
+    inputs.file('projects/neotenet/neoforge-patches.jar')
+    outputs.dir('projects/neotenet-server/src/main/java')
+
+    doLast {
+        def patchesJar = new File(rootDir, 'projects/neotenet/neoforge-patches.jar')
+        if (!patchesJar.exists()) {
+            logger.lifecycle('neoforge-patches.jar Non Exist，Skip')
+            return
+        }
+        def baseDir = new File(rootDir, 'projects/neoforge/src/main/java').toPath()
+        def targetDir = new File(rootDir, 'projects/neotenet-server/src/main/java').toPath()
+
+        def builder = PatchOperation.builder()
+                .logTo(logger::lifecycle)
+                .baseInput(MultiInput.folder(baseDir))
+                .patchesInput(MultiInput.detectedArchive(patchesJar.toPath()))
+                .patchedOutput(MultiOutput.folder(targetDir))
+                .level(io.codechicken.diffpatch.util.LogLevel.WARN)
+                .summary(false)
+                .lineEnding('\n')
+
+        def result = builder.build().operate()
+        if (result.exit != 0 && result.exit != 1) {
+            throw new RuntimeException("Patch Failed，Code: " + result.exit)
+        }
+        logger.lifecycle('Applied Successful')
+    }
+}

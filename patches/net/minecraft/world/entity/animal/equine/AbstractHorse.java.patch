@@ -4,8 +4,8 @@
      private int standCounter;
      public int tailCounter;
      public int sprintCounter;
--    protected SimpleContainer inventory;
-+    public SimpleContainer inventory;
+-    public SimpleContainer inventory;
++    protected SimpleContainer inventory;
      protected int temper = 0;
      protected float playerJumpPendingScale;
      protected boolean allowStandSliding;
@@ -13,8 +13,8 @@
      private float mouthAnimO;
      protected boolean canGallop = true;
      protected int gallopSoundCounter;
--    private @Nullable EntityReference<LivingEntity> owner;
-+    public @Nullable EntityReference<LivingEntity> owner;
+-    public @Nullable EntityReference<LivingEntity> owner;
++    private @Nullable EntityReference<LivingEntity> owner;
  
      protected AbstractHorse(EntityType<? extends AbstractHorse> type, Level level) {
          super(type, level);
@@ -22,8 +22,8 @@
          return AbstractMountInventoryMenu.getInventorySize(this.getInventoryColumns());
      }
  
--    protected void createInventory() {
-+    public void createInventory() {
+-    public void createInventory() {
++    protected void createInventory() {
          SimpleContainer old = this.inventory;
          this.inventory = new SimpleContainer(this.getInventorySize());
          if (old != null) {

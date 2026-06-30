@@ -4,8 +4,8 @@
      private static final String TAG_JOHNNY = "Johnny";
      private static final Predicate<Difficulty> DOOR_BREAKING_PREDICATE = d -> d == Difficulty.NORMAL || d == Difficulty.HARD;
      private static final boolean DEFAULT_JOHNNY = false;
--    private boolean isJohnny = false;
-+    public boolean isJohnny = false;
+-    public boolean isJohnny = false;
++    private boolean isJohnny = false;
  
      public Vindicator(EntityType<? extends Vindicator> type, Level level) {
          super(type, level);

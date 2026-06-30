@@ -4,12 +4,12 @@
      private static final byte DEFAULT_FUEL = 0;
      private static final Component DEFAULT_NAME = Component.translatable("container.brewing");
      private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
--    private int brewTime;
-+    public int brewTime;
+-    public int brewTime;
++    private int brewTime;
      private boolean[] lastPotionCount;
      private Item ingredient;
--    private int fuel;
-+    public int fuel;
+-    public int fuel;
++    private int fuel;
      protected final ContainerData dataAccess = new ContainerData() {
          @Override
          public int get(int dataId) {

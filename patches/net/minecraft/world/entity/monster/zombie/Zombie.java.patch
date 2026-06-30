@@ -4,8 +4,8 @@
      private static final Identifier ZOMBIE_RANDOM_SPAWN_BONUS_ID = Identifier.withDefaultNamespace("zombie_random_spawn_bonus");
      private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Integer> DATA_SPECIAL_TYPE_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.INT);
--    private static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
-+    public static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
+-    public static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
++    private static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
      public static final float ZOMBIE_LEADER_CHANCE = 0.05F;
      public static final int REINFORCEMENT_ATTEMPTS = 50;
      public static final int REINFORCEMENT_RANGE_MAX = 40;
@@ -13,8 +13,8 @@
      private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
      private boolean canBreakDoors = false;
      private int inWaterTime = 0;
--    protected int conversionTime;
-+    public int conversionTime;
+-    public int conversionTime;
++    protected int conversionTime;
  
      public Zombie(EntityType<? extends Zombie> type, Level level) {
          super(type, level);
@@ -22,8 +22,8 @@
          super.tick();
      }
  
--    private void startUnderWaterConversion(int time) {
-+    public void startUnderWaterConversion(int time) {
+-    public void startUnderWaterConversion(int time) {
++    private void startUnderWaterConversion(int time) {
          this.conversionTime = time;
          this.getEntityData().set(DATA_DROWNED_CONVERSION_ID, true);
      }

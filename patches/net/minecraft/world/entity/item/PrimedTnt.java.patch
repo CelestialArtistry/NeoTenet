@@ -4,11 +4,11 @@
              return block.is(Blocks.NETHER_PORTAL) ? Optional.empty() : super.getBlockExplosionResistance(explosion, level, pos, block, fluid);
          }
      };
--    private @Nullable EntityReference<LivingEntity> owner;
-+    public @Nullable EntityReference<LivingEntity> owner;
+-    public @Nullable EntityReference<LivingEntity> owner;
++    private @Nullable EntityReference<LivingEntity> owner;
      private boolean usedPortal;
--    private float explosionPower = 4.0F;
-+    public float explosionPower = 4.0F;
+-    public float explosionPower = 4.0F;
++    private float explosionPower = 4.0F;
  
      public PrimedTnt(EntityType<? extends PrimedTnt> type, Level level) {
          super(type, level);

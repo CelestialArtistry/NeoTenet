@@ -4,12 +4,12 @@
      private static final float TOO_FAR_SIGNAL_HEIGHT = 8.0F;
      private static final float TOO_FAR_DISTANCE = 12.0F;
      private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(EyeOfEnder.class, EntityDataSerializers.ITEM_STACK);
--    private @Nullable Vec3 target;
--    private int life;
--    private boolean surviveAfterDeath;
-+    public @Nullable Vec3 target;
-+    public int life;
-+    public boolean surviveAfterDeath;
+-    public @Nullable Vec3 target;
+-    public int life;
+-    public boolean surviveAfterDeath;
++    private @Nullable Vec3 target;
++    private int life;
++    private boolean surviveAfterDeath;
  
      public EyeOfEnder(EntityType<? extends EyeOfEnder> type, Level level) {
          super(type, level);

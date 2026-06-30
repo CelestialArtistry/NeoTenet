@@ -20,13 +20,20 @@ evaluationDependsOn(":neoforge-coremods")
 
 gradleutils.setupSigning(project: project, signAllPublications: true)
 
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+    options.encoding = 'UTF-8'
+    options.warnings = false
+    options.compilerArgs << "-Xlint:-removal" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-varargs" << "-Xdiags:verbose"
+}
+
 sourceSets {
     main {
         java {
-            srcDirs rootProject.file('src/main/java')
+            srcDirs rootProject.file('src/main/java'), rootProject.file('projects/neotenet/src/main/java')
         }
         resources {
-            srcDirs rootProject.file('src/main/resources'), rootProject.file('src/generated/resources')
+            srcDirs rootProject.file('src/main/resources'), rootProject.file('src/generated/resources'), rootProject.file('projects/neotenet/src/main/resources')
         }
     }
     client {
@@ -139,9 +146,51 @@ dependencies {
         exclude group: 'org.slf4j'
     }
 
+    // craftbukkit
+    libraries 'javax.inject:javax.inject:1'
+    libraries 'com.googlecode.json-simple:json-simple:1.1.1'
+    libraries 'org.xerial:sqlite-jdbc:3.51.3.0'
+    libraries 'com.mysql:mysql-connector-j:9.6.0'
+    libraries 'org.apache.logging.log4j:log4j-iostreams:2.26.0'
+    libraries 'org.apache.logging.log4j:log4j-core:2.26.0'
+    libraries 'org.apache.logging.log4j:log4j-slf4j2-impl:2.26.0'
+    libraries 'org.jline:jline:3.30.4'
+    // spigot
+    libraries 'commons-codec:commons-codec:1.22.0'
+    libraries 'commons-lang:commons-lang:2.6'
+    libraries 'org.apache.commons:commons-lang3:3.20.0'
+    libraries 'org.apache.httpcomponents:httpclient:4.5.14'
+    libraries 'org.apache.httpcomponents:httpcore:4.4.16'
+    libraries 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    // bukkit
+    libraries 'org.yaml:snakeyaml:2.6'
+    // LibraryLoader start
+    libraries 'org.checkerframework:checker-qual:3.49.2'
+    libraries 'org.eclipse.sisu:org.eclipse.sisu.inject:0.9.0.M2'
+    libraries 'org.codehaus.plexus:plexus-interpolation:1.26'
+    libraries 'org.codehaus.plexus:plexus-utils:4.0.3'
+    libraries 'com.google.protobuf:protobuf-java:4.28.2'
+    libraries "org.apache.maven:maven-artifact:3.9.9"
+    libraries 'org.apache.maven:maven-builder-support:3.9.6'
+    libraries 'org.apache.maven:maven-model:3.9.6'
+    libraries 'org.apache.maven:maven-model-builder:3.9.6'
+    libraries 'org.apache.maven:maven-repository-metadata:3.9.6'
+    libraries 'org.apache.maven:maven-resolver-provider:3.9.6'
+
+    libraries 'org.apache.maven.resolver:maven-resolver-api:1.9.18'
+    libraries 'org.apache.maven.resolver:maven-resolver-connector-basic:1.9.18'
+    libraries 'org.apache.maven.resolver:maven-resolver-impl:1.9.18'
+    libraries 'org.apache.maven.resolver:maven-resolver-named-locks:1.9.18'
+    libraries 'org.apache.maven.resolver:maven-resolver-spi:1.9.18'
+    libraries 'org.apache.maven.resolver:maven-resolver-transport-http:1.9.18'
+    libraries 'org.apache.maven.resolver:maven-resolver-util:1.9.18'
+    // LibraryLoader end
+
     compileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
 
-    userdevCompileOnly jarJar("io.github.llamalad7:mixinextras-neoforge:${project.mixin_extras_version}")
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${project.mixin_extras_version}"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:${project.mixin_extras_version}"))
+    //userdevCompileOnly jarJar("io.github.llamalad7:mixinextras-neoforge:${project.mixin_extras_version}")
 
     userdevTestFixtures("net.neoforged.fancymodloader:junit-fml:${project.fancy_mod_loader_version}") {
         endorseStrictVersions()
@@ -474,6 +523,18 @@ configurations {
         }
         javaComponent.addVariantsFromConfiguration(it) {}
     }
+    changelog {
+        canBeDeclared = false
+        canBeResolved = false
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType, "changelog"))
+        }
+        // Publish it, but only for release versions
+        if (!rootProject.isPreReleaseVersion) {
+            javaComponent.addVariantsFromConfiguration(it) {}
+        }
+    }
 }
 
 sourcesJar {
@@ -553,6 +614,9 @@ publishing {
 }
 
 
-tasks.withType(JavaCompile.class).configureEach(task -> {
-    Collections.addAll(task.getOptions().getCompilerArgs(), "-Xmaxerrs", "9999");
-});
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+    options.encoding = 'UTF-8'
+    options.warnings = false
+    options.compilerArgs << "-Xlint:-removal" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-varargs" << "-Xdiags:verbose"
+}

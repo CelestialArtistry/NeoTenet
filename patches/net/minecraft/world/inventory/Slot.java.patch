@@ -4,8 +4,8 @@
  import org.jspecify.annotations.Nullable;
  
  public class Slot {
--    private final int slot;
-+    public final int slot;
+-    public final int slot;
++    private final int slot;
      public final Container container;
      public int index;
      public final int x;

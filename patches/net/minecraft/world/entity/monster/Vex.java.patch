@@ -4,10 +4,10 @@
      private static final int FLAG_IS_CHARGING = 1;
      private @Nullable EntityReference<LivingEntity> owner;
      private @Nullable BlockPos boundOrigin;
--    private boolean hasLimitedLife;
--    private int limitedLifeTicks;
-+    public boolean hasLimitedLife;
-+    public int limitedLifeTicks;
+-    public boolean hasLimitedLife;
+-    public int limitedLifeTicks;
++    private boolean hasLimitedLife;
++    private int limitedLifeTicks;
  
      public Vex(EntityType<? extends Vex> type, Level level) {
          super(type, level);

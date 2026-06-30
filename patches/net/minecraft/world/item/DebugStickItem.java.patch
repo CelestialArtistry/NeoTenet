@@ -4,8 +4,8 @@
          return InteractionResult.SUCCESS;
      }
  
--    private boolean handleInteraction(ServerPlayer player, BlockState state, LevelAccessor level, BlockPos pos, boolean cycle, ItemStack itemStackInHand) {
-+    public boolean handleInteraction(ServerPlayer player, BlockState state, LevelAccessor level, BlockPos pos, boolean cycle, ItemStack itemStackInHand) {
+-    public boolean handleInteraction(ServerPlayer player, BlockState state, LevelAccessor level, BlockPos pos, boolean cycle, ItemStack itemStackInHand) {
++    private boolean handleInteraction(ServerPlayer player, BlockState state, LevelAccessor level, BlockPos pos, boolean cycle, ItemStack itemStackInHand) {
          if (!player.canUseGameMasterBlocks()) {
              return false;
          }

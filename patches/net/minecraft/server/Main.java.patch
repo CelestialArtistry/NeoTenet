@@ -68,8 +68,8 @@
          return new WorldLoader.InitConfig(packConfig, Commands.CommandSelection.DEDICATED, properties.functionPermissions);
      }
  
--    private static void forceUpgrade(
-+    public static void forceUpgrade(
+-    public static void forceUpgrade(
++    private static void forceUpgrade(
          LevelStorageSource.LevelStorageAccess storageSource,
          DataFixer fixerUpper,
          boolean eraseCache,

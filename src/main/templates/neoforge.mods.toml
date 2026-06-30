@@ -26,5 +26,3 @@ license="LGPL v2.1"
     file="META-INF/accesstransformer.cfg"
 [[accessTransformers]]
     file="META-INF/accesstransformergenerated.cfg"
-[[accessTransformers]]
-    file="META-INF/neotenet.cfg"

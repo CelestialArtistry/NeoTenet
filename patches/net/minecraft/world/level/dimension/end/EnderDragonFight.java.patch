@@ -4,10 +4,10 @@
      public static final int DRAGON_SPAWN_Y = 128;
      private static final Component EVENT_DISPLAY_NAME = Component.translatable("entity.minecraft.ender_dragon");
      private Predicate<Entity> validPlayer;
--    private ServerBossEvent dragonEvent;
--    private ServerLevel level;
-+    public ServerBossEvent dragonEvent;
-+    public ServerLevel level;
+-    public ServerBossEvent dragonEvent;
+-    public ServerLevel level;
++    private ServerBossEvent dragonEvent;
++    private ServerLevel level;
      private BlockPos origin;
      private final List<Integer> gateways;
      private final BlockPattern exitPortalPattern = BlockPatternBuilder.start()
@@ -15,16 +15,16 @@
      private int ticksSinceCrystalsScanned;
      private int ticksSinceLastPlayerScan = 21;
      private boolean dragonKilled;
--    private boolean hasPreviouslyKilledDragon;
-+    public boolean hasPreviouslyKilledDragon;
+-    public boolean hasPreviouslyKilledDragon;
++    private boolean hasPreviouslyKilledDragon;
      private boolean skipArenaLoadedCheck = false;
--    private @Nullable UUID dragonUUID;
-+    public @Nullable UUID dragonUUID;
+-    public @Nullable UUID dragonUUID;
++    private @Nullable UUID dragonUUID;
      private boolean needsStateScanning;
--    private @Nullable BlockPos exitPortalLocation;
--    private @Nullable DragonRespawnStage respawnStage;
-+    public @Nullable BlockPos exitPortalLocation;
-+    public @Nullable DragonRespawnStage respawnStage;
+-    public @Nullable BlockPos exitPortalLocation;
+-    public @Nullable DragonRespawnStage respawnStage;
++    private @Nullable BlockPos exitPortalLocation;
++    private @Nullable DragonRespawnStage respawnStage;
      private int respawnTime;
      private List<EntityReference<EndCrystal>> respawnCrystals;
      public static final Codec<EnderDragonFight> CODEC = RecordCodecBuilder.create(
@@ -32,8 +32,8 @@
          }
      }
  
--    protected void setRespawnStage(DragonRespawnStage stage) {
-+    public void setRespawnStage(DragonRespawnStage stage) {
+-    public void setRespawnStage(DragonRespawnStage stage) {
++    protected void setRespawnStage(DragonRespawnStage stage) {
          if (this.respawnStage == null) {
              throw new IllegalStateException("Dragon respawn isn't in progress, can't skip ahead in the animation.");
          }
@@ -41,8 +41,8 @@
          return false;
      }
  
--    private BlockPattern.@Nullable BlockPatternMatch findExitPortal() {
-+    public BlockPattern.@Nullable BlockPatternMatch findExitPortal() {
+-    public BlockPattern.@Nullable BlockPatternMatch findExitPortal() {
++    private BlockPattern.@Nullable BlockPatternMatch findExitPortal() {
          ChunkPos chunkOrigin = ChunkPos.containing(this.origin);
  
          for (int x = -8 + chunkOrigin.x(); x <= 8 + chunkOrigin.x(); x++) {
@@ -50,8 +50,8 @@
              .ifPresent(endGateway -> endGateway.value().place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), pos));
      }
  
--    private void spawnExitPortal(boolean activated) {
-+    public void spawnExitPortal(boolean activated) {
+-    public void spawnExitPortal(boolean activated) {
++    private void spawnExitPortal(boolean activated) {
          EndPodiumFeature feature = new EndPodiumFeature(activated);
          if (this.exitPortalLocation == null) {
              this.exitPortalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.getLocation(this.origin)).below();
@@ -59,8 +59,8 @@
          }
      }
  
--    private void respawnDragon(List<EndCrystal> crystals) {
-+    public void respawnDragon(List<EndCrystal> crystals) {
+-    public void respawnDragon(List<EndCrystal> crystals) {
++    private void respawnDragon(List<EndCrystal> crystals) {
          if (this.dragonKilled && this.respawnStage == null) {
              for (BlockPattern.BlockPatternMatch portal = this.findExitPortal(); portal != null; portal = this.findExitPortal()) {
                  for (int x = 0; x < this.exitPortalPattern.getWidth(); x++) {

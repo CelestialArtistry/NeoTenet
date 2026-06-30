@@ -4,16 +4,16 @@
      public static final int RAID_REMOVAL_THRESHOLD_SQR = 12544;
      private final Map<Integer, Raider> groupToLeaderMap = Maps.newHashMap();
      private final Map<Integer, Set<Raider>> groupRaiderMap = Maps.newHashMap();
--    private final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
--    private long ticksActive;
-+    public final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
-+    public long ticksActive;
+-    public final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
+-    public long ticksActive;
++    private final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
++    private long ticksActive;
      private BlockPos center;
      private boolean started;
--    private float totalHealth;
--    private int raidOmenLevel;
-+    public float totalHealth;
-+    public int raidOmenLevel;
+-    public float totalHealth;
+-    public int raidOmenLevel;
++    private float totalHealth;
++    private int raidOmenLevel;
      private boolean active;
      private int groupsSpawned;
      private int postRaidTicks;
@@ -21,8 +21,8 @@
      private final ServerBossEvent raidEvent = new ServerBossEvent(
          Mth.createInsecureUUID(this.random), RAID_NAME_COMPONENT, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10
      );
--    private final int numGroups;
-+    public final int numGroups;
+-    public final int numGroups;
++    private final int numGroups;
      private Raid.RaidStatus status;
      private int celebrationTicks;
      private Optional<BlockPos> waveSpawnPos = Optional.empty();

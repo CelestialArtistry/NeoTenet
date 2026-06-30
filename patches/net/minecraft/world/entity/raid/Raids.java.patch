@@ -4,8 +4,8 @@
              .apply(i, Raids::new)
      );
      public static final SavedDataType<Raids> TYPE = new SavedDataType<>(RAID_FILE_ID, Raids::new, CODEC, DataFixTypes.SAVED_DATA_RAIDS);
--    private final Int2ObjectMap<Raid> raidMap = new Int2ObjectOpenHashMap<>();
-+    public final Int2ObjectMap<Raid> raidMap = new Int2ObjectOpenHashMap<>();
+-    public final Int2ObjectMap<Raid> raidMap = new Int2ObjectOpenHashMap<>();
++    private final Int2ObjectMap<Raid> raidMap = new Int2ObjectOpenHashMap<>();
      private int nextId = 1;
      private int tick;
  

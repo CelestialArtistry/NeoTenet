@@ -1,25 +1,11 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -202,10 +_,12 @@
- import net.minecraft.world.scores.Team;
- import net.minecraft.world.scores.TeamColor;
- import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
- import org.jspecify.annotations.Nullable;
- import org.slf4j.Logger;
-+import org.teneted.neotenet.injection.server.level.ServerPlayerInjection;
- 
--public class ServerPlayer extends Player {
-+public class ServerPlayer extends Player implements ServerPlayerInjection {
-     private static final Logger LOGGER = LogUtils.getLogger();
-     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
-     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
 @@ -229,7 +_,7 @@
      private static final boolean DEFAULT_SEEN_CREDITS = false;
      private static final boolean DEFAULT_SPAWN_EXTRA_PARTICLES_ON_FALL = false;
      public ServerGamePacketListenerImpl connection;
--    private final MinecraftServer server;
-+    public final MinecraftServer server;
+-    public final MinecraftServer server;
++    private final MinecraftServer server;
      public final ServerPlayerGameMode gameMode;
      private final PlayerAdvancements advancements;
      private final ServerStatsCounter stats;
@@ -27,23 +13,23 @@
      private float lastSentHealth = -1.0E8F;
      private int lastSentFood = -99999999;
      private boolean lastFoodSaturationZero = true;
--    private int lastSentExp = -99999999;
-+    public int lastSentExp = -99999999;
+-    public int lastSentExp = -99999999;
++    private int lastSentExp = -99999999;
      private ChatVisiblity chatVisibility = ChatVisiblity.FULL;
      private ParticleStatus particleStatus = ParticleStatus.ALL;
      private boolean canChatColor = true;
      private long lastActionTime = Util.getMillis();
      private @Nullable Entity camera;
--    private boolean isChangingDimension;
-+    public boolean isChangingDimension;
+-    public boolean isChangingDimension;
++    private boolean isChangingDimension;
      public boolean seenCredits = false;
      private final ServerRecipeBook recipeBook;
      private @Nullable Vec3 levitationStartPos;
      private int levitationStartTime;
      private boolean disconnected;
      private int requestedViewDistance = 2;
--    private String language = "en_us";
-+    public String language = "en_us";
+-    public String language = "en_us";
++    private String language = "en_us";
      private @Nullable Vec3 startingToFallPosition;
      private @Nullable Vec3 enteredNetherPosition;
      private @Nullable Vec3 enteredLavaOnVehiclePosition;
@@ -58,7 +44,7 @@
              ServerPlayer.this.connection.send(new ClientboundContainerSetDataPacket(container.containerId, id, value));
          }
  
-@@ -362,10 +_,32 @@
+@@ -362,10 +_,17 @@
          public void sendSystemMessage(Component message) {
              ServerPlayer.this.sendSystemMessage(message);
          }
@@ -73,21 +59,6 @@
      public boolean wonGame;
 +    // Neo: Used to track partial TIME_SINCE_REST increases for dimensions in which clocks move at different speeds. No need to persist, at most Phantoms will spawn one tick too early for each save/load cycle.
 +    private float partialTimeSinceRestTick;
-+    // CraftBukkit start
-+    public CraftPlayer.TransferCookieConnection transferCookieConnection;
-+    public String displayName;
-+    public Component listName;
-+    public int listOrder = 0;
-+    public org.bukkit.Location compassTarget;
-+    public int newExp = 0;
-+    public int newLevel = 0;
-+    public int newTotalExp = 0;
-+    public boolean keepLevel = false;
-+    public double maxHealthCache;
-+    public boolean joining = true;
-+    public boolean sentListPacket = false;
-+    public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
-+    // CraftBukkit end
  
      public ServerPlayer(MinecraftServer server, ServerLevel level, GameProfile gameProfile, ClientInformation clientInformation) {
          super(level, gameProfile);
@@ -95,8 +66,8 @@
          this.lastSentExp = -1;
      }
  
--    private void initMenu(AbstractContainerMenu container) {
-+    public void initMenu(AbstractContainerMenu container) {
+-    public void initMenu(AbstractContainerMenu container) {
++    private void initMenu(AbstractContainerMenu container) {
          container.addSlotListener(this.containerListener);
          container.setSynchronizer(this.containerSynchronizer);
      }
@@ -161,8 +132,8 @@
          super.onAttributeUpdated(attribute);
      }
  
--    private static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
-+    public static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
+-    public static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
++    private static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
          ServerLevel level, ServerPlayer.RespawnConfig respawnConfig, boolean consumeSpawnBlock
      ) {
          LevelData.RespawnData respawnData = respawnConfig.respawnData;
@@ -212,8 +183,8 @@
          this.connection.send(new ClientboundPlayerRotationPacket(yRot, relativeY, xRot, relativeX));
      }
  
--    private void triggerDimensionChangeTriggers(ServerLevel oldLevel) {
-+    public void triggerDimensionChangeTriggers(ServerLevel oldLevel) {
+-    public void triggerDimensionChangeTriggers(ServerLevel oldLevel) {
++    private void triggerDimensionChangeTriggers(ServerLevel oldLevel) {
          ResourceKey<Level> oldKey = oldLevel.dimension();
          ResourceKey<Level> newKey = this.level().dimension();
          CriteriaTriggers.CHANGED_DIMENSION.trigger(this, oldKey, newKey);
@@ -279,8 +250,8 @@
          this.connection.send(new ClientboundShowDialogPacket(dialog));
      }
  
--    private void nextContainerCounter() {
-+    public void nextContainerCounter() {
+-    public void nextContainerCounter() {
++    private void nextContainerCounter() {
          this.containerCounter = this.containerCounter % 100 + 1;
      }
  
@@ -511,8 +482,8 @@
          return this.shoulderEntityLeft;
      }
  
--    protected void setShoulderEntityLeft(CompoundTag tag) {
-+    public void setShoulderEntityLeft(CompoundTag tag) {
+-    public void setShoulderEntityLeft(CompoundTag tag) {
++    protected void setShoulderEntityLeft(CompoundTag tag) {
          this.shoulderEntityLeft = tag;
          this.setShoulderParrotLeft(extractParrotVariant(tag));
      }
@@ -520,8 +491,8 @@
          return this.shoulderEntityRight;
      }
  
--    protected void setShoulderEntityRight(CompoundTag tag) {
-+    public void setShoulderEntityRight(CompoundTag tag) {
+-    public void setShoulderEntityRight(CompoundTag tag) {
++    protected void setShoulderEntityRight(CompoundTag tag) {
          this.shoulderEntityRight = tag;
          this.setShoulderParrotRight(extractParrotVariant(tag));
      }

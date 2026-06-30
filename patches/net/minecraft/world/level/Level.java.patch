@@ -1,38 +1,11 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -4,9 +_,11 @@
- import com.mojang.serialization.Codec;
- import java.io.IOException;
- import java.util.Collection;
-+import java.util.HashMap;
- import java.util.Iterator;
- import java.util.List;
- import java.util.Locale;
-+import java.util.Map;
- import java.util.Optional;
- import java.util.UUID;
- import java.util.function.Consumer;
-@@ -51,6 +_,7 @@
- import net.minecraft.world.entity.EntitySelector;
- import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
- import net.minecraft.world.entity.boss.enderdragon.EnderDragonPart;
-+import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.alchemy.PotionBrewing;
-@@ -88,11 +_,14 @@
- import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.scores.Scoreboard;
- import org.apache.commons.lang3.mutable.MutableBoolean;
-+import org.bukkit.craftbukkit.block.CapturedBlockState;
-+import org.bukkit.entity.SpawnCategory;
- import org.jspecify.annotations.Nullable;
+@@ -92,7 +_,7 @@
  
  import net.neoforged.neoforge.common.extensions.ILevelExtension;
-+import org.teneted.neotenet.injection.world.level.LevelInjection;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable, ILevelExtension {
-+public abstract class Level extends net.neoforged.neoforge.attachment.AttachmentHolder implements LevelAccessor, AutoCloseable, ILevelExtension, LevelInjection {
++public abstract class Level extends net.neoforged.neoforge.attachment.AttachmentHolder implements LevelAccessor, AutoCloseable, ILevelExtension {
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
      public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, Identifier.withDefaultNamespace("overworld"));
      public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, Identifier.withDefaultNamespace("the_nether"));
@@ -40,8 +13,8 @@
      public static final int MAX_BRIGHTNESS = 15;
      public static final int MAX_ENTITY_SPAWN_Y = 20000000;
      public static final int MIN_ENTITY_SPAWN_Y = -20000000;
--    private static final WeightedList<ExplosionParticleInfo> DEFAULT_EXPLOSION_BLOCK_PARTICLES = WeightedList.<ExplosionParticleInfo>builder()
-+    public static final WeightedList<ExplosionParticleInfo> DEFAULT_EXPLOSION_BLOCK_PARTICLES = WeightedList.<ExplosionParticleInfo>builder()
+-    public static final WeightedList<ExplosionParticleInfo> DEFAULT_EXPLOSION_BLOCK_PARTICLES = WeightedList.<ExplosionParticleInfo>builder()
++    private static final WeightedList<ExplosionParticleInfo> DEFAULT_EXPLOSION_BLOCK_PARTICLES = WeightedList.<ExplosionParticleInfo>builder()
          .add(new ExplosionParticleInfo(ParticleTypes.POOF, 0.5F, 1.0F))
          .add(new ExplosionParticleInfo(ParticleTypes.SMOKE, 1.0F, 1.0F))
          .build();
@@ -49,8 +22,8 @@
      protected final CollectingNeighborUpdater neighborUpdater;
      private final List<TickingBlockEntity> pendingBlockEntityTickers = Lists.newArrayList();
      private boolean tickingBlockEntities;
--    private final Thread thread;
-+    public final Thread thread;
+-    public final Thread thread;
++    private final Thread thread;
      private final boolean isDebug;
      private int skyDarken;
      protected int randValue = RandomSource.createThreadLocalInstance().nextInt();
@@ -58,12 +31,12 @@
      @Deprecated
      private final RandomSource soundSeedGenerator = RandomSource.createThreadSafe();
      private final Holder<DimensionType> dimensionTypeRegistration;
--    protected final WritableLevelData levelData;
-+    public final WritableLevelData levelData;
+-    public final WritableLevelData levelData;
++    protected final WritableLevelData levelData;
      private final boolean isClientSide;
      private final BiomeManager biomeManager;
      private final ResourceKey<Level> dimension;
-@@ -133,6 +_,21 @@
+@@ -133,6 +_,11 @@
      private final DamageSources damageSources;
      private final PalettedContainerFactory palettedContainerFactory;
      private long subTickCount;
@@ -72,16 +45,6 @@
 +    public java.util.ArrayList<net.neoforged.neoforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
 +    private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
 +    private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
-+    public org.bukkit.generator.ChunkGenerator generator;
-+
-+    public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
-+    public boolean captureBlockStates = false;
-+    public boolean captureTreeGeneration = false;
-+    public Map<BlockPos, CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
-+    public Map<BlockPos, BlockEntity> capturedTileEntities = new HashMap<>();
-+    public List<ItemEntity> captureDrops;
-+    public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
-+    public boolean populating;
  
      protected Level(
          WritableLevelData levelData,
@@ -306,18 +269,8 @@
          return this.isDebug;
      }
  
--    protected abstract LevelEntityGetter<Entity> getEntities();
-+    public abstract LevelEntityGetter<Entity> getEntities();
+-    public abstract LevelEntityGetter<Entity> getEntities();
++    protected abstract LevelEntityGetter<Entity> getEntities();
  
      @Override
      public long nextSubTickCount() {
-@@ -1036,7 +_,8 @@
-         BLOCK("block"),
-         MOB("mob"),
-         TNT("tnt"),
--        TRIGGER("trigger");
-+        TRIGGER("trigger"),
-+        STANDARD("standard"); // CraftBukkit - Add STANDARD which will always use Explosion.Effect.DESTROY
- 
-         public static final Codec<Level.ExplosionInteraction> CODEC = StringRepresentable.fromEnum(Level.ExplosionInteraction::values);
-         private final String id;

@@ -4,8 +4,8 @@
  
  public class SpectralArrow extends AbstractArrow {
      private static final int DEFAULT_DURATION = 200;
--    private int duration = 200;
-+    public int duration = 200;
+-    public int duration = 200;
++    private int duration = 200;
  
      public SpectralArrow(EntityType<? extends SpectralArrow> type, Level level) {
          super(type, level);

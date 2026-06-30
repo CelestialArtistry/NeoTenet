@@ -4,10 +4,10 @@
      private static final int MAX_BOOST_TIME = 700;
      private final SynchedEntityData entityData;
      private final EntityDataAccessor<Integer> boostTimeAccessor;
--    private boolean boosting;
--    private int boostTime;
-+    public boolean boosting;
-+    public int boostTime;
+-    public boolean boosting;
+-    public int boostTime;
++    private boolean boosting;
++    private int boostTime;
  
      public ItemBasedSteering(SynchedEntityData entityData, EntityDataAccessor<Integer> boostTimeAccessor) {
          this.entityData = entityData;
@@ -15,8 +15,8 @@
          return this.boosting ? 1.0F + 1.15F * Mth.sin((float)this.boostTime / this.boostTimeTotal() * (float) Math.PI) : 1.0F;
      }
  
--    private int boostTimeTotal() {
-+    public int boostTimeTotal() {
+-    public int boostTimeTotal() {
++    private int boostTimeTotal() {
          return this.entityData.get(this.boostTimeAccessor);
      }
  }

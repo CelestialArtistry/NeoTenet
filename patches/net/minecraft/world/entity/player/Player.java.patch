@@ -1,13 +1,9 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -124,8 +_,10 @@
- import org.jspecify.annotations.Nullable;
- 
+@@ -126,6 +_,7 @@
  import net.neoforged.neoforge.common.extensions.IPlayerExtension;
-+import org.teneted.neotenet.injection.world.entity.player.PlayerInjection;
  
--public abstract class Player extends Avatar implements ContainerUser, IPlayerExtension {
-+public abstract class Player extends Avatar implements ContainerUser, IPlayerExtension, PlayerInjection {
+ public abstract class Player extends Avatar implements ContainerUser, IPlayerExtension {
 +    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
      public static final int MAX_HEALTH = 20;
      public static final int SLEEP_DURATION = 100;
@@ -16,19 +12,19 @@
      protected FoodData foodData = new FoodData();
      protected int jumpTriggerTime;
      public int takeXpDelay;
--    private int sleepCounter = 0;
-+    public int sleepCounter = 0;
+-    public int sleepCounter = 0;
++    private int sleepCounter = 0;
      protected boolean wasUnderwater;
      private final Abilities abilities = new Abilities();
      public int experienceLevel = 0;
      public int totalExperience = 0;
      public float experienceProgress = 0.0F;
--    protected int enchantmentSeed = 0;
-+    public int enchantmentSeed = 0;
+-    public int enchantmentSeed = 0;
++    protected int enchantmentSeed = 0;
      protected final float defaultFlySpeed = 0.02F;
      private int lastLevelUpTime;
      private final GameProfile gameProfile;
-@@ -173,6 +_,12 @@
+@@ -173,6 +_,10 @@
      private Optional<GlobalPos> lastDeathLocation = Optional.empty();
      public @Nullable FishingHook fishing;
      protected float hurtDir;
@@ -36,8 +32,6 @@
 +    private final java.util.Collection<MutableComponent> suffixes = new java.util.LinkedList<>();
 +    @Nullable
 +    private Pose forcedPose = null;
-+    public boolean fauxSleeping;
-+    public int oldLevel = -1;
  
      public Player(Level level, GameProfile gameProfile) {
          super(EntityTypes.PLAYER, level);
@@ -91,8 +85,8 @@
      }
  
      @Override
--    protected int getFireImmuneTicks() {
-+    public int getFireImmuneTicks() {
+-    public int getFireImmuneTicks() {
++    protected int getFireImmuneTicks() {
          return 20;
      }
  

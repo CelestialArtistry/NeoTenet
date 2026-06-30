@@ -4,10 +4,10 @@
  
  public abstract class AbstractMinecartContainer extends AbstractMinecart implements ContainerEntity {
      private NonNullList<ItemStack> itemStacks = NonNullList.withSize(36, ItemStack.EMPTY);
--    private @Nullable ResourceKey<LootTable> lootTable;
--    private long lootTableSeed;
-+    public @Nullable ResourceKey<LootTable> lootTable;
-+    public long lootTableSeed;
+-    public @Nullable ResourceKey<LootTable> lootTable;
+-    public long lootTableSeed;
++    private @Nullable ResourceKey<LootTable> lootTable;
++    private long lootTableSeed;
  
      protected AbstractMinecartContainer(EntityType<?> type, Level level) {
          super(type, level);

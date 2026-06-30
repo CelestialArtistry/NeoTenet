@@ -4,8 +4,8 @@
      private static final int EVENT_SET_OPEN_COUNT = 1;
      private static final Component DEFAULT_NAME = Component.translatable("container.chest");
      private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
--    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-+    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+-    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
++    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
          @Override
          protected void onOpen(Level level, BlockPos pos, BlockState blockState) {
              if (blockState.getBlock() instanceof ChestBlock chestBlock) {
@@ -13,8 +13,8 @@
          entity.chestLidController.tickLid();
      }
  
--    private static void playSound(Level level, BlockPos worldPosition, BlockState blockState, SoundEvent event) {
-+    public static void playSound(Level level, BlockPos worldPosition, BlockState blockState, SoundEvent event) {
+-    public static void playSound(Level level, BlockPos worldPosition, BlockState blockState, SoundEvent event) {
++    private static void playSound(Level level, BlockPos worldPosition, BlockState blockState, SoundEvent event) {
          ChestType type = blockState.getValue(ChestBlock.TYPE);
          if (type != ChestType.LEFT) {
              double x = worldPosition.getX() + 0.5;

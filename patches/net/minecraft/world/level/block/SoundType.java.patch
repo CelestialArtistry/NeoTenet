@@ -4,12 +4,12 @@
      );
      public final float volume;
      public final float pitch;
--    private final SoundEvent breakSound;
-+    public final SoundEvent breakSound;
+-    public final SoundEvent breakSound;
++    private final SoundEvent breakSound;
      private final SoundEvent stepSound;
      private final SoundEvent placeSound;
--    private final SoundEvent hitSound;
-+    public final SoundEvent hitSound;
+-    public final SoundEvent hitSound;
++    private final SoundEvent hitSound;
      private final SoundEvent fallSound;
  
 +    @Deprecated // Forge: Use {@link net.neoforged.neoforge.common.util.DeferredSoundType} instead for suppliers

@@ -4,28 +4,28 @@
              )
              .apply(i, MapItemSavedData::new)
      );
--    public final int centerX;
--    public final int centerZ;
--    public final ResourceKey<Level> dimension;
--    private final boolean trackingPosition;
--    private final boolean unlimitedTracking;
--    public final byte scale;
-+    public int centerX;
-+    public int centerZ;
-+    public ResourceKey<Level> dimension;
-+    public boolean trackingPosition;
-+    public boolean unlimitedTracking;
-+    public byte scale;
+-    public int centerX;
+-    public int centerZ;
+-    public ResourceKey<Level> dimension;
+-    public boolean trackingPosition;
+-    public boolean unlimitedTracking;
+-    public byte scale;
++    public final int centerX;
++    public final int centerZ;
++    public final ResourceKey<Level> dimension;
++    private final boolean trackingPosition;
++    private final boolean unlimitedTracking;
++    public final byte scale;
      public byte[] colors = new byte[16384];
--    public final boolean locked;
--    private final List<MapItemSavedData.HoldingPlayer> carriedBy = Lists.newArrayList();
--    private final Map<Player, MapItemSavedData.HoldingPlayer> carriedByPlayers = Maps.newHashMap();
-+    public boolean locked;
-+    public final List<MapItemSavedData.HoldingPlayer> carriedBy = Lists.newArrayList();
-+    public final Map<Player, MapItemSavedData.HoldingPlayer> carriedByPlayers = Maps.newHashMap();
+-    public boolean locked;
+-    public final List<MapItemSavedData.HoldingPlayer> carriedBy = Lists.newArrayList();
+-    public final Map<Player, MapItemSavedData.HoldingPlayer> carriedByPlayers = Maps.newHashMap();
++    public final boolean locked;
++    private final List<MapItemSavedData.HoldingPlayer> carriedBy = Lists.newArrayList();
++    private final Map<Player, MapItemSavedData.HoldingPlayer> carriedByPlayers = Maps.newHashMap();
      private final Map<String, MapBanner> bannerMarkers = Maps.newHashMap();
--    private final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
-+    public final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
+-    public final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
++    private final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
      private final Map<String, MapFrame> frameMarkers = Maps.newHashMap();
      private int trackedDecorationCount;
  
@@ -33,8 +33,8 @@
          return holdingPlayer == null ? null : holdingPlayer.nextUpdatePacket(id);
      }
  
--    private void setColorsDirty(int x, int y) {
-+    public void setColorsDirty(int x, int y) {
+-    public void setColorsDirty(int x, int y) {
++    private void setColorsDirty(int x, int y) {
          this.setDirty();
  
          for (MapItemSavedData.HoldingPlayer holdingPlayer : this.carriedBy) {
@@ -42,8 +42,8 @@
          }
      }
  
--    private void setDecorationsDirty() {
-+    public void setDecorationsDirty() {
+-    public void setDecorationsDirty() {
++    private void setDecorationsDirty() {
          this.carriedBy.forEach(MapItemSavedData.HoldingPlayer::markDecorationsDirty);
      }
  

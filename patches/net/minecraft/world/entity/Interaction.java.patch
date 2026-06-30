@@ -4,10 +4,10 @@
      private static final float DEFAULT_WIDTH = 1.0F;
      private static final float DEFAULT_HEIGHT = 1.0F;
      private static final boolean DEFAULT_RESPONSE = false;
--    private Interaction.@Nullable PlayerAction attack;
--    private Interaction.@Nullable PlayerAction interaction;
-+    public Interaction.@Nullable PlayerAction attack;
-+    public Interaction.@Nullable PlayerAction interaction;
+-    public Interaction.@Nullable PlayerAction attack;
+-    public Interaction.@Nullable PlayerAction interaction;
++    private Interaction.@Nullable PlayerAction attack;
++    private Interaction.@Nullable PlayerAction interaction;
  
      public Interaction(EntityType<?> type, Level level) {
          super(type, level);
@@ -15,33 +15,33 @@
          return this.interaction != null ? this.level().getPlayerByUUID(this.interaction.player()) : null;
      }
  
--    private void setWidth(float width) {
-+    public void setWidth(float width) {
+-    public void setWidth(float width) {
++    private void setWidth(float width) {
          this.entityData.set(DATA_WIDTH_ID, width);
      }
  
--    private float getWidth() {
-+    public float getWidth() {
+-    public float getWidth() {
++    private float getWidth() {
          return this.entityData.get(DATA_WIDTH_ID);
      }
  
--    private void setHeight(float width) {
-+    public void setHeight(float width) {
+-    public void setHeight(float width) {
++    private void setHeight(float width) {
          this.entityData.set(DATA_HEIGHT_ID, width);
      }
  
--    private float getHeight() {
-+    public float getHeight() {
+-    public float getHeight() {
++    private float getHeight() {
          return this.entityData.get(DATA_HEIGHT_ID);
      }
  
--    private void setResponse(boolean response) {
-+    public void setResponse(boolean response) {
+-    public void setResponse(boolean response) {
++    private void setResponse(boolean response) {
          this.entityData.set(DATA_RESPONSE_ID, response);
      }
  
--    private boolean getResponse() {
-+    public boolean getResponse() {
+-    public boolean getResponse() {
++    private boolean getResponse() {
          return this.entityData.get(DATA_RESPONSE_ID);
      }
  
@@ -49,8 +49,8 @@
          return this.getDimensions().makeBoundingBox(position);
      }
  
--    private record PlayerAction(UUID player, long timestamp) {
-+    public record PlayerAction(UUID player, long timestamp) {
+-    public record PlayerAction(UUID player, long timestamp) {
++    private record PlayerAction(UUID player, long timestamp) {
          public static final Codec<Interaction.PlayerAction> CODEC = RecordCodecBuilder.create(
              i -> i.group(
                      UUIDUtil.CODEC.fieldOf("player").forGetter(Interaction.PlayerAction::player),

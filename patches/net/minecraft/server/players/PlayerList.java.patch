@@ -4,8 +4,8 @@
      private static final int SEND_PLAYER_INFO_INTERVAL = 600;
      private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z", Locale.ROOT);
      private final MinecraftServer server;
--    private final List<ServerPlayer> players = Lists.newArrayList();
-+    public final List<ServerPlayer> players = Lists.newArrayList();
+-    public final List<ServerPlayer> players = Lists.newArrayList();
++    private final List<ServerPlayer> players = Lists.newArrayList();
      private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
      private final UserBanList bans;
      private final IpBanList ipBans;
@@ -13,8 +13,8 @@
      private final UserWhiteList whitelist;
      private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
      private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
--    private final PlayerDataStorage playerIo;
-+    public final PlayerDataStorage playerIo;
+-    public final PlayerDataStorage playerIo;
++    private final PlayerDataStorage playerIo;
      private final LayeredRegistryAccess<RegistryLayer> registries;
      private int viewDistance;
      private int simulationDistance;
@@ -55,8 +55,8 @@
 +        net.neoforged.neoforge.event.EventHooks.firePlayerLoggedIn(player);
      }
  
--    protected void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
-+    public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
+-    public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
++    protected void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
          Set<Objective> objectives = Sets.newHashSet();
  
          for (PlayerTeam team : scoreboard.getPlayerTeams()) {

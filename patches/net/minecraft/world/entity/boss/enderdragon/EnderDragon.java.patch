@@ -4,8 +4,8 @@
      private static final String SITTING_DAMAGE_RECEIVED_KEY = "sitting_damage_received";
      private static final int DEFAULT_DEATH_TIME = 0;
      public final DragonFlightHistory flightHistory = new DragonFlightHistory();
--    private final EnderDragonPart[] subEntities;
-+    public final EnderDragonPart[] subEntities;
+-    public final EnderDragonPart[] subEntities;
++    private final EnderDragonPart[] subEntities;
      public final EnderDragonPart head;
      private final EnderDragonPart neck;
      private final EnderDragonPart body;

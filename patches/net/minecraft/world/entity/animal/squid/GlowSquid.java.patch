@@ -4,8 +4,8 @@
          return hurt;
      }
  
--    private void setDarkTicks(int ticks) {
-+    public void setDarkTicks(int ticks) {
+-    public void setDarkTicks(int ticks) {
++    private void setDarkTicks(int ticks) {
          this.entityData.set(DATA_DARK_TICKS_REMAINING, ticks);
      }
  

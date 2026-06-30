@@ -4,8 +4,8 @@
      public static final int EVENT_POT_WOBBLES = 1;
      public long wobbleStartedAtTick;
      public DecoratedPotBlockEntity.@Nullable WobbleStyle lastWobbleStyle;
--    private PotDecorations decorations;
-+    public PotDecorations decorations;
+-    public PotDecorations decorations;
++    private PotDecorations decorations;
      private ItemStack item = ItemStack.EMPTY;
      protected @Nullable ResourceKey<LootTable> lootTable;
      protected long lootTableSeed;

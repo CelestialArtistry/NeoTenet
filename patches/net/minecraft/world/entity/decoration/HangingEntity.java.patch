@@ -4,8 +4,8 @@
          this.entityData.set(DATA_DIRECTION, direction);
      }
  
--    protected void setDirection(Direction direction) {
-+    public void setDirection(Direction direction) {
+-    public void setDirection(Direction direction) {
++    protected void setDirection(Direction direction) {
          Objects.requireNonNull(direction);
          Validate.isTrue(direction.getAxis().isHorizontal());
          this.setDirectionRaw(direction);

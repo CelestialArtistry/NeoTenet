@@ -4,8 +4,8 @@
          return Leashable.createQuadLeashOffsets(this, -0.01, 0.63, 0.38, 1.15);
      }
  
--    private Sniffer.State getState() {
-+    public Sniffer.State getState() {
+-    public Sniffer.State getState() {
++    private Sniffer.State getState() {
          return this.entityData.get(DATA_STATE);
      }
  
@@ -13,8 +13,8 @@
          return this;
      }
  
--    Optional<BlockPos> calculateDigPosition() {
-+    public Optional<BlockPos> calculateDigPosition() {
+-    public Optional<BlockPos> calculateDigPosition() {
++    Optional<BlockPos> calculateDigPosition() {
          return IntStream.range(0, 5)
              .mapToObj(idx -> LandRandomPos.getPos(this, 10 + 2 * idx, 3))
              .filter(Objects::nonNull)
@@ -22,8 +22,8 @@
              .findFirst();
      }
  
--    boolean canDig() {
-+    public boolean canDig() {
+-    public boolean canDig() {
++    boolean canDig() {
          return !this.isPanicking()
              && !this.isTempted()
              && !this.isBaby()
@@ -40,16 +40,16 @@
          return this;
      }
  
--    private Sniffer storeExploredPosition(BlockPos position) {
-+    public Sniffer storeExploredPosition(BlockPos position) {
+-    public Sniffer storeExploredPosition(BlockPos position) {
++    private Sniffer storeExploredPosition(BlockPos position) {
          List<GlobalPos> updated = this.getExploredPositions().limit(20L).collect(Collectors.toList());
          updated.add(0, GlobalPos.of(this.level().dimension(), position));
          this.getBrain().setMemory(MemoryModuleType.SNIFFER_EXPLORED_POSITIONS, updated);
          return this;
      }
  
--    private Stream<GlobalPos> getExploredPositions() {
-+    public Stream<GlobalPos> getExploredPositions() {
+-    public Stream<GlobalPos> getExploredPositions() {
++    private Stream<GlobalPos> getExploredPositions() {
          return this.getBrain().getMemory(MemoryModuleType.SNIFFER_EXPLORED_POSITIONS).stream().flatMap(Collection::stream);
      }
  

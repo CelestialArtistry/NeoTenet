@@ -4,8 +4,8 @@
          }
      }
  
--    private void setVariant(Holder<PaintingVariant> variant) {
-+    public void setVariant(Holder<PaintingVariant> variant) {
+-    public void setVariant(Holder<PaintingVariant> variant) {
++    private void setVariant(Holder<PaintingVariant> variant) {
          this.entityData.set(DATA_PAINTING_VARIANT_ID, variant);
      }
  

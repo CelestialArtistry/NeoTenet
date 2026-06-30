@@ -4,24 +4,24 @@
  import org.jspecify.annotations.Nullable;
  
  public class FireworkRocketEntity extends Projectile implements ItemSupplier {
--    private static final EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM = SynchedEntityData.defineId(
-+    public static final EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM = SynchedEntityData.defineId(
+-    public static final EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM = SynchedEntityData.defineId(
++    private static final EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM = SynchedEntityData.defineId(
          FireworkRocketEntity.class, EntityDataSerializers.ITEM_STACK
      );
      private static final EntityDataAccessor<OptionalInt> DATA_ATTACHED_TO_TARGET = SynchedEntityData.defineId(
          FireworkRocketEntity.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT
      );
--    private static final EntityDataAccessor<Boolean> DATA_SHOT_AT_ANGLE = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.BOOLEAN);
-+    public static final EntityDataAccessor<Boolean> DATA_SHOT_AT_ANGLE = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.BOOLEAN);
+-    public static final EntityDataAccessor<Boolean> DATA_SHOT_AT_ANGLE = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.BOOLEAN);
++    private static final EntityDataAccessor<Boolean> DATA_SHOT_AT_ANGLE = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.BOOLEAN);
      private static final int DEFAULT_LIFE = 0;
      private static final int DEFAULT_LIFE_TIME = 0;
      private static final boolean DEFAULT_SHOT_AT_ANGLE = false;
--    private int life = 0;
--    private int lifetime = 0;
--    private @Nullable LivingEntity attachedToEntity;
-+    public int life = 0;
-+    public int lifetime = 0;
-+    public @Nullable LivingEntity attachedToEntity;
+-    public int life = 0;
+-    public int lifetime = 0;
+-    public @Nullable LivingEntity attachedToEntity;
++    private int life = 0;
++    private int lifetime = 0;
++    private @Nullable LivingEntity attachedToEntity;
  
      public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> type, Level level) {
          super(type, level);

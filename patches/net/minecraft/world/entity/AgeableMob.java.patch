@@ -4,8 +4,8 @@
          }
      }
  
--    protected void setAgeLocked(boolean locked) {
-+    public void setAgeLocked(boolean locked) {
+-    public void setAgeLocked(boolean locked) {
++    protected void setAgeLocked(boolean locked) {
          this.entityData.set(AGE_LOCKED, locked);
      }
  

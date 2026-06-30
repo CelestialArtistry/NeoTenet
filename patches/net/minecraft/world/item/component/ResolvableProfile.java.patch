@@ -4,8 +4,8 @@
          private static final Component DYNAMIC_TOOLTIP = Component.translatable("component.profile.dynamic").withStyle(ChatFormatting.GRAY);
          private final Either<String, UUID> nameOrId;
  
--        private Dynamic(Either<String, UUID> nameOrId, PlayerSkin.Patch skinPatch) {
-+        public Dynamic(Either<String, UUID> nameOrId, PlayerSkin.Patch skinPatch) {
+-        public Dynamic(Either<String, UUID> nameOrId, PlayerSkin.Patch skinPatch) {
++        private Dynamic(Either<String, UUID> nameOrId, PlayerSkin.Patch skinPatch) {
              super(ResolvableProfile.createPartialProfile(nameOrId.left(), nameOrId.right(), PropertyMap.EMPTY), skinPatch);
              this.nameOrId = nameOrId;
          }
@@ -13,8 +13,8 @@
          public static final ResolvableProfile.Static EMPTY = new ResolvableProfile.Static(Either.right(ResolvableProfile.Partial.EMPTY), PlayerSkin.Patch.EMPTY);
          private final Either<GameProfile, ResolvableProfile.Partial> contents;
  
--        private Static(Either<GameProfile, ResolvableProfile.Partial> contents, PlayerSkin.Patch skinPatch) {
-+        public Static(Either<GameProfile, ResolvableProfile.Partial> contents, PlayerSkin.Patch skinPatch) {
+-        public Static(Either<GameProfile, ResolvableProfile.Partial> contents, PlayerSkin.Patch skinPatch) {
++        private Static(Either<GameProfile, ResolvableProfile.Partial> contents, PlayerSkin.Patch skinPatch) {
              super(contents.map(gameProfile -> (GameProfile)gameProfile, ResolvableProfile.Partial::createProfile), skinPatch);
              this.contents = contents;
          }

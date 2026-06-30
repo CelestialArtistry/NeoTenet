@@ -12,8 +12,8 @@
      public static final SavedDataType<TicketStorage> TYPE = new SavedDataType<>(
          Identifier.withDefaultNamespace("chunk_tickets"), TicketStorage::new, CODEC, DataFixTypes.SAVED_DATA_FORCED_CHUNKS
      );
--    private final Long2ObjectOpenHashMap<List<Ticket>> tickets;
-+    public final Long2ObjectOpenHashMap<List<Ticket>> tickets;
+-    public final Long2ObjectOpenHashMap<List<Ticket>> tickets;
++    private final Long2ObjectOpenHashMap<List<Ticket>> tickets;
      private final Long2ObjectOpenHashMap<List<Ticket>> deactivatedTickets;
      private LongSet chunksWithForcedTickets = new LongOpenHashSet();
      private TicketStorage.@Nullable ChunkUpdated loadingChunkUpdatedListener;

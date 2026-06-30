@@ -4,8 +4,8 @@
          return this.entityData.get(DATA_VARIANT_ID);
      }
  
--    private void setVariant(Holder<CatVariant> variant) {
-+    public void setVariant(Holder<CatVariant> variant) {
+-    public void setVariant(Holder<CatVariant> variant) {
++    private void setVariant(Holder<CatVariant> variant) {
          this.entityData.set(DATA_VARIANT_ID, variant);
      }
  
@@ -13,8 +13,8 @@
          return DyeColor.byId(this.entityData.get(DATA_COLLAR_COLOR));
      }
  
--    private void setCollarColor(DyeColor color) {
-+    public void setCollarColor(DyeColor color) {
+-    public void setCollarColor(DyeColor color) {
++    private void setCollarColor(DyeColor color) {
          this.entityData.set(DATA_COLLAR_COLOR, color.getId());
      }
  

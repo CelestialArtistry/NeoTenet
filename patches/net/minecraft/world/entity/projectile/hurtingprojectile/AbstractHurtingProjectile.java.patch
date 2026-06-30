@@ -23,8 +23,8 @@
          return 1.0F;
      }
  
--    private void assignDirectionalMovement(Vec3 direction, double speed) {
-+    public void assignDirectionalMovement(Vec3 direction, double speed) {
+-    public void assignDirectionalMovement(Vec3 direction, double speed) {
++    private void assignDirectionalMovement(Vec3 direction, double speed) {
          this.setDeltaMovement(direction.normalize().scale(speed));
          this.needsSync = true;
      }

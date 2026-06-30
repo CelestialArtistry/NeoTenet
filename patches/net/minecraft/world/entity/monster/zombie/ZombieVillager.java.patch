@@ -4,8 +4,8 @@
  import org.jspecify.annotations.Nullable;
  
  public class ZombieVillager extends Zombie implements VillagerDataHolder {
--    private static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieVillager.class, EntityDataSerializers.BOOLEAN);
-+    public static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieVillager.class, EntityDataSerializers.BOOLEAN);
+-    public static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieVillager.class, EntityDataSerializers.BOOLEAN);
++    private static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieVillager.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA = SynchedEntityData.defineId(
          ZombieVillager.class, EntityDataSerializers.VILLAGER_DATA
      );
@@ -13,10 +13,10 @@
      private static final int SPECIAL_BLOCK_RADIUS = 4;
      private static final int NOT_CONVERTING = -1;
      private static final int DEFAULT_XP = 0;
--    private int villagerConversionTime;
--    private @Nullable UUID conversionStarter;
-+    public int villagerConversionTime;
-+    public @Nullable UUID conversionStarter;
+-    public int villagerConversionTime;
+-    public @Nullable UUID conversionStarter;
++    private int villagerConversionTime;
++    private @Nullable UUID conversionStarter;
      private @Nullable GossipContainer gossips;
      private @Nullable MerchantOffers tradeOffers;
      private int villagerXp = 0;
@@ -33,8 +33,8 @@
          return this.getEntityData().get(DATA_CONVERTING_ID);
      }
  
--    private void startConverting(@Nullable UUID player, int time) {
-+    public void startConverting(@Nullable UUID player, int time) {
+-    public void startConverting(@Nullable UUID player, int time) {
++    private void startConverting(@Nullable UUID player, int time) {
          this.conversionStarter = player;
          this.villagerConversionTime = time;
          this.getEntityData().set(DATA_CONVERTING_ID, true);

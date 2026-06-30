@@ -4,8 +4,8 @@
          bucket.copyFrom(DataComponents.SALMON_SIZE, this);
      }
  
--    private void setVariant(Salmon.Variant variant) {
-+    public void setVariant(Salmon.Variant variant) {
+-    public void setVariant(Salmon.Variant variant) {
++    private void setVariant(Salmon.Variant variant) {
          this.entityData.set(DATA_TYPE, variant.id);
      }
  

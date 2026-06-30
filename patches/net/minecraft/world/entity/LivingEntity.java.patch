@@ -1,50 +1,20 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -12,9 +_,12 @@
- import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
- import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
- import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
-+
-+import java.util.ArrayList;
- import java.util.Collection;
- import java.util.ConcurrentModificationException;
- import java.util.EnumMap;
-+import java.util.HashSet;
- import java.util.Iterator;
- import java.util.List;
- import java.util.Map;
-@@ -134,13 +_,15 @@
- import net.minecraft.world.scores.Scoreboard;
- import net.minecraft.world.waypoints.Waypoint;
- import net.minecraft.world.waypoints.WaypointTransmitter;
-+import org.bukkit.event.entity.EntityPotionEffectEvent;
- import org.jetbrains.annotations.Contract;
- import org.jspecify.annotations.Nullable;
- import org.slf4j.Logger;
- 
- import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
-+import org.teneted.neotenet.injection.world.entity.LivingEntityInjection;
- 
--public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter, ILivingEntityExtension {
-+public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter, ILivingEntityExtension, LivingEntityInjection {
-     private static final Logger LOGGER = LogUtils.getLogger();
-     private static final String TAG_ACTIVE_EFFECTS = "active_effects";
-     public static final String TAG_ATTRIBUTES = "attributes";
 @@ -177,14 +_,14 @@
      private static final double MAX_LINE_OF_SIGHT_TEST_RANGE = 128.0;
      protected static final int LIVING_ENTITY_FLAG_IS_USING = 1;
      protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
--    protected static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
-+    public static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
+-    public static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
++    protected static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
      protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
--    private static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-+    public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
+-    public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
++    private static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
      private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(
          LivingEntity.class, EntityDataSerializers.PARTICLES
      );
      private static final EntityDataAccessor<Boolean> DATA_EFFECT_AMBIENCE_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
--    private static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-+    public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
+-    public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
++    private static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
      private static final EntityDataAccessor<Integer> DATA_STINGER_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
      private static final EntityDataAccessor<Optional<BlockPos>> SLEEPING_POS_ID = SynchedEntityData.defineId(
          LivingEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS
@@ -66,10 +36,10 @@
 +    @Deprecated
 +    public static final Predicate<LivingEntity> PLAYER_NOT_WEARING_DISGUISE_ITEM = livingEntity -> PLAYER_NOT_WEARING_DISGUISE_ITEM_FOR_TARGET.test(livingEntity, null);
      private final AttributeMap attributes;
--    private final CombatTracker combatTracker = new CombatTracker(this);
--    private final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
-+    public CombatTracker combatTracker = new CombatTracker(this);
-+    public final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
+-    public CombatTracker combatTracker = new CombatTracker(this);
+-    public final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
++    private final CombatTracker combatTracker = new CombatTracker(this);
++    private final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
      private final Map<EquipmentSlot, ItemStack> lastEquipmentItems = Util.makeEnumMap(EquipmentSlot.class, slot -> ItemStack.EMPTY);
      public boolean swinging;
      private boolean discardFriction = false;
@@ -77,13 +47,13 @@
      public float yHeadRot;
      public float yHeadRotO;
      public final ElytraAnimationState elytraAnimationState = new ElytraAnimationState(this);
--    protected @Nullable EntityReference<Player> lastHurtByPlayer;
-+    public @Nullable EntityReference<Player> lastHurtByPlayer;
+-    public @Nullable EntityReference<Player> lastHurtByPlayer;
++    protected @Nullable EntityReference<Player> lastHurtByPlayer;
      protected int lastHurtByPlayerMemoryTime;
      protected boolean dead;
      protected int noActionTime;
--    protected float lastHurt;
-+    public float lastHurt;
+-    public float lastHurt;
++    protected float lastHurt;
      protected boolean jumping;
      public float xxa;
      public float yya;
@@ -91,34 +61,34 @@
      protected final InterpolationHandler interpolation = new InterpolationHandler(this);
      protected double lerpYHeadRot;
      protected int lerpHeadSteps;
--    private boolean effectsDirty = true;
--    private @Nullable EntityReference<LivingEntity> lastHurtByMob;
--    private int lastHurtByMobTimestamp;
-+    public boolean effectsDirty = true;
-+    public @Nullable EntityReference<LivingEntity> lastHurtByMob;
-+    public int lastHurtByMobTimestamp;
+-    public boolean effectsDirty = true;
+-    public @Nullable EntityReference<LivingEntity> lastHurtByMob;
+-    public int lastHurtByMobTimestamp;
++    private boolean effectsDirty = true;
++    private @Nullable EntityReference<LivingEntity> lastHurtByMob;
++    private int lastHurtByMobTimestamp;
      private @Nullable LivingEntity lastHurtMob;
      private int lastHurtMobTimestamp;
      private float speed;
      private int noJumpDelay;
      private float absorptionAmount;
      protected ItemStack useItem = ItemStack.EMPTY;
--    protected int useItemRemaining;
-+    public int useItemRemaining;
+-    public int useItemRemaining;
++    protected int useItemRemaining;
      protected int fallFlyTicks;
      private long lastKineticHitFeedbackTime = -2147483648L;
      private BlockPos lastPos;
-@@ -277,13 +_,27 @@
+@@ -277,13 +_,20 @@
      private float swimAmount;
      private float swimAmountO;
      protected Brain<?> brain;
--    private boolean skipDropExperience;
-+    protected boolean skipDropExperience;
+-    protected boolean skipDropExperience;
++    private boolean skipDropExperience;
      private final EnumMap<EquipmentSlot, Reference2ObjectMap<Enchantment, Set<EnchantmentLocationBasedEffect>>> activeLocationDependentEnchantments = new EnumMap<>(
          EquipmentSlot.class
      );
--    protected final EntityEquipment equipment;
-+    public final EntityEquipment equipment;
+-    public final EntityEquipment equipment;
++    protected final EntityEquipment equipment;
      private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
      public @Nullable Vec3 currentImpulseImpactPos;
 +    /**
@@ -128,13 +98,6 @@
 +     * the stack before the method's return.
 +     **/
 +    protected java.util.@Nullable Stack<net.neoforged.neoforge.common.damagesource.DamageContainer> damageContainers = new java.util.Stack<>();
-+    public int expToDrop;
-+    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
-+    public org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
-+    public boolean collides = true;
-+    public Set<UUID> collidableExemptions = new HashSet<>();
-+    public boolean bukkitPickUpLoot;
-+    public int invulnerableDuration = 20;
  
      protected LivingEntity(EntityType<? extends LivingEntity> type, Level level) {
          super(type, level);
@@ -185,32 +148,6 @@
          }
  
          return entity;
-@@ -847,6 +_,25 @@
-         this.updateDirtyEffects();
-     }
- 
-+    // CraftBukkit start
-+    private static class ProcessableEffect {
-+
-+        private Holder<MobEffect> type;
-+        private MobEffectInstance effect;
-+        private final EntityPotionEffectEvent.Cause cause;
-+
-+        private ProcessableEffect(MobEffectInstance effect, EntityPotionEffectEvent.Cause cause) {
-+            this.effect = effect;
-+            this.cause = cause;
-+        }
-+
-+        private ProcessableEffect(Holder<MobEffect> type, EntityPotionEffectEvent.Cause cause) {
-+            this.type = type;
-+            this.cause = cause;
-+        }
-+    }
-+    // CraftBukkit end
-+
-     protected void tickEffects() {
-         if (this.level() instanceof ServerLevel serverLevel) {
-             Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
 @@ -856,8 +_,10 @@
                      Holder<MobEffect> mobEffect = iterator.next();
                      MobEffectInstance effect = this.activeEffects.get(mobEffect);
@@ -260,12 +197,7 @@
          return true;
      }
  
-@@ -1010,16 +_,17 @@
-     }
- 
-     public final boolean addEffect(MobEffectInstance newEffect) {
--        return this.addEffect(newEffect, null);
-+        return this.addEffect(newEffect, (Entity) null);
+@@ -1014,12 +_,13 @@
      }
  
      public boolean addEffect(MobEffectInstance newEffect, @Nullable Entity source) {
@@ -715,8 +647,8 @@
      public void onAttack() {
      }
  
--    private void detectEquipmentUpdates() {
-+    public void detectEquipmentUpdates() {
+-    public void detectEquipmentUpdates() {
++    private void detectEquipmentUpdates() {
          Map<EquipmentSlot, ItemStack> changedItems = this.collectEquipmentChanges(this.lastEquipmentItems);
          if (changedItems != null) {
              this.handleHandSwap(changedItems);
@@ -772,8 +704,8 @@
          }
      }
  
--    protected void setLivingEntityFlag(int flag, boolean value) {
-+    public void setLivingEntityFlag(int flag, boolean value) {
+-    public void setLivingEntityFlag(int flag, boolean value) {
++    protected void setLivingEntityFlag(int flag, boolean value) {
          int currentFlags = this.entityData.get(DATA_LIVING_ENTITY_FLAGS);
          if (value) {
              currentFlags |= flag;

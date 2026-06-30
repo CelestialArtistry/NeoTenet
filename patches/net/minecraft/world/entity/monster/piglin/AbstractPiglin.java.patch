@@ -4,8 +4,8 @@
      private static final boolean DEFAULT_IMMUNE_TO_ZOMBIFICATION = false;
      private static final boolean DEFAULT_PICK_UP_LOOT = true;
      private static final int DEFAULT_TIME_IN_OVERWORLD = 0;
--    protected int timeInOverworld = 0;
-+    public int timeInOverworld = 0;
+-    public int timeInOverworld = 0;
++    protected int timeInOverworld = 0;
  
      public AbstractPiglin(EntityType<? extends AbstractPiglin> type, Level level) {
          super(type, level);
@@ -13,8 +13,8 @@
          this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, isImmuneToZombification);
      }
  
--    protected boolean isImmuneToZombification() {
-+    public boolean isImmuneToZombification() {
+-    public boolean isImmuneToZombification() {
++    protected boolean isImmuneToZombification() {
          return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
      }
  

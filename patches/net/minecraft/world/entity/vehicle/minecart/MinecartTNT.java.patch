@@ -4,12 +4,12 @@
      private static final float DEFAULT_EXPLOSION_POWER_BASE = 4.0F;
      private static final float DEFAULT_EXPLOSION_SPEED_FACTOR = 1.0F;
      private @Nullable DamageSource ignitionSource;
--    private int fuse = -1;
--    private float explosionPowerBase = 4.0F;
--    private float explosionSpeedFactor = 1.0F;
-+    public int fuse = -1;
-+    public float explosionPowerBase = 4.0F;
-+    public float explosionSpeedFactor = 1.0F;
+-    public int fuse = -1;
+-    public float explosionPowerBase = 4.0F;
+-    public float explosionSpeedFactor = 1.0F;
++    private int fuse = -1;
++    private float explosionPowerBase = 4.0F;
++    private float explosionSpeedFactor = 1.0F;
  
      public MinecartTNT(EntityType<? extends MinecartTNT> type, Level level) {
          super(type, level);
@@ -17,8 +17,8 @@
          return new ItemStack(Items.TNT_MINECART);
      }
  
--    protected void explode(@Nullable DamageSource damageSource, double speedSqr) {
-+    public void explode(@Nullable DamageSource damageSource, double speedSqr) {
+-    public void explode(@Nullable DamageSource damageSource, double speedSqr) {
++    protected void explode(@Nullable DamageSource damageSource, double speedSqr) {
          if (this.level() instanceof ServerLevel level) {
              if (level.getGameRules().get(GameRules.TNT_EXPLODES)) {
                  double speed = Math.min(Math.sqrt(speedSqr), 5.0);

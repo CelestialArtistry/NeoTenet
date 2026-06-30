@@ -13,8 +13,8 @@
          return this.worldDimensionData.create(registries);
      }
  
--    private record WorldDimensionData(JsonObject generatorSettings, String levelType) {
-+    public record WorldDimensionData(JsonObject generatorSettings, String levelType) {
+-    public record WorldDimensionData(JsonObject generatorSettings, String levelType) {
++    private record WorldDimensionData(JsonObject generatorSettings, String levelType) {
          private static final Map<String, ResourceKey<WorldPreset>> LEGACY_PRESET_NAMES = Map.of(
              "default", WorldPresets.NORMAL, "largebiomes", WorldPresets.LARGE_BIOMES
          );

@@ -4,8 +4,8 @@
  public class FeatureFlagRegistry {
      private static final Logger LOGGER = LogUtils.getLogger();
      private final FeatureFlagUniverse universe;
--    private final Map<Identifier, FeatureFlag> names;
-+    public final Map<Identifier, FeatureFlag> names;
+-    public final Map<Identifier, FeatureFlag> names;
++    private final Map<Identifier, FeatureFlag> names;
      private final FeatureFlagSet allFlags;
  
      private FeatureFlagRegistry(FeatureFlagUniverse universe, FeatureFlagSet allFlags, Map<Identifier, FeatureFlag> names) {

@@ -4,8 +4,8 @@
      }
  
      @Override
--    protected void registerGoals() {
-+    public void registerGoals() {
+-    public void registerGoals() {
++    protected void registerGoals() {
          this.goalSelector.addGoal(1, new FloatGoal(this));
          this.goalSelector.addGoal(1, new ClimbOnTopOfPowderSnowGoal(this, this.level()));
          this.goalSelector.addGoal(1, new Rabbit.RabbitPanicGoal(this, 2.2));
@@ -13,8 +13,8 @@
          return Rabbit.Variant.byId(this.entityData.get(DATA_TYPE_ID));
      }
  
--    private void setVariant(Rabbit.Variant variant) {
-+    public void setVariant(Rabbit.Variant variant) {
+-    public void setVariant(Rabbit.Variant variant) {
++    private void setVariant(Rabbit.Variant variant) {
          if (variant == Rabbit.Variant.EVIL) {
              this.getAttribute(Attributes.ARMOR).setBaseValue(8.0);
              this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.4, true));

@@ -4,8 +4,8 @@
      private boolean inputDown;
      private double waterLevel;
      private float landFriction;
--    private AbstractBoat.Status status;
-+    public AbstractBoat.Status status;
+-    public AbstractBoat.Status status;
++    private AbstractBoat.Status status;
      private AbstractBoat.Status oldStatus;
      private double lastYd;
      private boolean isAboveBubbleColumn;

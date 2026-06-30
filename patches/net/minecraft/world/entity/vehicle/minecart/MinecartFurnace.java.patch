@@ -4,8 +4,8 @@
      private static final int MAX_FUEL_TICKS = 32000;
      private static final short DEFAULT_FUEL = 0;
      private static final Vec3 DEFAULT_PUSH = Vec3.ZERO;
--    private int fuel = 0;
-+    public int fuel = 0;
+-    public int fuel = 0;
++    private int fuel = 0;
      public Vec3 push = DEFAULT_PUSH;
  
      public MinecartFurnace(EntityType<? extends MinecartFurnace> type, Level level) {

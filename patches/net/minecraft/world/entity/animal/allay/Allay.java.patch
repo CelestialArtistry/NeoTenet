@@ -4,10 +4,10 @@
      private final VibrationSystem.User vibrationUser;
      private final DynamicGameEventListener<Allay.JukeboxListener> dynamicJukeboxListener;
      private final SimpleContainer inventory = new SimpleContainer(1);
--    private @Nullable BlockPos jukeboxPos;
--    private long duplicationCooldown = 0L;
-+    public @Nullable BlockPos jukeboxPos;
-+    public long duplicationCooldown = 0L;
+-    public @Nullable BlockPos jukeboxPos;
+-    public long duplicationCooldown = 0L;
++    private @Nullable BlockPos jukeboxPos;
++    private long duplicationCooldown = 0L;
      private float holdingItemAnimationTicks;
      private float holdingItemAnimationTicks0;
      private float dancingAnimationTicks;
@@ -27,8 +27,8 @@
          this.entityData.set(DATA_CAN_DUPLICATE, duplicationCooldown == 0L);
      }
  
--    private void duplicateAllay() {
-+    public void duplicateAllay() {
+-    public void duplicateAllay() {
++    private void duplicateAllay() {
          Allay allay = EntityTypes.ALLAY.create(this.level(), EntitySpawnReason.BREEDING);
          if (allay != null) {
              allay.snapTo(this.position());
@@ -36,13 +36,13 @@
          }
      }
  
--    private void resetDuplicationCooldown() {
-+    public void resetDuplicationCooldown() {
+-    public void resetDuplicationCooldown() {
++    private void resetDuplicationCooldown() {
          this.setDuplicationCooldown(6000L);
      }
  
--    private boolean canDuplicate() {
-+    public boolean canDuplicate() {
+-    public boolean canDuplicate() {
++    private boolean canDuplicate() {
          return this.entityData.get(DATA_CAN_DUPLICATE);
      }
  

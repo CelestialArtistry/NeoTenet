@@ -4,10 +4,10 @@
      private static final boolean DEFAULT_CANNOT_BE_HUNTED = false;
      public static final int CONVERSION_TIME = 300;
      private int attackAnimationRemainingTicks;
--    private int timeInOverworld = 0;
--    private boolean cannotBeHunted = false;
-+    public int timeInOverworld = 0;
-+    public boolean cannotBeHunted = false;
+-    public int timeInOverworld = 0;
+-    public boolean cannotBeHunted = false;
++    private int timeInOverworld = 0;
++    private boolean cannotBeHunted = false;
      private static final Brain.Provider<Hoglin> BRAIN_PROVIDER = Brain.<Hoglin>provider(
          List.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ADULT, SensorType.HOGLIN_SPECIFIC_SENSOR),
          var0 -> HoglinAi.getActivities()
@@ -36,8 +36,8 @@
          this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, isImmuneToZombification);
      }
  
--    private boolean isImmuneToZombification() {
-+    public boolean isImmuneToZombification() {
+-    public boolean isImmuneToZombification() {
++    private boolean isImmuneToZombification() {
          return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
      }
  

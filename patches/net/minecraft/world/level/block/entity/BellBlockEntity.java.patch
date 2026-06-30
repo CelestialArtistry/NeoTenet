@@ -4,10 +4,10 @@
      public boolean shaking;
      public Direction clickDirection;
      private List<LivingEntity> nearbyEntities;
--    private boolean resonating;
--    private int resonationTicks;
-+    public boolean resonating;
-+    public int resonationTicks;
+-    public boolean resonating;
+-    public int resonationTicks;
++    private boolean resonating;
++    private int resonationTicks;
  
      public BellBlockEntity(BlockPos worldPosition, BlockState blockState) {
          super(BlockEntityTypes.BELL, worldPosition, blockState);

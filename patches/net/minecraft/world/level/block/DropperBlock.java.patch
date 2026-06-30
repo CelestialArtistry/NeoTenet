@@ -4,8 +4,8 @@
      }
  
      @Override
--    protected void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
-+    public void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
+-    public void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
++    protected void dispenseFrom(ServerLevel level, BlockState state, BlockPos pos) {
          DispenserBlockEntity blockEntity = level.getBlockEntity(pos, BlockEntityTypes.DROPPER).orElse(null);
          if (blockEntity == null) {
              LOGGER.warn("Ignoring dispensing attempt for Dropper without matching block entity at {}", pos);

@@ -4,8 +4,8 @@
      private final int[] nextHeadUpdate = new int[2];
      private final int[] idleHeadUpdates = new int[2];
      private int destroyBlocksTick;
--    private final ServerBossEvent bossEvent = Util.make(
-+    public final ServerBossEvent bossEvent = Util.make(
+-    public final ServerBossEvent bossEvent = Util.make(
++    private final ServerBossEvent bossEvent = Util.make(
          new ServerBossEvent(Mth.createInsecureUUID(this.random), this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS),
          e -> e.setDarkenScreen(true)
      );

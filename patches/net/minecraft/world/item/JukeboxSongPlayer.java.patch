@@ -4,8 +4,8 @@
  public class JukeboxSongPlayer {
      public static final int PLAY_EVENT_INTERVAL_TICKS = 20;
      private long ticksSinceSongStarted;
--    private @Nullable Holder<JukeboxSong> song;
-+    public @Nullable Holder<JukeboxSong> song;
+-    public @Nullable Holder<JukeboxSong> song;
++    private @Nullable Holder<JukeboxSong> song;
      private final BlockPos blockPos;
      private final JukeboxSongPlayer.OnSongChanged onSongChanged;
  

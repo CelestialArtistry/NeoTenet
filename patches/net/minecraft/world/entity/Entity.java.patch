@@ -1,39 +1,13 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -123,6 +_,7 @@
- import net.minecraft.world.level.entity.EntityInLevelCallback;
- import net.minecraft.world.level.gameevent.DynamicGameEventListener;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import net.minecraft.world.level.gamerules.GameRules;
- import net.minecraft.world.level.levelgen.Heightmap;
- import net.minecraft.world.level.material.Fluid;
- import net.minecraft.world.level.material.FluidState;
-@@ -151,13 +_,16 @@
- import net.minecraft.world.scores.Scoreboard;
- import net.minecraft.world.scores.Team;
- import net.minecraft.world.waypoints.WaypointTransmitter;
-+import org.bukkit.command.CommandSender;
- import org.jetbrains.annotations.Contract;
- import org.jspecify.annotations.Nullable;
- import org.slf4j.Logger;
- 
+@@ -158,6 +_,7 @@
  import net.neoforged.neoforge.common.extensions.IEntityExtension;
-+import org.teneted.neotenet.injection.world.entity.EntityInjection;
  
  public abstract class Entity
 +    extends net.neoforged.neoforge.attachment.AttachmentHolder
      implements Nameable,
      EntityAccess,
      ScoreHolder,
-@@ -166,7 +_,7 @@
-     ItemOwner,
-     SlotProvider,
-     DebugValueSource,
--    TypedInstance<EntityType<?>>, IEntityExtension {
-+    TypedInstance<EntityType<?>>, IEntityExtension, EntityInjection {
-     private static final Logger LOGGER = LogUtils.getLogger();
-     public static final String TAG_ID = "id";
-     public static final String TAG_UUID = "UUID";
 @@ -207,11 +_,13 @@
      private static final int MAX_BLOCK_ITERATIONS_ALONG_TRAVEL_PER_TICK = 16;
      private static final double MAX_MOVEMENT_RESETTING_TRACE_DISTANCE = 8.0;
@@ -44,8 +18,8 @@
      private boolean requiresPrecisePosition;
      private int id = 0;
      public boolean blocksBuilding;
--    private ImmutableList<Entity> passengers = ImmutableList.of();
-+    public ImmutableList<Entity> passengers = ImmutableList.of();
+-    public ImmutableList<Entity> passengers = ImmutableList.of();
++    private ImmutableList<Entity> passengers = ImmutableList.of();
      protected int boardingCooldown;
      private @Nullable Entity vehicle;
      private Level level;
@@ -53,8 +27,8 @@
      public float yRotO;
      public float xRotO;
      private AABB bb = INITIAL_AABB;
--    private boolean onGround;
-+    public boolean onGround;
+-    public boolean onGround;
++    private boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
      public boolean verticalCollisionBelow;
@@ -62,13 +36,13 @@
      public double yOld;
      public double zOld;
      public boolean noPhysics;
--    protected final RandomSource random = RandomSource.create();
-+    public final RandomSource random = RandomSource.create();
+-    public final RandomSource random = RandomSource.create();
++    protected final RandomSource random = RandomSource.create();
      public int tickCount;
      private int remainingFireTicks;
      private final EntityFluidInteraction fluidInteraction = new EntityFluidInteraction(Set.of(FluidTags.WATER, FluidTags.LAVA));
--    protected boolean wasTouchingWater;
-+    public boolean wasTouchingWater;
+-    public boolean wasTouchingWater;
++    protected boolean wasTouchingWater;
      protected boolean wasEyeInWater;
      public int invulnerableTime;
      protected boolean firstTick = true;
@@ -76,8 +50,8 @@
      public boolean needsSync;
      public boolean syncPosition;
      public @Nullable PortalProcessor portalProcess;
--    private int portalCooldown;
-+    public int portalCooldown;
+-    public int portalCooldown;
++    private int portalCooldown;
      private boolean invulnerable;
      protected UUID uuid = Mth.createInsecureUUID(this.random);
      protected String stringUUID = this.uuid.toString();
@@ -85,33 +59,11 @@
      private boolean onGroundNoBlocks = false;
      private float crystalSoundIntensity;
      private int lastCrystalSoundPlayTick;
--    private boolean hasVisualFire;
-+    public boolean hasVisualFire;
+-    public boolean hasVisualFire;
++    private boolean hasVisualFire;
      private Vec3 lastKnownSpeed = Vec3.ZERO;
      private @Nullable Vec3 lastKnownPosition;
      private @Nullable BlockState inBlockState = null;
-@@ -302,6 +_,21 @@
-     private final LongSet visitedBlocks = new LongOpenHashSet();
-     private final InsideBlockEffectApplier.StepBasedCollector insideEffectCollector = new InsideBlockEffectApplier.StepBasedCollector();
-     private CustomData customData = CustomData.EMPTY;
-+    // CraftBukkit start
-+    public boolean forceDrops;
-+    public boolean persist = true;
-+    public boolean visibleByDefault = true;
-+    public boolean valid;
-+    public boolean inWorld = false;
-+    public boolean generation;
-+    public int maxAirTicks = getDefaultMaxAirSupply(); // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
-+    public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
-+    public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
-+    public boolean persistentInvisibility = false;
-+    public BlockPos lastLavaContact;
-+    // Marks an entity, that it was removed by a plugin via Entity#remove
-+    // Main use case currently is for SPIGOT-7487, preventing dropping of leash when leash is removed
-+    public boolean pluginRemoved = false;
- 
-     public Entity(EntityType<?> type, Level level) {
-         this.type = type;
 @@ -323,7 +_,10 @@
          this.defineSynchedData(entityDataBuilder);
          this.entityData = entityDataBuilder.build();
@@ -317,13 +269,13 @@
          this.setSharedFlag(5, invisible);
      }
  
--    protected boolean getSharedFlag(@Entity.Flags int flag) {
-+    public boolean getSharedFlag(@Entity.Flags int flag) {
+-    public boolean getSharedFlag(@Entity.Flags int flag) {
++    protected boolean getSharedFlag(@Entity.Flags int flag) {
          return (this.entityData.get(DATA_SHARED_FLAGS_ID) & 1 << flag) != 0;
      }
  
--    protected void setSharedFlag(@Entity.Flags int flag, boolean value) {
-+    public void setSharedFlag(@Entity.Flags int flag, boolean value) {
+-    public void setSharedFlag(@Entity.Flags int flag, boolean value) {
++    protected void setSharedFlag(@Entity.Flags int flag, boolean value) {
          byte currentValue = this.entityData.get(DATA_SHARED_FLAGS_ID);
          if (value) {
              this.entityData.set(DATA_SHARED_FLAGS_ID, (byte)(currentValue | 1 << flag));
@@ -349,9 +301,9 @@
              );
      }
  
--    protected final boolean isInvulnerableToBase(DamageSource source) {
+-    public final boolean isInvulnerableToBase(DamageSource source) {
 -        return this.isRemoved()
-+    public final boolean isInvulnerableToBase(DamageSource source) {
++    protected final boolean isInvulnerableToBase(DamageSource source) {
 +        boolean isVanillaInvulnerable = this.isRemoved()
              || this.invulnerable && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.isCreativePlayer()
              || source.is(DamageTypeTags.IS_FIRE) && this.fireImmune()
@@ -385,47 +337,15 @@
          this.dimensions = newDim;
          this.eyeHeight = newDim.eyeHeight();
          this.reapplyPosition();
-@@ -3611,10 +_,39 @@
+@@ -3611,7 +_,7 @@
          return SoundSource.NEUTRAL;
      }
  
--    protected int getFireImmuneTicks() {
-+    public int getFireImmuneTicks() {
+-    public int getFireImmuneTicks() {
++    protected int getFireImmuneTicks() {
          return 0;
      }
  
-+    // CraftBukkit start
-+    private final CommandSource commandSource = new CommandSource() {
-+
-+        @Override
-+        public void sendSystemMessage(Component component) {
-+        }
-+
-+        @Override
-+        public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+            return Entity.this.getBukkitEntity();
-+        }
-+
-+        @Override
-+        public boolean acceptsSuccess() {
-+            return ((ServerLevel) Entity.this.level()).getGameRules().get(GameRules.SEND_COMMAND_FEEDBACK);
-+        }
-+
-+        @Override
-+        public boolean acceptsFailure() {
-+            return true;
-+        }
-+
-+        @Override
-+        public boolean shouldInformAdmins() {
-+            return true;
-+        }
-+    };
-+    // CraftBukkit end
-+
-     public CommandSourceStack createCommandSourceStackForNameResolution(ServerLevel level) {
-         return new CommandSourceStack(
-             CommandSource.NULL,
 @@ -3810,6 +_,10 @@
                  }
              }
@@ -441,8 +361,8 @@
          this.onRemoval(reason);
      }
  
--    protected void unsetRemoved() {
-+    public void unsetRemoved() {
+-    public void unsetRemoved() {
++    protected void unsetRemoved() {
          this.removalReason = null;
      }
  

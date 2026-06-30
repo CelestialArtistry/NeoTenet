@@ -1,21 +1,11 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
-@@ -28,15 +_,16 @@
- import net.minecraft.world.level.chunk.status.ChunkStatus;
- import net.minecraft.world.level.lighting.LevelLightEngine;
- import org.jspecify.annotations.Nullable;
-+import org.teneted.neotenet.injection.server.level.ChunkHolderInjection;
- 
--public class ChunkHolder extends GenerationChunkHolder {
-+public class ChunkHolder extends GenerationChunkHolder implements ChunkHolderInjection {
-     public static final ChunkResult<LevelChunk> UNLOADED_LEVEL_CHUNK = ChunkResult.error("Unloaded level chunk");
-     private static final CompletableFuture<ChunkResult<LevelChunk>> UNLOADED_LEVEL_CHUNK_FUTURE = CompletableFuture.completedFuture(UNLOADED_LEVEL_CHUNK);
-     private final LevelHeightAccessor levelHeightAccessor;
+@@ -36,7 +_,7 @@
      private volatile CompletableFuture<ChunkResult<LevelChunk>> fullChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
      private volatile CompletableFuture<ChunkResult<LevelChunk>> tickingChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
      private volatile CompletableFuture<ChunkResult<LevelChunk>> entityTickingChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
--    private int oldTicketLevel;
-+    public int oldTicketLevel;
+-    public int oldTicketLevel;
++    private int oldTicketLevel;
      private int ticketLevel;
      private int queueLevel;
      private boolean hasChangedSections;
@@ -23,8 +13,8 @@
      private final BitSet skyChangedLightSectionFilter = new BitSet();
      private final LevelLightEngine lightEngine;
      private final ChunkHolder.LevelChangeListener onLevelChange;
--    private final ChunkHolder.PlayerProvider playerProvider;
-+    public final ChunkHolder.PlayerProvider playerProvider;
+-    public final ChunkHolder.PlayerProvider playerProvider;
++    private final ChunkHolder.PlayerProvider playerProvider;
      private boolean wasAccessibleSinceLastSave;
      private CompletableFuture<?> pendingFullStateConfirmation = CompletableFuture.completedFuture(null);
      private CompletableFuture<?> sendSync = CompletableFuture.completedFuture(null);

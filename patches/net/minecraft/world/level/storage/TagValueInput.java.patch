@@ -4,8 +4,8 @@
  public class TagValueInput implements ValueInput {
      private final ProblemReporter problemReporter;
      private final ValueInputContextHelper context;
--    private final CompoundTag input;
-+    public final CompoundTag input;
+-    public final CompoundTag input;
++    private final CompoundTag input;
  
      private TagValueInput(ProblemReporter problemReporter, ValueInputContextHelper context, CompoundTag input) {
          this.problemReporter = problemReporter;

@@ -4,10 +4,10 @@
      private static final String TAG_PROFILE = "profile";
      private static final String TAG_NOTE_BLOCK_SOUND = "note_block_sound";
      private static final String TAG_CUSTOM_NAME = "custom_name";
--    private @Nullable ResolvableProfile owner;
--    private @Nullable Identifier noteBlockSound;
-+    public @Nullable ResolvableProfile owner;
-+    public @Nullable Identifier noteBlockSound;
+-    public @Nullable ResolvableProfile owner;
+-    public @Nullable Identifier noteBlockSound;
++    private @Nullable ResolvableProfile owner;
++    private @Nullable Identifier noteBlockSound;
      private int animationTickCount;
      private boolean isAnimating;
      private @Nullable Component customName;

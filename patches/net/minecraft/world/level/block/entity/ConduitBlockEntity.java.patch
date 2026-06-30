@@ -4,10 +4,10 @@
      private float activeRotation;
      private boolean isActive;
      private boolean isHunting;
--    private final List<BlockPos> effectBlocks = Lists.newArrayList();
--    private @Nullable EntityReference<LivingEntity> destroyTarget;
-+    public final List<BlockPos> effectBlocks = Lists.newArrayList();
-+    public @Nullable EntityReference<LivingEntity> destroyTarget;
+-    public final List<BlockPos> effectBlocks = Lists.newArrayList();
+-    public @Nullable EntityReference<LivingEntity> destroyTarget;
++    private final List<BlockPos> effectBlocks = Lists.newArrayList();
++    private @Nullable EntityReference<LivingEntity> destroyTarget;
      private long nextAmbientSoundActivation;
  
      public ConduitBlockEntity(BlockPos worldPosition, BlockState blockState) {
@@ -28,8 +28,8 @@
          return candidates.isEmpty() ? null : EntityReference.of(Util.getRandom(candidates, level.getRandom()));
      }
  
--    private static AABB getDestroyRangeAABB(BlockPos worldPosition) {
-+    public static AABB getDestroyRangeAABB(BlockPos worldPosition) {
+-    public static AABB getDestroyRangeAABB(BlockPos worldPosition) {
++    private static AABB getDestroyRangeAABB(BlockPos worldPosition) {
          return new AABB(worldPosition).inflate(8.0);
      }
  

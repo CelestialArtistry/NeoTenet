@@ -4,8 +4,8 @@
      public static final int LIFE_OFFSET = 2;
      public static final int ATTACK_TRIGGER_TICKS = 14;
      private static final int DEFAULT_WARMUP_DELAY = 0;
--    private int warmupDelayTicks = 0;
-+    public int warmupDelayTicks = 0;
+-    public int warmupDelayTicks = 0;
++    private int warmupDelayTicks = 0;
      private boolean sentSpikeEvent;
      private int lifeTicks = 22;
      private boolean clientSideAttackStarted;
