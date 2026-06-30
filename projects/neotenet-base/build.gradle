@@ -1,0 +1,115 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs rootProject.file('src/main/java'), rootProject.file('projects/neotenet/src/main/java')
+        }
+        resources {
+            srcDirs rootProject.file('src/main/resources'), rootProject.file('src/generated/resources'), rootProject.file('projects/neotenet/src/main/resources')
+        }
+    }
+    client {
+        java {
+            srcDirs rootProject.file('src/client/java')
+        }
+    }
+}
+
+dependencies {
+    for (var asmModule : ["org.ow2.asm:asm", "org.ow2.asm:asm-commons", "org.ow2.asm:asm-tree", "org.ow2.asm:asm-util", "org.ow2.asm:asm-analysis"]) {
+        compileOnly(asmModule) {
+            // Vanilla ships with ASM 9.3 transitively (via their OpenID connect library dependency), we require
+            // ASM in a more recent version and have to strictly require this to override the strict Minecraft version.
+            version {
+                strictly project.asm_version
+            }
+        }
+    }
+    compileOnly ("net.neoforged.fancymodloader:loader:${project.fancy_mod_loader_version}") {
+        exclude group: 'org.slf4j'
+        exclude group: 'net.fabricmc'
+        // MC currently (as of 26.2-pre-1) uses the Unsafe-using artifact of LWJGL.
+        // To avoid overriding that artifact, exclude it from here and rely on minecraft-dependencies to provide it.
+        // We must specifically exclude the main LWJGL module, since FML depends on lwjgl-tinyfd.
+        exclude group: 'org.lwjgl', module: 'lwjgl'
+    }
+    compileOnly ("net.neoforged.fancymodloader:earlydisplay:${project.fancy_mod_loader_version}") {
+        exclude group: 'org.lwjgl'
+        exclude group: 'org.slf4j'
+        exclude group: 'net.fabricmc'
+    }
+    compileOnly "net.neoforged:accesstransformers:${project.accesstransformers_version}"
+    compileOnly "net.neoforged:bus:${project.eventbus_version}"
+    compileOnly "net.neoforged:mergetool:${project.mergetool_version}:api"
+    compileOnly "com.electronwill.night-config:core:${project.nightconfig_version}"
+    compileOnly "com.electronwill.night-config:toml:${project.nightconfig_version}"
+    compileOnly "org.apache.maven:maven-artifact:${project.apache_maven_artifact_version}"
+    compileOnly "net.jodah:typetools:${project.typetools_version}"
+    compileOnly "net.minecrell:terminalconsoleappender:${project.terminalconsoleappender_version}"
+    compileOnly("net.fabricmc:sponge-mixin:${project.mixin_version}") { transitive = false }
+    compileOnly ("net.neoforged:JarJarSelector:${project.jarjar_version}") {
+        exclude group: 'org.slf4j'
+    }
+    compileOnly ("net.neoforged:JarJarMetadata:${project.jarjar_version}") {
+        exclude group: 'org.slf4j'
+    }
+
+    // craftbukkit
+    compileOnly 'javax.inject:javax.inject:1'
+    compileOnly 'com.googlecode.json-simple:json-simple:1.1.1'
+    compileOnly 'org.xerial:sqlite-jdbc:3.51.3.0'
+    compileOnly 'com.mysql:mysql-connector-j:9.6.0'
+    compileOnly 'org.apache.logging.log4j:log4j-iostreams:2.26.0'
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.26.0'
+    compileOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.26.0'
+    compileOnly 'org.jline:jline:3.30.4'
+    // spigot
+    compileOnly 'commons-codec:commons-codec:1.22.0'
+    compileOnly 'commons-lang:commons-lang:2.6'
+    compileOnly 'org.apache.commons:commons-lang3:3.20.0'
+    compileOnly 'org.apache.httpcomponents:httpclient:4.5.14'
+    compileOnly 'org.apache.httpcomponents:httpcore:4.4.16'
+    compileOnly 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    // bukkit
+    compileOnly 'org.yaml:snakeyaml:2.6'
+    // LibraryLoader start
+    compileOnly 'org.checkerframework:checker-qual:3.49.2'
+    compileOnly 'org.eclipse.sisu:org.eclipse.sisu.inject:0.9.0.M2'
+    compileOnly 'org.codehaus.plexus:plexus-interpolation:1.26'
+    compileOnly 'org.codehaus.plexus:plexus-utils:4.0.3'
+    compileOnly 'com.google.protobuf:protobuf-java:4.28.2'
+    compileOnly "org.apache.maven:maven-artifact:3.9.9"
+    compileOnly 'org.apache.maven:maven-builder-support:3.9.6'
+    compileOnly 'org.apache.maven:maven-model:3.9.6'
+    compileOnly 'org.apache.maven:maven-model-builder:3.9.6'
+    compileOnly 'org.apache.maven:maven-repository-metadata:3.9.6'
+    compileOnly 'org.apache.maven:maven-resolver-provider:3.9.6'
+
+    compileOnly 'org.apache.maven.resolver:maven-resolver-api:1.9.18'
+    compileOnly 'org.apache.maven.resolver:maven-resolver-connector-basic:1.9.18'
+    compileOnly 'org.apache.maven.resolver:maven-resolver-impl:1.9.18'
+    compileOnly 'org.apache.maven.resolver:maven-resolver-named-locks:1.9.18'
+    compileOnly 'org.apache.maven.resolver:maven-resolver-spi:1.9.18'
+    compileOnly 'org.apache.maven.resolver:maven-resolver-transport-http:1.9.18'
+    compileOnly 'org.apache.maven.resolver:maven-resolver-util:1.9.18'
+    // LibraryLoader end
+
+    // Vanilla Lib Start
+    compileOnly 'com.mojang:authlib:9.0.75'
+    compileOnly 'com.mojang:datafixerupper:10.0.21'
+    compileOnly 'com.mojang:jtracy:1.0.37'
+    compileOnly 'it.unimi.dsi:fastutil:8.5.18'
+    // Vanilla Lib end
+    compileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+    options.encoding = 'UTF-8'
+    options.warnings = false
+    options.compilerArgs << "-Xlint:-removal" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-varargs" << "-Xdiags:verbose"
+}

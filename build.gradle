@@ -154,16 +154,25 @@ tasks.register('applyCBPatches') {
     }
 }
 
+tasks.register('prepareNeoForgeBase', Copy) {
+    group = 'neotenet'
+
+    from('projects/neoforge/src/main/java')
+    into('projects/neotenet-base/src/main/java')
+
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 tasks.register('genNeoForgePatchesJar') {
     group = 'neotenet'
 
-    inputs.dir('projects/neotenet-server/src/main/java')
+    inputs.dir('projects/neotenet-base/src/main/java')
     inputs.dir('projects/neoforge/src/main/java')
     outputs.file('projects/neotenet/neoforge-patches.jar')
 
     doLast {
         def baseDir = new File(rootDir, 'projects/neoforge/src/main/java').toPath()
-        def modifiedDir = new File(rootDir, 'projects/neotenet-server/src/main/java').toPath()
+        def modifiedDir = new File(rootDir, 'projects/neotenet-base/src/main/java').toPath()
         def patchesJar = new File(rootDir, 'projects/neotenet/neoforge-patches.jar').toPath()
 
         java.nio.file.Files.deleteIfExists(patchesJar)
@@ -193,7 +202,7 @@ tasks.register('applyNeoForgePatches') {
     group = 'neotenet'
 
     inputs.file('projects/neotenet/neoforge-patches.jar')
-    outputs.dir('projects/neotenet-server/src/main/java')
+    outputs.dir('projects/neoforge/src/main/java')
 
     doLast {
         def patchesJar = new File(rootDir, 'projects/neotenet/neoforge-patches.jar')
@@ -201,8 +210,8 @@ tasks.register('applyNeoForgePatches') {
             logger.lifecycle('neoforge-patches.jar Non Exist，Skip')
             return
         }
-        def baseDir = new File(rootDir, 'projects/neoforge/src/main/java').toPath()
-        def targetDir = new File(rootDir, 'projects/neotenet-server/src/main/java').toPath()
+        def baseDir = new File(rootDir, 'projects/neotenet-base/src/main/java').toPath()
+        def targetDir = new File(rootDir, 'projects/neoforge/src/main/java').toPath()
 
         def builder = PatchOperation.builder()
                 .logTo(logger::lifecycle)
