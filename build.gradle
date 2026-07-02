@@ -70,6 +70,7 @@ def rootDir = rootProject.projectDir
 
 tasks.register('prepareCleanCB', Copy) {
     group = 'neotenet'
+    dependsOn 'copyCB'
 
     from('projects/bukkit/src/main/java') {
         exclude 'com/mojang/**'
@@ -83,11 +84,11 @@ tasks.register('prepareCleanCB', Copy) {
 
 import io.codechicken.diffpatch.cli.DiffOperation
 import io.codechicken.diffpatch.util.Input.MultiInput
+import io.codechicken.diffpatch.util.Output
 import io.codechicken.diffpatch.util.Output.MultiOutput
 
 tasks.register('genCBPatchesJar') {
     group = 'neotenet'
-    dependsOn 'prepareCleanCB'
 
     inputs.dir('projects/cb-base/src/main/java/org/bukkit')
     inputs.dir('projects/neotenet/src/main/java/org/bukkit')
@@ -123,7 +124,7 @@ tasks.register('genCBPatchesJar') {
 
 tasks.register('applyCBPatches') {
     group = 'neotenet'
-    dependsOn 'copyCB'
+    dependsOn 'prepareCleanCB'
 
     inputs.file('projects/neotenet/cb-patches.jar')
     outputs.dir('projects/neotenet/src/main/java/org/bukkit')
@@ -156,6 +157,7 @@ tasks.register('applyCBPatches') {
 
 tasks.register("prepareNeoForgeOtherSrc", Copy) {
     group = 'neotenet'
+    dependsOn ':neoforge:setup'
 
     from('src/main/java')
     from('projects/neotenet/src/main/java')
@@ -253,7 +255,6 @@ tasks.register('genNeoForgePatchesJar') {
 
 tasks.register('applyNeoForgePatches') {
     group = 'neotenet'
-    dependsOn ':neoforge:setup'
 
     inputs.file('projects/neotenet/neoforge-patches.jar')
     outputs.dir('projects/neoforge/src/main/java')
@@ -269,9 +270,9 @@ tasks.register('applyNeoForgePatches') {
 
         def builder = PatchOperation.builder()
                 .logTo(logger::lifecycle)
-                .baseInput(MultiInput.folder(baseDir))
-                .patchesInput(MultiInput.detectedArchive(patchesJar.toPath()))
-                .patchedOutput(MultiOutput.folder(targetDir))
+                .baseInput(io.codechicken.diffpatch.util.Input.MultiInput.folder(baseDir))
+                .patchesInput(io.codechicken.diffpatch.util.Input.MultiInput.detectedArchive(patchesJar.toPath()))
+                .patchedOutput(Output.MultiOutput.folder(targetDir))
                 .level(io.codechicken.diffpatch.util.LogLevel.WARN)
                 .summary(false)
                 .lineEnding('\n')

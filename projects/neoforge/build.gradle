@@ -1,3 +1,5 @@
+import io.codechicken.diffpatch.cli.PatchOperation
+import io.codechicken.diffpatch.util.Output
 import net.neoforged.jarcompatibilitychecker.gradle.JCCPlugin
 import net.neoforged.jarcompatibilitychecker.gradle.CompatibilityTask
 import net.neoforged.moddevgradle.dsl.ModModel
