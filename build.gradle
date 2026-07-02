@@ -156,6 +156,7 @@ tasks.register('applyCBPatches') {
 
 tasks.register("prepareNeoForgeOtherSrc", Copy) {
     group = 'neotenet'
+
     from('src/main/java')
     from('projects/neotenet/src/main/java')
     into('projects/neotenet-base/other-src/main/java')
@@ -172,15 +173,58 @@ tasks.register('prepareNeoForgeBase', Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-tasks.register('genNeoForgePatchesJar') {
+tasks.register('applyNeoTenetBasePatches') {
+    group = 'neotenet'
+    dependsOn 'prepareNeoForgeBase'
+
+    inputs.file('projects/neotenet/neoforge-patches.jar')
+    outputs.dir('projects/neotenet-base/src/main/java')
+
+    doLast {
+        def patchesJar = new File(rootDir, 'projects/neotenet/neoforge-patches.jar')
+        if (!patchesJar.exists()) {
+            logger.lifecycle('neoforge-patches.jar Non Exist，Skip')
+            return
+        }
+        def baseDir = new File(rootDir, 'projects/neoforge-clean/src/main/java').toPath()
+        def targetDir = new File(rootDir, 'projects/neotenet-base/src/main/java').toPath()
+
+        def builder = PatchOperation.builder()
+                .logTo(logger::lifecycle)
+                .baseInput(MultiInput.folder(baseDir))
+                .patchesInput(MultiInput.detectedArchive(patchesJar.toPath()))
+                .patchedOutput(MultiOutput.folder(targetDir))
+                .level(io.codechicken.diffpatch.util.LogLevel.WARN)
+                .summary(false)
+                .lineEnding('\n')
+
+        def result = builder.build().operate()
+        if (result.exit != 0 && result.exit != 1) {
+            throw new RuntimeException("Patch Failed，Code: " + result.exit)
+        }
+        logger.lifecycle('Applied Successful')
+    }
+}
+
+tasks.register('prepareCleanNeoForge', Copy) {
     group = 'neotenet'
 
+    from('projects/neoforge/src/main/java')
+    into('projects/neoforge-clean/src/main/java')
+
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.register('genNeoForgePatchesJar') {
+    group = 'neotenet'
+    dependsOn 'prepareCleanNeoForge'
+
     inputs.dir('projects/neotenet-base/src/main/java')
-    inputs.dir('projects/neoforge/src/main/java')
+    inputs.dir('projects/neoforge-clean/src/main/java')
     outputs.file('projects/neotenet/neoforge-patches.jar')
 
     doLast {
-        def baseDir = new File(rootDir, 'projects/neoforge/src/main/java').toPath()
+        def baseDir = new File(rootDir, 'projects/neoforge-clean/src/main/java').toPath()
         def modifiedDir = new File(rootDir, 'projects/neotenet-base/src/main/java').toPath()
         def patchesJar = new File(rootDir, 'projects/neotenet/neoforge-patches.jar').toPath()
 

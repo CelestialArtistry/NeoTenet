@@ -1,19 +1,5 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -202,10 +_,12 @@
- import net.minecraft.world.scores.Team;
- import net.minecraft.world.scores.TeamColor;
- import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
- import org.jspecify.annotations.Nullable;
- import org.slf4j.Logger;
-+import org.teneted.neotenet.injection.server.level.ServerPlayerInjection;
- 
--public class ServerPlayer extends Player {
-+public class ServerPlayer extends Player implements ServerPlayerInjection {
-     private static final Logger LOGGER = LogUtils.getLogger();
-     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
-     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
 @@ -317,6 +_,10 @@
          }
  
@@ -25,7 +11,7 @@
              ServerPlayer.this.connection.send(new ClientboundContainerSetDataPacket(container.containerId, id, value));
          }
  
-@@ -362,10 +_,32 @@
+@@ -362,10 +_,17 @@
          public void sendSystemMessage(Component message) {
              ServerPlayer.this.sendSystemMessage(message);
          }
@@ -40,21 +26,6 @@
      public boolean wonGame;
 +    // Neo: Used to track partial TIME_SINCE_REST increases for dimensions in which clocks move at different speeds. No need to persist, at most Phantoms will spawn one tick too early for each save/load cycle.
 +    private float partialTimeSinceRestTick;
-+    // CraftBukkit start
-+    public CraftPlayer.TransferCookieConnection transferCookieConnection;
-+    public String displayName;
-+    public Component listName;
-+    public int listOrder = 0;
-+    public org.bukkit.Location compassTarget;
-+    public int newExp = 0;
-+    public int newLevel = 0;
-+    public int newTotalExp = 0;
-+    public boolean keepLevel = false;
-+    public double maxHealthCache;
-+    public boolean joining = true;
-+    public boolean sentListPacket = false;
-+    public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
-+    // CraftBukkit end
  
      public ServerPlayer(MinecraftServer server, ServerLevel level, GameProfile gameProfile, ClientInformation clientInformation) {
          super(level, gameProfile);

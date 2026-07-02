@@ -1,34 +1,5 @@
 --- a/net/minecraft/world/SimpleContainer.java
 +++ b/net/minecraft/world/SimpleContainer.java
-@@ -10,12 +_,28 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.level.storage.ValueInput;
- import net.minecraft.world.level.storage.ValueOutput;
-+import org.bukkit.entity.HumanEntity;
- 
- public class SimpleContainer implements Container, StackedContentsCompatible {
-     private final int size;
-     public final NonNullList<ItemStack> items;
-+    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
-+    protected org.bukkit.inventory.InventoryHolder bukkitOwner;
-+
-+    public SimpleContainer(SimpleContainer original) {
-+        this(original.size);
-+        for (int slot = 0; slot < original.size; slot++) {
-+            this.items.set(slot, original.items.get(slot).copy());
-+        }
-+    }
- 
-     public SimpleContainer(int size) {
-+        this(size, null);
-+    }
-+
-+    public SimpleContainer(int size, org.bukkit.inventory.InventoryHolder owner) {
-+        this.bukkitOwner = owner;
-+        // CraftBukkit end
-         this.size = size;
-         this.items = NonNullList.withSize(size, ItemStack.EMPTY);
-     }
 @@ -109,8 +_,14 @@
  
      @Override

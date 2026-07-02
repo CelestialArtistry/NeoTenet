@@ -47,4 +47,5 @@ build
 **/out/
 /projects/cb-base/
 /projects/neotenet-base/src/
+/projects/neoforge-clean/src/
 /projects/neotenet-base/other-src/

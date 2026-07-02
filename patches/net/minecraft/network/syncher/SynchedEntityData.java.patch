@@ -1,16 +1,5 @@
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
-@@ -12,8 +_,9 @@
- import org.apache.commons.lang3.ObjectUtils;
- import org.jspecify.annotations.Nullable;
- import org.slf4j.Logger;
-+import org.teneted.neotenet.injection.network.syncher.SynchedEntityDataInjection;
- 
--public class SynchedEntityData {
-+public class SynchedEntityData implements SynchedEntityDataInjection {
-     private static final Logger LOGGER = LogUtils.getLogger();
-     private static final int MAX_ID_VALUE = 254;
-     private static final ClassTreeIdRegistry ID_REGISTRY = new ClassTreeIdRegistry();
 @@ -26,8 +_,10 @@
          this.itemsById = itemsById;
      }

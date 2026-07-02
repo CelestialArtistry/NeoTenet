@@ -612,12 +612,5 @@ publishing {
         maven gradleutils.getPublishingMaven()
     }
 }
-def rootDir = rootProject.projectDir
 
-tasks.register('cleanBaseSources', Delete) {
-    group = 'neotenet'
-    delete "${rootDir}/projects/neotenet-base/src"
-    delete "${rootDir}/projects/neotenet-base/other-src"
-}
-
-genPatches.dependsOn cleanBaseSources
+installerJar.dependsOn("applyNeoForgePatches")
