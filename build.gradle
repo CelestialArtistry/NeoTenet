@@ -253,6 +253,7 @@ tasks.register('genNeoForgePatchesJar') {
 
 tasks.register('applyNeoForgePatches') {
     group = 'neotenet'
+    dependsOn ':neoforge:setup'
 
     inputs.file('projects/neotenet/neoforge-patches.jar')
     outputs.dir('projects/neoforge/src/main/java')

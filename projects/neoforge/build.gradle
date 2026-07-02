@@ -612,5 +612,3 @@ publishing {
         maven gradleutils.getPublishingMaven()
     }
 }
-
-installerJar.dependsOn("applyNeoForgePatches")
