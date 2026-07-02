@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.entity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.AbstractCubeMob;
 
-public abstract class CraftAbstractCubeMob extends CraftMob implements AbstractCubeMob {
+public abstract class CraftAbstractCubeMob extends CraftAgeable implements AbstractCubeMob {
 
     public CraftAbstractCubeMob(CraftServer server, net.minecraft.world.entity.monster.cubemob.AbstractCubeMob entity) {
         super(server, entity);
