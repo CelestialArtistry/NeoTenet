@@ -210,6 +210,7 @@ tasks.register('applyNeoTenetBasePatches') {
 
 tasks.register('prepareCleanNeoForge', Copy) {
     group = 'neotenet'
+    dependsOn ':neoforge:setup'
 
     from('projects/neoforge/src/main/java')
     into('projects/neoforge-clean/src/main/java')
@@ -265,7 +266,7 @@ tasks.register('applyNeoForgePatches') {
             logger.lifecycle('neoforge-patches.jar Non Exist，Skip')
             return
         }
-        def baseDir = new File(rootDir, 'projects/neotenet-base/src/main/java').toPath()
+        def baseDir = new File(rootDir, 'projects/neoforge/src/main/java').toPath()
         def targetDir = new File(rootDir, 'projects/neoforge/src/main/java').toPath()
 
         def builder = PatchOperation.builder()
@@ -273,6 +274,7 @@ tasks.register('applyNeoForgePatches') {
                 .baseInput(io.codechicken.diffpatch.util.Input.MultiInput.folder(baseDir))
                 .patchesInput(io.codechicken.diffpatch.util.Input.MultiInput.detectedArchive(patchesJar.toPath()))
                 .patchedOutput(Output.MultiOutput.folder(targetDir))
+                .rejectsOutput(MultiOutput.folder(new File(rootDir, 'projects/neotenet/rejects').toPath()))
                 .level(io.codechicken.diffpatch.util.LogLevel.WARN)
                 .summary(false)
                 .lineEnding('\n')

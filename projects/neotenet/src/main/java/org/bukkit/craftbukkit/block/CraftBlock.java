@@ -472,7 +472,7 @@ public class CraftBlock implements Block {
 
         // SPIGOT-6895: Call StructureGrowEvent and BlockFertilizeEvent
         world.captureTreeGeneration = true;
-        InteractionResult result = BoneMealItem.applyBonemeal(context);
+        InteractionResult result = BoneMealItem.applyBonemeal(context.getItemInHand(), context.getLevel(), context.getClickedPos(), context.getPlayer());
         world.captureTreeGeneration = false;
 
         if (world.capturedBlockStates.size() > 0) {
