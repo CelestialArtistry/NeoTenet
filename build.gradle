@@ -161,7 +161,7 @@ tasks.register("prepareNeoForgeOtherSrc", Copy) {
 
     from('src/main/java')
     from('projects/neotenet/src/main/java')
-    from('projects/neoforge/build/generated/sources/neoforge/main/java')
+    from('projects/neoforge/build/generated/sources/neoforge/java')
     into('projects/neotenet-base/other-src/main/java')
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
