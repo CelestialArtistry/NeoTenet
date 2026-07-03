@@ -1,6 +1,7 @@
 package org.teneted.neotenet.injection.world.entity;
 
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -88,6 +89,10 @@ public interface LivingEntityInjection extends EntityInjection {
     }
 
     default Optional<Boolean> randomTeleport(double xx, double yy, double zz, boolean showParticles, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
+        throw new IllegalArgumentException("Not implemented");
+    }
+
+    default int getExpReward(ServerLevel level, @Nullable Entity entity) {
         throw new IllegalArgumentException("Not implemented");
     }
 }
