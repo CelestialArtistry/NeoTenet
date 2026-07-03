@@ -957,7 +957,7 @@ public final class CraftServer implements Server {
         }
 
         for (ServerLevel world : console.getAllLevels()) {
-            world.serverLevelData.setDifficulty(config.difficulty.get());
+            world.serverLevelDataCB.setDifficulty(config.difficulty.get());
 
             for (SpawnCategory spawnCategory : SpawnCategory.values()) {
                 if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {

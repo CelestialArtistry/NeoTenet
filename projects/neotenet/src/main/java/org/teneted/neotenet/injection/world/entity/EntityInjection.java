@@ -100,8 +100,4 @@ public interface EntityInjection {
     default boolean teleportTo(ServerLevel level, double x, double y, double z, Set<Relative> relatives, float newYRot, float newXRot, boolean resetCamera, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
         throw new IllegalArgumentException("Not implemented");
     }
-
-    default void setRemoved(Entity.RemovalReason reason, EntityRemoveEvent.Cause cause) {
-        throw new IllegalArgumentException("Not implemented");
-    }
 }
