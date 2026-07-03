@@ -1,0 +1,61 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+plugins {
+    id 'java'
+    id 'net.neoforged.gradleutils' version '5.1.1'
+    id 'com.gradleup.shadow' version '9.3.0'
+}
+
+group = 'org.teneted.neotenet'
+version = '26.2-' + gradleutils.gitInfo.abbreviatedId // NeoTenet
+
+base {
+    archivesName = "neotenet-launcher"
+}
+
+def neotenetDir = rootProject.layout.projectDirectory.dir("projects/neoforge")
+def buildJarDir = neotenetDir.dir("build/libs")
+def neoDevDir = neotenetDir.dir("build/neodev")
+def universalJarFile = buildJarDir.file("neotenet-${rootProject.version}-universal.jar")
+def installProfile = neoDevDir.file("installer-profile.json")
+def unixArgs = neoDevDir.file("unix-server-args.txt")
+def winArgs = neoDevDir.file("windows-server-args.txt")
+def serverPatch = neoDevDir.file("server-binpatches.lzma")
+
+dependencies {
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.1")
+
+    compileOnly ("net.neoforged.fancymodloader:loader:${project.fancy_mod_loader_version}") {
+        exclude group: 'org.slf4j'
+        exclude group: 'net.fabricmc'
+        // MC currently (as of 26.2-pre-1) uses the Unsafe-using artifact of LWJGL.
+        // To avoid overriding that artifact, exclude it from here and rely on minecraft-dependencies to provide it.
+        // We must specifically exclude the main LWJGL module, since FML depends on lwjgl-tinyfd.
+        exclude group: 'org.lwjgl', module: 'lwjgl'
+    }
+}
+
+tasks.register('launcherJar', ShadowJar) {
+    group = 'neotenet'
+
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": version,
+                "Main-Class": "org.teneted.neotenet.launcher.NeoTenetLauncher",
+                "Launcher-Agent-Class": "org.teneted.neotenet.launcher.NeoTenetAgent",
+        )
+    }
+
+    configurations = project.configurations.named('runtimeClasspath').map { [it] }
+
+    from sourceSets.main.output
+
+    dependsOn project(':neoforge').tasks.named('installerJar')
+
+    from(universalJarFile.asFile) { into('neodev/') }
+    from(installProfile.asFile) { into('neodev/') }
+    from(unixArgs.asFile) { into('neodev/') }
+    from(winArgs.asFile) { into('neodev/') }
+    from(serverPatch.asFile) { into('neodev/') }
+}

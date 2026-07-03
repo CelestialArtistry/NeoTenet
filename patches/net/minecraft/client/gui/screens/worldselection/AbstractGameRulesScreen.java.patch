@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/gui/screens/worldselection/AbstractGameRulesScreen.java
++++ b/net/minecraft/client/gui/screens/worldselection/AbstractGameRulesScreen.java
+@@ -33,6 +_,7 @@
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.ComponentUtils;
+ import net.minecraft.network.chat.MutableComponent;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.FormattedCharSequence;
+ import net.minecraft.world.level.gamerules.GameRule;
+ import net.minecraft.world.level.gamerules.GameRuleCategory;
+@@ -141,7 +_,7 @@
+             this.checkbox = CycleButton.onOffBuilder(AbstractGameRulesScreen.this.gameRules.get(gameRule))
+                 .displayOnlyValue()
+                 .withCustomNarration(button -> button.createDefaultNarrationMessage().append("\n").append(narration))
+-                .create(10, 5, 44, 20, name, (button, newValue) -> AbstractGameRulesScreen.this.gameRules.set(gameRule, newValue, null));
++                .create(10, 5, 44, 20, name, (button, newValue) -> AbstractGameRulesScreen.this.gameRules.set(gameRule, newValue, (MinecraftServer) null));
+             this.children.add(this.checkbox);
+         }
+ 
+@@ -234,7 +_,7 @@
+                 if (value.isSuccess()) {
+                     this.input.setTextColor(-2039584);
+                     AbstractGameRulesScreen.this.clearInvalid(this);
+-                    AbstractGameRulesScreen.this.gameRules.set(gameRule, value.getOrThrow(), null);
++                    AbstractGameRulesScreen.this.gameRules.set(gameRule, value.getOrThrow(), (MinecraftServer) null);
+                 } else {
+                     this.input.setTextColor(-65536);
+                     AbstractGameRulesScreen.this.markInvalid(this);

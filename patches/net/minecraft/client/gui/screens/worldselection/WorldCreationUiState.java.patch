@@ -1,5 +1,22 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldCreationUiState.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldCreationUiState.java
+@@ -13,6 +_,7 @@
+ import net.minecraft.core.registries.Registries;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.resources.ResourceKey;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.tags.WorldPresetTags;
+ import net.minecraft.util.FileUtil;
+@@ -58,7 +_,7 @@
+         this.targetFolder = this.findResultFolder(this.name);
+         this.gameMode = settings.initialWorldCreationOptions().selectedGameMode();
+         this.gameRules = new GameRules(settings.dataConfiguration().enabledFeatures());
+-        this.gameRules.setAll(settings.initialWorldCreationOptions().gameRuleOverwrites(), null);
++        this.gameRules.setAll(settings.initialWorldCreationOptions().gameRuleOverwrites(), (MinecraftServer) null);
+         Optional.ofNullable(settings.initialWorldCreationOptions().flatLevelPreset())
+             .flatMap(key -> settings.worldgenLoadContext().lookup(Registries.FLAT_LEVEL_GENERATOR_PRESET).flatMap(registry -> registry.get(key)))
+             .map(reference -> reference.value().settings())
 @@ -237,7 +_,7 @@
  
      public @Nullable PresetEditor getPresetEditor() {

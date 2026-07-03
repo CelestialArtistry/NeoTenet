@@ -121,6 +121,15 @@
          return this.dragonParts;
      }
  
+@@ -998,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected LevelEntityGetter<Entity> getEntities() {
++    public LevelEntityGetter<Entity> getEntities() {
+         return this.entityStorage.getEntityGetter();
+     }
+ 
 @@ -1009,7 +_,7 @@
  
      @Override

@@ -8,6 +8,24 @@
          WorldDataConfiguration dataConfig = SharedConstants.IS_RUNNING_IN_IDE
              ? new WorldDataConfiguration(new DataPackConfig(List.of("vanilla", "tests"), List.of()), FeatureFlags.DEFAULT_FLAGS)
              : WorldDataConfiguration.DEFAULT;
+@@ -208,7 +_,7 @@
+         result.uiState.setName(levelSettings.levelName());
+         result.uiState.setAllowCommands(levelSettings.allowCommands());
+         result.uiState.setDifficulty(levelSettings.difficultySettings().difficulty());
+-        result.uiState.getGameRules().setAll(worldCreationContext.initialWorldCreationOptions().gameRuleOverwrites(), null);
++        result.uiState.getGameRules().setAll(worldCreationContext.initialWorldCreationOptions().gameRuleOverwrites(), (MinecraftServer) null);
+         if (levelSettings.difficultySettings().hardcore()) {
+             result.uiState.setGameMode(WorldCreationUiState.SelectedGameMode.HARDCORE);
+         } else if (levelSettings.gameType().isSurvival()) {
+@@ -294,7 +_,7 @@
+         GameRules gameRules;
+         if (isDebug) {
+             gameRules = MinecraftServer.DEFAULT_GAME_RULES.get();
+-            gameRules.set(GameRules.ADVANCE_TIME, false, null);
++            gameRules.set(GameRules.ADVANCE_TIME, false, (MinecraftServer) null);
+         } else {
+             gameRules = this.uiState.getGameRules().copy(enabledFeatures);
+         }
 @@ -329,6 +_,10 @@
              SystemToast.onPackCopyFailure(this.minecraft, worldFolder);
              return false;
