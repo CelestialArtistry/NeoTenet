@@ -11,6 +11,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.event.CraftPortalEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -98,6 +99,10 @@ public interface EntityInjection {
     }
 
     default boolean teleportTo(ServerLevel level, double x, double y, double z, Set<Relative> relatives, float newYRot, float newXRot, boolean resetCamera, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
+        throw new IllegalArgumentException("Not implemented");
+    }
+
+    default void neotenet$pushSpawnReason(CreatureSpawnEvent.SpawnReason spawnReason) {
         throw new IllegalArgumentException("Not implemented");
     }
 }
