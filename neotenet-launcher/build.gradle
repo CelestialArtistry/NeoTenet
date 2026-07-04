@@ -16,11 +16,11 @@ base {
 def neotenetDir = rootProject.layout.projectDirectory.dir("projects/neoforge")
 def buildJarDir = neotenetDir.dir("build/libs")
 def neoDevDir = neotenetDir.dir("build/neodev")
-def universalJarFile = buildJarDir.file("neotenet-${rootProject.version}-universal.jar")
+def universalJarFile = buildJarDir.file("neoforge-${rootProject.version}-universal.jar")
 def installProfile = neoDevDir.file("installer-profile.json")
 def unixArgs = neoDevDir.file("unix-server-args.txt")
 def winArgs = neoDevDir.file("windows-server-args.txt")
-def serverPatch = neoDevDir.file("server-binpatches.lzma")
+def serverPatch = neoDevDir.file("patches.lzma")
 
 dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.20.1")

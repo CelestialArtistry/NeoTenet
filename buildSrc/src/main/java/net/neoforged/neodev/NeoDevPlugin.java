@@ -303,6 +303,10 @@ public class NeoDevPlugin implements Plugin<Project> {
             task.exclude("net/minecraft/**");
             task.exclude("com/**");
             task.exclude("mcp/**");
+            // NeoTenet Start - do not include in neoforge jar
+            task.exclude("org/bukkit/**");
+            task.exclude("org/teneted/**");
+            // NeoTenet End
             task.from(binaryPatchOutputs, spec -> {
                 spec.into("net/neoforged/neoforge/common/");
                 spec.rename(s -> "patches.lzma");
