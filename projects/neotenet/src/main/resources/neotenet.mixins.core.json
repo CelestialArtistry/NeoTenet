@@ -6,7 +6,11 @@
     "MinecraftServerMixin",
     "advancements.AdvancementHolderMixin",
     "commands.CommandSource_1Mixin",
-    "commands.CommandSourceMixin"
+    "commands.CommandSourceMixin",
+    "world.CompoundContainerMixin",
+    "world.ContainerMixin",
+    "world.SimpleContainerMixin",
+    "world.waypoints.WaypointTransmitterMixin"
   ],
   "client": [],
   "injectors": {
