@@ -1,4 +1,4 @@
-package org.teneted.neotenet.mixin.core;
+package org.teneted.neotenet.mixin.core.server;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

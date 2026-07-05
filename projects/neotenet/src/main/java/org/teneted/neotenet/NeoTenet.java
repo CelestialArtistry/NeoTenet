@@ -18,6 +18,21 @@ public class NeoTenet {
     private static final String RESET = "\u001B[0m";
 
     public static void run() throws Exception {
+        String[][] letters = {
+                {"*   *","**  *","* * *","*  **","*   *","*   *","*   *"}, // N
+                {"*****","*    ","*****","*    ","*****","*    ","*****"}, // E
+                {" *** ","*   *","*   *","*   *","*   *","*   *"," *** "}, // O
+                {"*****","  *  ","  *  ","  *  ","  *  ","  *  ","  *  "}, // T
+                {"*****","*    ","*****","*    ","*****","*    ","*****"}, // E
+                {"*   *","**  *","* * *","*  **","*   *","*   *","*   *"}, // N
+                {"*****","*    ","*****","*    ","*****","*    ","*****"}, // E
+                {"*****","  *  ","  *  ","  *  ","  *  ","  *  ","  *  "}  // T
+        };
+        for (int row = 0; row < 7; row++) {
+            for (String[] letter : letters)
+                System.out.print(letter[row] + "  ");
+            System.out.println();
+        }
         System.out.println(YELLOW + "Welcome to NeoTenet for NeoForge " + NeoForgeVersion.getVersion() + ", Java " + javaVersion + RESET);
 
         ZoneId zoneId = ZoneId.of("Asia/Shanghai");

@@ -1,12 +1,17 @@
 {
   "required": true,
   "package": "org.teneted.neotenet.mixin.core",
+  "plugin": "org.teneted.neotenet.mixin.NeoTenetMixinPlugin",
   "mixins": [
     "CrashReportMixin",
-    "MinecraftServerMixin",
     "advancements.AdvancementHolderMixin",
     "commands.CommandSource_1Mixin",
     "commands.CommandSourceMixin",
+    "network.ConnectionMixin",
+    "network.syncher.SynchedEntityDataMixin",
+    "server.MinecraftServerMixin",
+    "stats.ServerRecipeBookMixin",
+    "stats.StatsCounterMixin",
     "world.CompoundContainerMixin",
     "world.ContainerMixin",
     "world.SimpleContainerMixin",
