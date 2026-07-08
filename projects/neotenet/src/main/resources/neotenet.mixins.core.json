@@ -9,6 +9,7 @@
     "commands.CommandSourceMixin",
     "network.ConnectionMixin",
     "network.syncher.SynchedEntityDataMixin",
+    "server.MainMixin",
     "server.MinecraftServerMixin",
     "stats.ServerRecipeBookMixin",
     "stats.StatsCounterMixin",
